@@ -1,0 +1,30 @@
+name: CI
+on:
+  pull_request:
+    paths:
+      - "**/*.js"
+      - "**/*.jsx"
+      - "**/*.ts"
+      - "**/*.tsx"
+      - "package.json"
+      - "pnpm-lock.yaml"
+      - "yarn.lock"
+      - "vite.config.*"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    concurrency:
+      group: frontend-${{ github.ref }}
+      cancel-in-progress: true
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      - run: npm ci || npm i
+      - run: npm run build --if-present
+      - run: npm test --if-present -- --ci
