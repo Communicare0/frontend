@@ -113,7 +113,7 @@ export default function LoginForm() {
                 <img src={googleIconPath} alt="Google logo" style={{ width: '18px', height: '18px' }} />
                 Google 계정으로 로그인
             </Button>
-            
+
             <p className={s.footerText}>
                 계정이 없으신가요?{" "}
                 <a
@@ -127,3 +127,5 @@ export default function LoginForm() {
         </form>
     );
 }
+
+/*1*/
