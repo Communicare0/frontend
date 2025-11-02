@@ -1,5 +1,5 @@
 import React from 'react';
-import loginStyles from '../../styles/modules/auth/Login.module.css'; 
+import loginStyles from '../../styles/modules/auth/LoginForm.module.css'; 
 
 
 function Input({ className, ...props }) {
