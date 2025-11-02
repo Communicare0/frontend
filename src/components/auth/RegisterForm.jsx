@@ -4,7 +4,7 @@ import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import FormError from "@/components/ui/FormError";
 import { register } from "@/services/authApi";
-import s from "./RegisterForm.module.css";
+import s from "@styles/modules/auth/RegisterForm.module.css";
 
 export default function RegisterForm() {
   const navigate = useNavigate();
