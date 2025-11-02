@@ -3,7 +3,7 @@
     --indigo-700: #4338ca;
     --bg-screen: #eef4ff;
     --card-bg: #ffffff;
-    --text-muted: #6b7280;
+    --text-muted: hsl(220, 9%, 46%);
     --border: #e5e7eb;
     --input-bg: #f7f8fa;
     --error: #dc2626;
@@ -35,7 +35,7 @@
 
 .row {
   display: flex;
-  gap: 8px;          /* 자식 간 여백 */
+  gap: 8px;        
   align-items: center;
 }
 
