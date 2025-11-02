@@ -7,8 +7,9 @@
     --border: #e5e7eb;
     --input-bg: #f7f8fa;
     --error: #dc2626;
+    --success: #22c55e;
 }
-
+/* 폼 카드 */
 .form {
     width: 420px;
     margin: 0 auto;
@@ -17,7 +18,6 @@
     box-shadow: 0 10px 24px rgba(0,0,0,0.06);
     padding: 32px 40px;
 }
-
 .title {
     font-size: 28px;
     font-weight: 800;
@@ -25,22 +25,12 @@
     text-align: center;
     margin: 0 0 24px;
 }
-
 .label {
   display: block;
   font-size: 13px;
   font-weight: 600;
   margin: 12px 0 6px;
 }
-
-.row {
-  display: flex;
-  gap: 8px;          /* 자식 간 여백 */
-  align-items: center;
-}
-
-.flex1 { flex: 1; }
-
 .input {
   width: 100%;
   background: var(--input-bg);
@@ -52,26 +42,115 @@
   transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
   box-sizing: border-box;
 }
-
 .input:focus {
   background: #fff;
   border-color: #c7d2fe;            /* 연보라 테두리 */
   box-shadow: 0 0 0 3px rgba(79,70,229,0.15);
 }
 
+/*인증 완료된 이메일 인풋 상태*/
+.inputOk {
+  background: rgba(34,197,94,.18);
+  border-color: rgba(34,197,84,.5);
+}
+
+/* 이메일 입력 줄: 입력 + 타이머/버튼/배지 */
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+}
+.flex1 { flex: 1; }
+
+/* 인증 버튼 (아웃라인)*/
 .verifyBtn {
-  /* 아웃라인 버튼 */
   background: #fff;
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 12px 14px;
   font-weight: 600;
   white-space: nowrap;
-  transition: background .15s ease;
-  height: var(--control-h);
+  transition: background .15s;
 }
 .verifyBtn:hover { background: #f5f5f5; }
 
+/* 우측 타이머 알약 (3:00) */
+.timerBox {
+  min-width: 64px;
+  padding: 10px 12px;
+  text-align: center;
+  font-weight: 700;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.02);
+}
+
+/* 인증 완효 체크 배지 (초록 원형) */
+.verifiedBadge {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--success);
+  position: relative;
+}
+.verifiedBadge::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 14px;
+  height: 8px;
+  border: 4px solid #fff;
+  border-top: none;
+  border-right: none;
+  transform: translate(-50%, -60%) rotate(-45deg);
+  border-radius: 2px;
+}
+
+/* 인증 안내 박스 */
+.noticeBox {
+  margin-top: 10px;
+  padding: 12px;
+  border: 1px solid #dbeafe;
+  background: #eef5ff;
+  border-radius: 12px;
+}
+.noticeHead {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #3b82f6;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.mailIcon{
+  width:18px; height:12px; position:relative; display:inline-block;
+  background: currentColor; clip-path: polygon(0 0,100% 0,100% 100%,0 100%);
+}
+.mailIcon::after{ /* 봉투 삼각형 */
+  content:""; position:absolute; left:0; top:0; width:100%; height:100%;
+  background:linear-gradient(135deg, transparent 49%, #fff 50% 51%, transparent 52%),
+             linear-gradient(225deg, transparent 49%, #fff 50% 51%, transparent 52%);
+  opacity:.9;
+}
+
+/* 코드 입력 줄: 인풋 + 확인 버튼 */
+.codeRow{ display:grid; grid-template-columns: 1fr auto; gap:8px; align-items:center; }
+
+.codeConfirmBtn{
+  background:#6b7280; color:#fff; border:none; border-radius:10px; padding:12px 14px;
+  font-weight:700; }
+.codeConfirmBtn:hover{ filter:brightness(0.95); }
+
+/* 인라인 에러(만료 등) */
+.inlineError{
+  margin-top:10px; font-size:13px; color:#b91c1c;
+  background:#fee2e2; border:1px solid #fecaca; border-radius:8px; padding:8px 10px;
+}
+
+/* 하단 버튼 / 풋터 */
 .submitBtn {
   margin-top: 10px;
   width: 100%;
@@ -100,7 +179,6 @@
   color: var(--text-muted);
   font-size: 13px;
 }
-
 .link {
   color: var(--indigo-600);
   font-weight: 600;
