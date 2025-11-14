@@ -1,0 +1,53 @@
+.sidebar {
+  display: flex;
+  justify-content: center;
+}
+
+.card {
+  width: 220px;
+  background: #f0f3ff;
+  border-radius: 24px;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.avatarCircle {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: #ffffff;
+  margin: 0 auto 16px;
+}
+
+.infoRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 4px 0;
+}
+
+.label {
+  color: #777;
+}
+
+.value {
+  font-weight: 500;
+}
+
+.hint {
+  margin-top: 16px;
+  font-size: 12px;
+  color: #999;
+}
+
+.mypageBtn {
+  margin-top: 16px;
+  width: 100%;
+  border: none;
+  border-radius: 20px;
+  padding: 8px 0;
+  background: #3b5cff;
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+}

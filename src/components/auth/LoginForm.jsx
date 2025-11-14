@@ -6,9 +6,17 @@ import Button from "@/components/ui/Button";
 import FormError from "@/components/ui/FormError";
 import { login } from "@/services/authApi";
 import s from "@styles/modules/auth/LoginForm.module.css";
+//추가한 부분=====================================================================
+import useAuth from "@/hooks/useAuth";
+// setUser 사용하기 위해 import====================================================
 
 export default function LoginForm() {
     const navigate = useNavigate();
+
+    //추가한 부분==================================================================
+    const { setUser } = useAuth();
+    //로그인 성공 시 전역 상태 저장===================================================
+
     const [values, setValues] = useState({
         email: "",
         password: "",
@@ -49,7 +57,11 @@ export default function LoginForm() {
                 const data = await res.json();
                 setGlobalError(data.message || "로그인에 실패했습니다.");
             } else {
-                navigate("/");
+                //추가 및 변경===============================================================
+                const data = await res.json();
+                setUser(data.user);
+                navigate("/home", { replace: true });
+                //백엔드로부터 사용자 정보 받아 전역상태 저장 -> 홈화면으로 이동=====================
             }
         } catch (err) {
             console.error(err);
@@ -67,6 +79,21 @@ export default function LoginForm() {
         e.preventDefault();
         navigate("/register");
     };
+
+    // 추가한 부분================================================================
+    const handleDevLogin = () => {
+        setUser({
+            id: 1,
+            email: "dev@ajou.ac.kr",
+            nickname: "DevUser",
+            major: "Software",
+            nation: "KR",
+            studentId: "202500000",
+        });
+
+        navigate("/home", { replace: true });
+    };
+    // 개발용 강제 로그인 버튼 -> 추후 반드시 제거======================================
 
     const googleIconPath = '/image/google_icon.svg';
     const dividerLinePath = '/image/Vector 1.svg';
@@ -124,6 +151,17 @@ export default function LoginForm() {
                     회원가입
                 </a>
             </p>
+
+            {/* 추가한 부분 =======================================================================*/}
+            <Button 
+                type="button"
+                className={s.socialBtn}
+                onClick={handleDevLogin}
+                style={{ marginTop: "12px", background: "#ddd" }}
+            >
+                (개발용) 로그인 없이 홈으로 이동
+            </Button>
+            {/* 개발용 강제 로그인 버튼 -> 백엔드 연동 후 반드시 제거 =======================================*/}
         </form>
     );
 }

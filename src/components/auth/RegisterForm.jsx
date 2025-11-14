@@ -132,6 +132,11 @@ export default function RegisterForm() {
     }
   };
 
+  const handleLoginClick = (e) => {
+    e.preventDefault();
+    navigate("/login");
+  }
+
   return (
     <form className={s.form} onSubmit={handleSubmit} noValidate>
       <h1 className={s.title}>Communicare</h1>
@@ -218,7 +223,7 @@ export default function RegisterForm() {
 
       <p className={s.footerText}>
         이미 계정이 있으신가요?{" "}
-        <a href="/login" className={s.link}>로그인</a>
+        <a href="/login" className={s.link} onClick={handleLoginClick}>로그인</a>
       </p>
     </form>
   );
