@@ -1,17 +1,21 @@
 // src/app/routes.jsx
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, Navigate } from "react-router-dom";
 
 import LoginPage from "@/pages/auth/LoginPage";
 import RegisterPage from "@/pages/auth/RegisterPage";
 
 import MainLayout from "@/components/layout/MainLayout";
-import HomePage from "@/pages/home/HomePage";
-import AjouBoardPage from "@/pages/board/AjouBoardPage";
-import RestaurantBoardPage from "@/pages/board/RestaurantBoardPage";
-import FreeBoardPage from "@/pages/board/FreeBoardPage";
-import MapPage from "@/pages/map/MapPage";
+
+import BoardPage from "@/pages/board/BoardPage";
+import ReadPostPage from "@/pages/board/ReadPostPage";
+
+import RestaurantPage from "@/pages/restaurant/RestaurantPage";
+
 import ChatPage from "@/pages/chat/ChatPage";
+
 import MyPage from "@/pages/mypage/MyPage";
+
+import NotificationsPage from "@/pages/notification/NotificationsPage";
 
 import RequireAuth from "@/components/auth/RequireAuth";
 import PublicOnlyRoute from "@/components/auth/PubilcOnlyRoute";
@@ -45,14 +49,13 @@ export const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <HomePage /> },      // "/" -> 홈(게시판)
-      { path: "home", element: <HomePage /> },     // "/home"도 동일
-      { path: "boards/ajou", element: <AjouBoardPage /> },
-      { path: "boards/restaurant", element: <RestaurantBoardPage /> },
-      { path: "boards/free", element: <FreeBoardPage /> },
-      { path: "map", element: <MapPage /> },
+      { index: true, element: <Navigate to="board/popularity" replace /> },      // "/" -> 홈(게시판)
+      { path: "board/:category", element: <BoardPage /> },
+      { path: "board/:category/:postId", element: <ReadPostPage /> },
+      { path: "restaurant", element: <RestaurantPage /> },
       { path: "chat", element: <ChatPage /> },
       { path: "mypage", element: <MyPage /> },
+      { path: "notifications", element: <NotificationsPage /> },
     ],
   },
 ]);

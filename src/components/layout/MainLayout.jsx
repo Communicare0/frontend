@@ -16,14 +16,14 @@ export default function MainLayout() {
         <div className={s.container}>
             <header className={s.header}>
                 <div className={s.left}>
-                    <span className={s.logo} onClick={() => navigate("/home")}>
+                    <span className={s.logo} onClick={() => navigate("/")}>
                         Communicare
                     </span>
                 </div>
 
                 <nav className={s.nav}>
                     <NavLink
-                        to="/home"
+                        to="/board/popularity"
                         className={({ isActive }) => 
                             isActive ? `${s.navItem} ${s.active}` : s.navItem
                         }
@@ -31,12 +31,12 @@ export default function MainLayout() {
                         게시판
                     </NavLink>
                     <NavLink
-                        to="/map"
+                        to="/restaurant"
                         className={({ isActive }) => 
                             isActive ? `${s.navItem} ${s.active}` : s.navItem
                         }
                     >
-                        지도
+                        식당
                     </NavLink>
                     <NavLink
                         to="/chat"
@@ -46,27 +46,25 @@ export default function MainLayout() {
                     >
                         채팅
                     </NavLink>
-                    <NavLink
-                        to="/mypage"
-                        className={({ isActive }) => 
-                            isActive ? `${s.navItem} ${s.active}` : s.navItem
-                        }
-                    >
-                        마이페이지
-                    </NavLink>
                 </nav>
 
                 <div className={s.right}>
-                    <button type="button" className={s.alarmBtn}>
-                        <span className={s.alarmText}>알림</span>
-                    </button>
+                    <NavLink to="/mypage" className={s.mypageBtn}>
+                        <img src="/image/user.svg" alt="마이페이지" className={s.mypageicon} />
+                    </NavLink>
+                    <NavLink to="/notifications" className={s.alarmBtn}>
+                        <img src="/image/alarm.svg" alt="알림" className={s.icon} />
+                        {/*{unreadCount > 0 && (
+                            <span className={s.badge}>{unreadCount}</span>
+                        )}*/}
+                    </NavLink>
                     <button type="button" className={s.logoutBtn} onClick={handleLogout}>
                         로그아웃
                     </button>
                 </div>
             </header>
 
-            <main className={s.content}>
+            <main className={s.content} data-layout-content>
                 <Outlet />
             </main>
         </div>

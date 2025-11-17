@@ -60,7 +60,7 @@ export default function LoginForm() {
                 //추가 및 변경===============================================================
                 const data = await res.json();
                 setUser(data.user);
-                navigate("/home", { replace: true });
+                navigate("/", { replace: true });
                 //백엔드로부터 사용자 정보 받아 전역상태 저장 -> 홈화면으로 이동=====================
             }
         } catch (err) {
@@ -91,7 +91,7 @@ export default function LoginForm() {
             studentId: "202500000",
         });
 
-        navigate("/home", { replace: true });
+        navigate("/", { replace: true });
     };
     // 개발용 강제 로그인 버튼 -> 추후 반드시 제거======================================
 

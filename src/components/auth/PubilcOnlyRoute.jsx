@@ -6,7 +6,7 @@ export default function PublicOnlyRoute({ children }) {
     const user = auth?.user;
 
     if(user) {
-        return <Navigate to="/home" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return children;

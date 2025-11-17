@@ -1,0 +1,45 @@
+.postCard {
+    background-color: #fff;
+    border-radius: 24px;
+    padding: 24px 32px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+}
+
+.postCardTitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.postCardText {
+    font-size: 14px;
+    margin-bottom: 16px;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 12px;
+}
+
+.postCardFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+}
+
+.postCardMeta span + span {
+    margin-left: 4px;
+}
+
+.postCardLike {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.postCardLikeIcon {
+    width: 12px;
+    height: 12px;
+}
+
+.postCardLikeText {
+    font-size: 11px;
+}
