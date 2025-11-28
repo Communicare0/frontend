@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import PostCard from "@/components/board/PostCard";
 /*import { fetchBoardPosts } from "@/services/boardApi";*/
@@ -8,6 +8,8 @@ import s from "@styles/modules/board/BoardPage.module.css";
 
 export default function BoardPage() {
     const { category } = useParams();
+    const navigate = useNavigate();
+    
     const [posts, setPosts]=  useState([]);
     const [sortOption, setSortOption]=  useState("like_desc");
     const [search, setSearch] = useState("");
@@ -147,8 +149,7 @@ export default function BoardPage() {
 
     const handleWriteClick = () => {
         //글쓰기 모달 또는 /board/:category/write로 이동
-        //navigate(`/board/${category}/write`);
-        console.log("글쓰기 버튼 클릭");
+        navigate(`/board/${category}/write`);
     }
 
     return (
