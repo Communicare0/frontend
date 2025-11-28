@@ -51,6 +51,7 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <Navigate to="board/popularity" replace /> },      // "/" -> 홈(게시판)
+      { path: "board", element: <Navigate to="popularity" replace />},
       { path: "board/:category", element: <BoardPage /> },
       { path: "board/:category/:postId", element: <ReadPostPage /> },
       { path: "board/:category/write", element: <WritePostPage /> },

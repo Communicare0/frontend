@@ -23,7 +23,7 @@ export default function MainLayout() {
 
                 <nav className={s.nav}>
                     <NavLink
-                        to="/board/popularity"
+                        to="/board"
                         className={({ isActive }) => 
                             isActive ? `${s.navItem} ${s.active}` : s.navItem
                         }
