@@ -2,19 +2,11 @@ import { API_BASE_URL } from "@/config/env";
 
 export async function api(path, options = {}) {
   const url = `${API_BASE_URL}${path}`;
-  const isFormData = options.body instanceof FormData;
-  const headers = {
-    ...(options.headers || {}),
-  };
-
-  if(!isFormData && !headers["Content-Type"]) {
-    headers["Content-Type"] = "application/json";
-  }
 
   const res = await fetch(url, {
     credentials: "include",
+    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
     ...options,
-    headers,
   });
 
   if(!res.ok) {

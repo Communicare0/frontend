@@ -9,16 +9,8 @@ export async function fetchBoardPosts({ category, sort, search }) {
     return api(`/boards/${category}${queryString}`);
 }
 
-export async function writePost({ category, title, content, files }) {
-    const formData = new FormData();
-    formData.append("title", title);
-    formData.append("content", content);
-
-    files.forEach((file) => {
-        formData.append("attachments", file);
-    });
-
-    return api(`/boards/${category}`, { method: "POST", body: formData });
+export async function writePost(payload) {
+    return api(`/boards/${payload.category}`, { method: "POST", body: JSON.stringify(payload) });
 }
 
 export async function testPost() {
