@@ -41,6 +41,30 @@ export default function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         const validationErrors = validate();
+        if(Object.keys(validationErrors).length > 0) {
+            setErrors(validationErrors);
+            return; 
+        }
+
+        setLoading(true);
+        try {
+            const data = await login({
+                email: values.email,
+                password: values.password,
+            });
+
+            setUser(data.user);
+            navigate("/", { replace: true });
+        } catch (err) {
+            console.error(err);
+            setGlobalError(err.message || "서버 연결에 실패했습니다.");
+        } finally {
+            setLoading(false);
+        }
+        
+        /* 기존의 코드
+        e.preventDefault();
+        const validationErrors = validate();
         if (Object.keys(validationErrors).length > 0) {
             setErrors(validationErrors);
             return;
@@ -68,7 +92,7 @@ export default function LoginForm() {
             setGlobalError("서버 연결에 실패했습니다.");
         } finally {
             setLoading(false);
-        }
+        }*/
     };
 
     const handleGoogleLogin = () => {

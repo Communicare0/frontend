@@ -1,8 +1,10 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, /*useRef*/ } from "react";
+import { writePost } from "@/services/boardApi";
 import s from "@styles/modules/board/WritePostPage.module.css";
 
 export default function WritePostPage() {
+    /*
     //파일 형식, 사이즈, 개수 제한
     const ALLOWED_IMAGE_TYPES = [
         "image/png",
@@ -11,13 +13,13 @@ export default function WritePostPage() {
         "image/webp",
     ]; // 이미지 파일만 허용
     const MAX_FILE_SIZE = 5 * 1024 * 1024; // 최대 5MB
-    const MAX_COUNT = 5; // 최대 5개
+    const MAX_COUNT = 5; // 최대 5개*/
 
     const navigate = useNavigate();
     const { category } = useParams();
-
+/*
     const [files, setFiles] = useState([]);
-    const fileInputRef = useRef(null);
+    const fileInputRef = useRef(null);*/
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -36,14 +38,14 @@ export default function WritePostPage() {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, [isDirty]);
-
+/*
     const handleAttachClick = () => {
         if(fileInputRef.current) {
             fileInputRef.current.click();
         }
-    };
+    };*/
 
-    const handleFileChange = (e) => {
+    /*const handleFileChange = (e) => {
         const fileList = Array.from(e.target.files);
         const validFiles = [];
         const rejectedFiles = [];
@@ -90,9 +92,9 @@ export default function WritePostPage() {
 
     const handleRemoveFile = (fileName) => {
         setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
-    }
+    }*/
 
-    const handleSubmit = /* async */ (e) => {
+    const handleSubmit =  async (e) => {
         e.preventDefault();
 
         if(!title.trim() || !content.trim()) {
@@ -105,25 +107,14 @@ export default function WritePostPage() {
 
         try {
             // 여기에 제출 로직
-            /*
-            const formData = new FormData();
-            formData.append("title", title);
-            formData.append("content", content);
-
-            files.forEach((file) => {
-                formData.append("attachments", file);
-            });
-
-            const res = await fetch(`/api/boards/${category}`, {
-                method: "POST",
-                body: formData,
+            
+            await writePost({
+                category,
+                title: title.trim(),
+                content: content.trim(),
+                /*files,*/
             });
             
-            if(!res.ok) {
-                alert("업로드 실패");
-                return;
-            }
-            */
             navigate(`/board/${category}`);
         } catch (err) {
             console.error(err);
@@ -167,7 +158,7 @@ export default function WritePostPage() {
                         />
                     </div>
 
-                    {/*테스트용: 선택한 파일 이름 보여주기*/}
+                    {/*테스트용: 선택한 파일 이름 보여주기*/}{/*}
                     {files.length > 0 && (
                         <div className={s.filePreview}>
                             <span>첨부된 파일:</span>
@@ -186,11 +177,11 @@ export default function WritePostPage() {
                                 ))}
                             </ul>
                         </div>
-                    )}
+                    )} */}
 
                     <div className={s.divider} />
 
-                    <div className={s.footer}>
+                    <div className={s.footer}>{/*
                         <button
                             type="button"
                             className={s.attachBtn}
@@ -206,7 +197,7 @@ export default function WritePostPage() {
                             onChange={handleFileChange}
                             accept=".png, .jpg, .jpeg, .gif, .webp"
                             style={{ display: "none" }}
-                        />
+                        />*/}
                         
                         <div className={s.footerRight}>
                             <button

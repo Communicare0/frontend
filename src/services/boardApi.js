@@ -6,33 +6,21 @@ export async function fetchBoardPosts({ category, sort, search }) {
     if(search) params.set("q", search);
 
     const queryString = params.toString() ? `?${params.toString()}` : "";
-
-    const res = await api(`/boards/${category}${queryString}`);
-
-    if(!res.ok) {
-        const errorBody = await res.json().catch(() => ({}));
-        const message = errorBody.message || "게시글을 불러오는데 실패했습니다.";
-        const err = new Error(message);
-        err.status = res.status;
-        throw err;
-    }
-
-    return res.json();
+    return api(`/boards/${category}${queryString}`);
 }
 
-export async function writePost({ category, payload }) {
-    const res = await api(`/boards/${category}`, {
-        method: "POST",
-        body: JSON.stringify(payload),
+export async function writePost({ category, title, content, files }) {
+    const formData = new FormData();
+    formData.append("title", title);
+    formData.append("content", content);
+
+    files.forEach((file) => {
+        formData.append("attachments", file);
     });
 
-    if(!res.ok) {
-        const errorBody = await res.json().catch(() => ({}));
-        const message = errorBody.message || "게시글 작성에 실패했습니다.";
-        const err = new Error(message);
-        err.status = res.status;
-        throw err;
-    }
+    return api(`/boards/${category}`, { method: "POST", body: formData });
+}
 
-    return res.json();
+export async function testPost() {
+    return api(`/v1/comments/post/11111111-2222-3333-4444-555555555555`);
 }

@@ -3,6 +3,8 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import PostCard from "@/components/board/PostCard";
 /*import { fetchBoardPosts } from "@/services/boardApi";*/
+/*import { testPost } from "../../services/boardApi";
+import { Test } from "@/components/board/Test";*/
 
 import s from "@styles/modules/board/BoardPage.module.css";
 
@@ -14,10 +16,25 @@ export default function BoardPage() {
     const [sortOption, setSortOption]=  useState("like_desc");
     const [search, setSearch] = useState("");
 
+    /*const test = async () => {
+        try {
+            const data = await testPost();
+            setPosts(data);
+        } catch (err) {
+            console.error(err);
+        }
+    }*/
     useEffect(() => {
         async function loadPosts() {
-        /*
-            try {
+            /*try {
+                const data = await testPost();
+                setPosts(data);
+            } catch (err) {
+                console.error(err);
+            }
+        }*/
+        
+            /*try {
                 const data = await fetchBoardPosts({
                     category,
                     sort: sortOption,
@@ -32,8 +49,8 @@ export default function BoardPage() {
 
         if(category) {
             loadPosts();
-        }
-        */
+        }*/
+        
 
             //개발용 ====================================================
             try {
@@ -185,6 +202,7 @@ export default function BoardPage() {
                     ))}
                 </div>
 
+                        
                 <button className={s.boardTopBtn} onClick={handleTopClick}>
                     Top
                 </button>
