@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "@/components/ui/Input";
 import Button from "@/components/ui/Button";
 import FormError from "@/components/ui/FormError";
-import { register as apiRegister } from "@/services/authApi";
+import { register } from "@/services/authApi";
 import s from "@styles/modules/auth/RegisterForm.module.css";
 
 const requestEmailCode = async (/*email*/) => {
@@ -125,10 +125,10 @@ export default function RegisterForm() {
     const e = validate();
     if (Object.keys(e).length) { setErrors(e); return; }
     try {
-      await apiRegister({ name: values.name.trim(), email: values.email.trim(), password: values.password });
+      await register({ name: values.name.trim(), email: values.email.trim(), password: values.password });
       navigate("/login", { replace:true });
     } catch (err) {
-      setGlobalError(err?.data?.message || err.message || "회원가입 실패");
+      setGlobalError(err.message || "회원가입 실패");
     }
   };
 
