@@ -16,23 +16,8 @@ export default function BoardPage() {
     const [sortOption, setSortOption]=  useState("like_desc");
     const [search, setSearch] = useState("");
 
-    /*const test = async () => {
-        try {
-            const data = await testPost();
-            setPosts(data);
-        } catch (err) {
-            console.error(err);
-        }
-    }*/
     useEffect(() => {
         async function loadPosts() {
-            /*try {
-                const data = await testPost();
-                setPosts(data);
-            } catch (err) {
-                console.error(err);
-            }
-        }*/
         
             /*try {
                 const data = await fetchBoardPosts({
@@ -212,7 +197,6 @@ export default function BoardPage() {
                     }}>
                     test
                 </button>
-
                         
                 <button className={s.boardTopBtn} onClick={handleTopClick}>
                     Top

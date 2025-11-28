@@ -9,8 +9,19 @@ export async function fetchBoardPosts({ category, sort, search }) {
     return api(`/boards/${category}${queryString}`);
 }
 
+export async function fetchUserPosts() {
+    return api(`/v1/posts/user`);
+}
+
 export async function writePost(payload) {
-    return api(`/boards/${payload.category}`, { method: "POST", body: JSON.stringify(payload) });
+    return api(`/v1/posts/${payload.category}`, { method: "POST", body: JSON.stringify(payload) });
+}
+
+export async function updatePost(postId, payload) {
+    return api(`/v1/posts/${postId}`, {
+        method: "PUT",
+        body: JSON.stringify(payload),
+    });
 }
 
 export async function testPost() {
