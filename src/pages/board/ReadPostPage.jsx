@@ -61,7 +61,7 @@ export default function ReadPostPage() {
         e.preventDefault();
         if (!newCommentText.trim()) return;
 
-        // 실제 API 호출 (주석 처리)
+        // 실제 API 댓글 예시
         /*
         try {
             await addComment(postId, newCommentText);
