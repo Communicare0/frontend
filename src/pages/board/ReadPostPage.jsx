@@ -1,15 +1,91 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
-// import { fetchPostDetail, fetchPostComments } from "@/services/boardApi"; 
+/* import { 
+    fetchPostDetail,
+    fetchPostComments, 
+    createComment 
+} from "@/services/boardApi"; */
+
+//개발용 모의(MOCK) API 함수 정의
+
+const DUMMY_POST = {
+    postId: "dummy-post-1",
+    title: "개발용 더미 게시글입니다",
+    text: "서버 연결 없이 UI 확인을 위해 로드된 임시 내용입니다.",
+    username: "테스트 작성자",
+    likeCount: 42,
+    createdAt: new Date().toISOString(),
+};
+
+const DUMMY_COMMENTS = [
+    {
+        id: 1,
+        username: "유저 A",
+        age: 25,
+        subject: "프론트",
+        text: "첫 번째 댓글입니다.",
+        likes: 12,
+        isLiked: false,
+        canReply: true,
+        canEdit: true,
+        canReport: true,
+        replies: []
+    },
+    {
+        id: 2,
+        username: "유저 B",
+        age: 30,
+        subject: "백엔드",
+        text: "두번째 댓글.",
+        likes: 5,
+        isLiked: true,
+        canReply: true,
+        canEdit: false,
+        canReport: true,
+        replies: [
+            {
+                id: 3,
+                username: "답변자",
+                age: 22,
+                subject: "풀스택",
+                text: "대댓글이 성공적으로 렌더링됩니다.",
+                likes: 2,
+                isLiked: false,
+                canReply: false,
+                canEdit: true,
+                canReport: true,
+            }
+        ]
+    }
+];
+
+// 모의 API 함수 정의
+const fetchPostDetail = async (postId) => {
+    await new Promise(resolve => setTimeout(resolve, 300)); // 로딩 시뮬레이션
+    return DUMMY_POST;
+};
+
+const fetchPostComments = async ({ postId }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return DUMMY_COMMENTS;
+};
+
+const createComment = async ({ postId, content }) => {
+    await new Promise(resolve => setTimeout(resolve, 300));
+    return { success: true, newComment: { id: Date.now(), content } }; 
+};
+
+// =================================================================
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
-// 임시 아이콘 컴포넌트 
-const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 7.5L13.3333 3.33333M17.5 7.5L13.3333 11.6667M17.5 7.5H9.16667C8.44928 7.5 7.76159 7.79097 7.25825 8.3044C6.75492 8.81784 6.47917 9.51087 6.47917 10.2333V14.4167C6.47917 15.1391 6.75492 15.8322 7.25825 16.3456C7.76159 16.859 8.44928 17.15 9.16667 17.15H17.5" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const LikeIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49999 17.5L2.5 10.8333V4.16667H7.49999C8.21738 4.16667 8.90507 4.45763 9.40841 4.97107C9.91174 5.48451 10.1875 6.17754 10.1875 6.9V9.16667M7.49999 17.5H12.5L15.4167 10.8333C15.4167 10.1109 15.7077 9.42322 16.2211 8.91989C16.7345 8.41655 17.4276 8.1408 18.15 8.1408H19.1667V4.16667H10.1875C9.46507 4.16667 8.77738 3.87571 8.26394 3.36231C7.75051 2.8489 7.45833 2.16122 7.45833 1.4388V1.04167C7.45833 0.817366 7.4116 0.596041 7.31956 0.392949C7.22752 0.189857 7.09115 0.00977464 6.91989 -0.161494C6.74862 -0.332763 6.5385 -0.470557 6.30537 -0.569591C6.07223 -0.668625 5.82025 -0.72591 5.56417 -0.738096L-0.00000109289 0L2.5 10.8333V17.5H7.49999Z" stroke="#EF4444" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const CommentIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 17.5C10.663 17.5 11.313 17.3683 11.9213 17.112C12.5297 16.8557 13.0886 16.4795 13.5705 16.0098C14.0524 15.5402 14.4502 14.9818 14.7439 14.3644C15.0376 13.747 15.2215 13.0827 15.2866 12.4042C15.4058 11.1965 15.2036 9.9702 14.6974 8.84713C14.1912 7.72407 13.3934 6.74681 12.3853 6.00762C11.3771 5.26844 10.1983 4.78696 8.97191 4.59591C7.74556 4.40486 6.49504 4.50974 5.3435 4.90098C4.19196 5.29222 3.17066 5.95543 2.37895 6.83789C1.58724 7.72036 1.05607 8.78456 0.835467 9.94056C0.614868 11.0966 0.718872 12.2982 1.15177 13.4076C1.58466 14.517 2.33668 15.4851 3.32833 16.2238C3.89973 16.6433 4.54226 16.969 5.22558 17.1853C5.90891 17.4017 6.62688 17.505 7.34861 17.4907L10 17.5Z" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const ShareIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.59 13.51l6.83-3.79M15.41 12.49l-6.83 3.79" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const HeartIcon = ({ isLiked = false }) => <svg width="18" height="18" viewBox="0 0 24 24" fill={isLiked ? "var(--heart-color)" : "none"} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={isLiked ? "none" : "currentColor"} strokeWidth="1.5" /></svg>;
+const CommentIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="3.5" /><path d="M19.998 18c-0.002-2.909-2.355-5.25-5.25-5.25h-5.5c-2.895 0-5.248 2.341-5.25 5.25v2.25h16.002v-2.25z" /></svg>;
+const NationIcon = () => <span className={s.nationIcon} style={{ backgroundColor: '#EF4444', display: 'inline-block', width: '10px', height: '7px', borderRadius: '1px' }}></span>;
 
 
 export default function ReadPostPage() {
@@ -18,70 +94,195 @@ export default function ReadPostPage() {
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState("");
+    const [isPostLiked, setIsPostLiked] = useState(false);
+    const [replyToCommentId, setReplyToCommentId] = useState(null);
+    const [replyText, setReplyText] = useState("");
+    const [updateKey, setUpdateKey] = useState(0); 
+    const effectRan = useRef(false);
 
-    // 로직: 게시물 데이터 로드 및 댓글 목록 로드
-    useEffect(() => {
-        // 개발용 더미 데이터 로드
-        const dummyPost = {
-            id: postId,
-            category: category,
-            title: "Title",
-            username: "User name",
-            createdAt: "1시간 전",
-            views: 45,
-            likes: 12,
-            text: "게시물 상세 내용입니다. 여기에 글의 본문이 표시됩니다. 피그마 이미지와 같이 내용이 길어질 경우 스크롤 될 수 있습니다. 모든 내용은 동적으로 표시됩니다.",
-            comments: [
-                { id: 1, username: "학생1", text: "좋은 정보 감사합니다!", createdAt: "10분 전" },
-                { id: 2, username: "학생2", text: "저도 이 내용 궁금했어요.", createdAt: "5분 전" },
-            ]
-        };
-
-        // 실제 API가 구현될경우 예시 코드
-        // async function loadPostData() {
-        //     try {
-        //         const [postData, commentsData] = await Promise.all([
-        //             fetchPostDetail(postId),
-        //             fetchPostComments(postId)
-        //         ]);
-        //         setPost(postData);
-        //         setComments(commentsData);
-        //     } catch (err) {
-        //         console.error(err);
-        //         navigate(`/board/${category}`);
-        //     }
-        // }
-
-        setPost(dummyPost);
-        setComments(dummyPost.comments); // 더미 데이터의 댓글 목록 
-    }, [category, postId, navigate]);
-
-    // 로직: 댓글 제출 핸들러
-    const handleCommentSubmit = (e) => {
-        e.preventDefault();
-        if (!newCommentText.trim()) return;
-
-        // 실제 API 댓글 예시
-        /*
+    const loadPostData = async () => {
         try {
-            await addComment(postId, newCommentText);
-            setNewCommentText("");
-            // 댓글 목록 새로고침 (또는 낙관적 업데이트)
+            const postDetail = await fetchPostDetail(postId); 
+            
+            const commentsData = await fetchPostComments({ postId });
+            
+            setPost({
+                ...postDetail,
+                likes: postDetail.likeCount || 0,
+            }); 
+            setComments(commentsData);
+            
         } catch (err) {
-            console.error("댓글 추가 실패:", err);
+            console.error("게시물 로드 실패:", err);
+            alert("게시물 정보를 불러오는데 실패했거나 존재하지 않는 게시물입니다.");
+            navigate(`/board/${category}`);
         }
-        */
-
-        // 개발용: 프론트엔드에 새 댓글 추가
-        const newComment = {
-            id: Date.now(),
-            username: "현재 사용자",
-            text: newCommentText.trim(),
-            createdAt: "방금 전"
-        };
-        setComments((prev) => [...prev, newComment]);
-        setNewCommentText("");
     };
+
+    useEffect(() => {
+        if (process.env.NODE_ENV !== 'development' || !effectRan.current) {
+            loadPostData();
+            effectRan.current = true;
+        }
+    }, [category, postId, navigate]);
+    
+    const handlePostLikeToggle = () => {
+        setPost(prev => ({
+            ...prev,
+            likes: prev.likes + (isPostLiked ? -1 : 1)
+        }));
+        setIsPostLiked(prev => !prev);
+    };
+
+    const handleCommentLikeToggle = (commentId) => {
+        setComments(prevComments => prevComments.map(comment => {
+            if (comment.id === commentId) {
+                return {
+                    ...comment,
+                    isLiked: !comment.isLiked,
+                    likes: comment.likes + (comment.isLiked ? -1 : 1)
+                };
+            }
+            const updatedReplies = comment.replies.map(reply => {
+                if (reply.id === commentId) {
+                    return {
+                        ...reply,
+                        isLiked: !reply.isLiked,
+                        likes: (reply.likes || 0) + (reply.isLiked ? -1 : 1)
+                    };
+                }
+                return reply;
+            });
+            if (updatedReplies !== comment.replies) {
+                return { ...comment, replies: updatedReplies };
+            }
+            return comment;
+        }));
+    };
+
+    const handleCommentSubmit = async (e) => {
+        e.preventDefault();
+        const trimmedComment = newCommentText.trim();
+        if (!trimmedComment) return;
+
+        try {
+            await createComment({ postId, content: trimmedComment });
+            if (process.env.NODE_ENV !== 'production' && typeof fetchPostComments === 'function' && fetchPostComments.name === 'fetchPostComments') {
+                 const commentsData = await fetchPostComments({ postId });
+                 setComments(commentsData);
+            } else {
+                 // 실제 API 연결 가정 시:
+                 const commentsData = await fetchPostComments({ postId });
+                 setComments(commentsData);
+            }
+            
+            setNewCommentText("");
+
+        } catch (err) {
+            console.error("댓글 등록 실패:", err);
+            alert("댓글 등록에 실패했습니다.");
+        }
+    };
+
+    const handleReplySubmit = async (e, parentId) => {
+        e.preventDefault();
+        const trimmedReply = replyText.trim();
+        if (!trimmedReply) return;
+
+        const newReply = {
+            id: Date.now(),
+            username: "답글 작성자",
+            age: 22,
+            subject: "답글 주제",
+            text: trimmedReply,
+            likes: 0,
+            isLiked: false,
+            canReport: true,
+        };
+
+        const updatedComments = comments.map(comment => {
+            if (comment.id === parentId) {
+                return {
+                    ...comment,
+                    replies: [...(comment.replies || []), newReply]
+                };
+            }
+            return comment;
+        });
+
+        setComments(updatedComments);
+        setReplyToCommentId(null);
+        setReplyText("");
+        setUpdateKey(prev => prev + 1); 
+    };
+
+    const CommentItem = ({ comment, isReply = false }) => (
+        <div key={comment.id} className={`${s.commentItem} ${isReply ? s.replyItem : ''}`}>
+            
+            {isReply && <div className={s.replyConnector}></div>} 
+
+            <div className={s.commentMeta}>
+                <ProfileIcon />
+                <span className={s.commentUsername}>{comment.username}</span>
+                <span className={s.commentUserInfo}>{comment.age} / {comment.subject} /</span>
+                <NationIcon />
+            </div>
+
+            <div className={s.commentTextContainer}>
+                <p className={s.commentText}>{comment.text}</p>
+
+                <div className={s.commentActions}>
+                    <div className={s.commentActionGroupLeft}>
+                        {comment.likes !== undefined && (
+                            <button className={s.commentLike} onClick={() => handleCommentLikeToggle(comment.id)}>
+                                <HeartIcon isLiked={comment.isLiked} />
+                                <span>{comment.likes}</span>
+                            </button>
+                        )}
+                        {comment.canReply && (
+                            <button
+                                className={s.addCommentButton}
+                                onClick={() => setReplyToCommentId(comment.id)}
+                            >
+                                <CommentIcon />
+                                <span>Add comment</span>
+                            </button>
+                        )}
+                    </div>
+
+                    <div className={s.commentActionGroupRight}>
+                        {comment.canEdit && <span className={s.actionText}>수정 / 삭제</span>}
+                        {comment.canReport && <span className={`${s.actionText} ${s.reportText}`}>신고</span>}
+                    </div>
+                </div>
+            </div>
+
+            {replyToCommentId === comment.id && (
+                <div className={s.replyInputSection}>
+                    <form onSubmit={(e) => handleReplySubmit(e, comment.id)} className={s.commentForm}>
+                        <input
+                            type="text"
+                            className={s.commentInput}
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder={`${comment.username}에게 답글`}
+                        />
+                        <button
+                            type="submit"
+                            className={s.commentSubmitBtn}
+                            disabled={!replyText.trim()}
+                        >
+                            등록
+                        </button>
+                    </form>
+                </div>
+            )}
+
+            {comment.replies && comment.replies.map(reply => (
+                <CommentItem key={reply.id} comment={reply} isReply={true} />
+            ))}
+        </div>
+    );
 
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
@@ -89,16 +290,10 @@ export default function ReadPostPage() {
 
     return (
         <div className={s.boardPageContainer}>
-
-            {/* ⬅️ 왼쪽 메뉴 영역 */}
             <BoardMenu />
-
-            {/* ➡️ 오른쪽 게시물 상세 내용 영역 */}
             <div className={s.postDetailArea}>
-
-                {/* 기존 게시물 상세 내용 (postLayout 스타일을 유지) */}
                 <div className={s.postLayout}>
-                    {/* 헤더 영역: 뒤로가기 */}
+
                     <header className={s.postHeader}>
                         <button
                             className={s.backButton}
@@ -106,48 +301,47 @@ export default function ReadPostPage() {
                         >
                             <ArrowLeftIcon />
                         </button>
+                        <div className={s.postProfile}>
+                            <ProfileIcon />
+                            <div className={s.postProfileMeta}>
+                                <span className={s.postUsername}>{post.username}</span>
+                                <span className={s.postUserInfo}>20 / subject / nation icon</span>
+                                <NationIcon />
+                            </div>
+                        </div>
                     </header>
 
-                    {/* 메인 콘텐츠 영역 */}
                     <section className={s.postMain}>
                         <h1 className={s.postTitle}>{post.title}</h1>
-
-                        {/* 작성자 정보 */}
-                        <div className={s.postMeta}>
-                            <span className={s.postUsername}>{post.username}</span>
-                            <span className={s.postSeparator}>•</span>
-                            <span className={s.postTime}>{post.createdAt}</span>
-                            <span className={s.postSeparator}>•</span>
-                            <span className={s.postViews}>조회 {post.views}</span>
-                        </div>
-
-                        {/* 게시물 본문 */}
                         <div className={s.postContent}>
                             <p>{post.text}</p>
                         </div>
 
-                        {/* 좋아요/댓글 정보 */}
-                        <div className={s.postActions}>
-                            <button className={s.actionItem}>
-                                <LikeIcon /> {post.likes}
-                            </button>
-                            <button className={s.actionItem}>
-                                <CommentIcon /> {comments.length}
-                            </button>
-                            <button className={s.shareButton}>
-                                <ShareIcon />
-                            </button>
+                        <div className={s.postActionsRow}>
+                            <div className={s.actionGroup}>
+                                <button className={s.likeButton} onClick={handlePostLikeToggle}>
+                                    <HeartIcon isLiked={isPostLiked} />
+                                    <span className={s.likeCount}>{post.likes}</span>
+                                </button>
+                                <button className={s.shareButton}>
+                                    share
+                                    <ShareIcon />
+                                </button>
+                            </div>
+                            <div className={s.editDeleteGroup}>
+                                <span className={s.actionText}>수정 / 삭제</span>
+                            </div>
                         </div>
                     </section>
 
-                    {/* 댓글 입력 영역 */}
                     <section className={s.commentInputSection}>
                         <form onSubmit={handleCommentSubmit} className={s.commentForm}>
-                            <textarea
-                                className={s.commentTextarea}
+                            <input
+                                type="text"
+                                className={s.commentInput}
                                 value={newCommentText}
                                 onChange={(e) => setNewCommentText(e.target.value)}
-                                placeholder="댓글을 작성해 주세요..."
+                                placeholder="Add comment"
                             />
                             <button
                                 type="submit"
@@ -159,18 +353,10 @@ export default function ReadPostPage() {
                         </form>
                     </section>
 
-                    {/* 댓글 목록 영역 */}
                     <section className={s.commentListSection}>
-                        <h3 className={s.commentListTitle}>댓글 ({comments.length})</h3>
-                        <div className={s.commentList}>
+                        <div className={s.commentList} key={updateKey}>
                             {comments.map((comment) => (
-                                <div key={comment.id} className={s.commentItem}>
-                                    <div className={s.commentMeta}>
-                                        <span className={s.commentUsername}>{comment.username}</span>
-                                        <span className={s.commentTime}>{comment.createdAt}</span>
-                                    </div>
-                                    <p className={s.commentText}>{comment.text}</p>
-                                </div>
+                                <CommentItem key={comment.id} comment={comment} />
                             ))}
                         </div>
                     </section>
