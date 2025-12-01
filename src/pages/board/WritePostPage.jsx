@@ -1,25 +1,12 @@
 import { useNavigate, useParams } from "react-router-dom";
-import { useEffect, useState, /*useRef*/ } from "react";
+import { useEffect, useState } from "react";
 import { writePost } from "@/services/boardApi";
 import s from "@styles/modules/board/WritePostPage.module.css";
 
 export default function WritePostPage() {
-    /*
-    //파일 형식, 사이즈, 개수 제한
-    const ALLOWED_IMAGE_TYPES = [
-        "image/png",
-        "image/jpeg",
-        "image/gif",
-        "image/webp",
-    ]; // 이미지 파일만 허용
-    const MAX_FILE_SIZE = 5 * 1024 * 1024; // 최대 5MB
-    const MAX_COUNT = 5; // 최대 5개*/
 
     const navigate = useNavigate();
     const { category } = useParams();
-/*
-    const [files, setFiles] = useState([]);
-    const fileInputRef = useRef(null);*/
 
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
@@ -38,61 +25,6 @@ export default function WritePostPage() {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
     }, [isDirty]);
-/*
-    const handleAttachClick = () => {
-        if(fileInputRef.current) {
-            fileInputRef.current.click();
-        }
-    };*/
-
-    /*const handleFileChange = (e) => {
-        const fileList = Array.from(e.target.files);
-        const validFiles = [];
-        const rejectedFiles = [];
-        const bigFiles = [];
-
-        if(files.length + fileList.length > MAX_COUNT) {
-            alert(`파일은 최대 5개까지 첨부할 수 있습니다.`);
-            return;
-        }
-
-        else {
-            fileList.forEach((file) => {
-                if(!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-                    rejectedFiles.push(file.name);
-                    return;
-                }
-                if(file.size > MAX_FILE_SIZE) {
-                    bigFiles.push(file.name);
-                    return;
-                }
-
-                validFiles.push(file);
-            })
-
-            if(rejectedFiles.length > 0) {
-                alert(
-                    `이미지 파일만 업로드할 수 있습니다.\n` +
-                    `허용 형식: PNG, JPG, JPEG, GIF, WEBP\n\n` +
-                    `제외된 파일: ${rejectedFiles.join(", ")}`
-                );
-            }
-
-            if(bigFiles.length > 0) {
-                alert(
-                    `파일의 크기는 최대 5MB입니다.\n` +
-                    `제외된 파일: ${bigFiles.join(", ")}`
-                );
-            }
-
-            setFiles(validFiles);
-            console.log("선택된 유효한 파일들:", validFiles);
-        }        
-    };
-
-    const handleRemoveFile = (fileName) => {
-        setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
-    }*/
 
     const handleSubmit =  async (e) => {
         e.preventDefault();
@@ -158,47 +90,9 @@ export default function WritePostPage() {
                         />
                     </div>
 
-                    {/*테스트용: 선택한 파일 이름 보여주기*/}{/*}
-                    {files.length > 0 && (
-                        <div className={s.filePreview}>
-                            <span>첨부된 파일:</span>
-                            <ul>
-                                {files.map((file) => (
-                                    <li key={file.name}>
-                                        {file.name}
-                                        <button
-                                            type="button"
-                                            className={s.delFileBtn}
-                                            onClick={() => handleRemoveFile(file.name)}
-                                        >
-                                            삭제
-                                        </button>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )} */}
-
                     <div className={s.divider} />
 
-                    <div className={s.footer}>{/*
-                        <button
-                            type="button"
-                            className={s.attachBtn}
-                            onClick={handleAttachClick}
-                        >
-                            <img src="/image/paperclip.svg" alt="attach" style={{ width: 32, height: 32 }} />
-                        </button>
-
-                        <input
-                            type="file"
-                            multiple
-                            ref={fileInputRef}
-                            onChange={handleFileChange}
-                            accept=".png, .jpg, .jpeg, .gif, .webp"
-                            style={{ display: "none" }}
-                        />*/}
-                        
+                    <div className={s.footer}>
                         <div className={s.footerRight}>
                             <button
                                 type="button"
