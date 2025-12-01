@@ -10,6 +10,8 @@ import s from "@styles/modules/auth/LoginForm.module.css";
 import useAuth from "@/hooks/useAuth";
 // setUser 사용하기 위해 import====================================================
 
+import { setAccessToken } from "@/services/authToken";
+
 export default function LoginForm() {
     const navigate = useNavigate();
 
@@ -52,8 +54,15 @@ export default function LoginForm() {
                 email: values.email,
                 password: values.password,
             });
+            
+            setAccessToken(data.accessToken);
+            
+            setUser({
+                id: data.userId,
+                email: data.email,
+                nickname: data.nickname,
+            });
 
-            setUser(data.user);
             navigate("/", { replace: true });
         } catch (err) {
             console.error(err);

@@ -2,9 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import PostCard from "@/components/board/PostCard";
-/*import { fetchBoardPosts } from "@/services/boardApi";*/
-import { testPost } from "../../services/boardApi";/*
-import { Test } from "@/components/board/Test";*/
+import { fetchBoardPosts } from "@/services/boardApi";
+import { testPost } from "../../services/boardApi";
 
 import s from "@styles/modules/board/BoardPage.module.css";
 
@@ -19,14 +18,24 @@ export default function BoardPage() {
     useEffect(() => {
         async function loadPosts() {
         
-            /*try {
+            try {
                 const data = await fetchBoardPosts({
                     category,
                     sort: sortOption,
                     search,
                 });
 
-                setPosts(data);
+                const normalized = data.map((p) => ({
+                    id: p.postId,
+                    title: p.title,
+                    text: p.content,
+                    username: p.userId,
+                    createdAt: new Date(p.createdAt).toLocaleString(),
+                    likes: p.likeCount,
+                    commentCount: 0,
+                }));
+
+                setPosts(normalized);
             } catch (err) {
                 console.error(err);
             }
@@ -34,102 +43,7 @@ export default function BoardPage() {
 
         if(category) {
             loadPosts();
-        }*/
-        
-
-            //개발용 ====================================================
-            try {
-                const dummy = [
-                    {
-                        id: 1,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 2,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 3,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 4,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 5,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 6,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 7,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 8,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                    {
-                        id: 9,
-                        title: "Title",
-                        text: "text",
-                        commentCount: 3,
-                        createdAt: "1 minute",
-                        username: "User name",
-                        likes: 100,
-                    },
-                ];
-                setPosts(dummy);
-            } catch (err) {
-                console.error(err);
-            }
         }
-
-        loadPosts();
-        // 개발용 =========================================
     }, [category, sortOption, search]);
 
     const handleSortToggle = () => {

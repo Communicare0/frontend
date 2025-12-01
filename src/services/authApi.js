@@ -1,9 +1,19 @@
 import { api } from "./apiClient";
 
-export function login(payload) {
-  return api("/auth/login", { method: "POST", body: JSON.stringify(payload) });
+export async function login({ email, password }) {
+  return api("/v1/user/login/email", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
 }
 
-export function register(payload) {
-  return api("/auth/register", { method: "POST", body: JSON.stringify(payload) });
+export async function register({ name, email, password }) {
+  return api("/v1/user/signup/email", {
+    method: "POST",
+    body: JSON.stringify({
+      email,
+      password,
+      nickname: name,
+    }),
+  });
 }

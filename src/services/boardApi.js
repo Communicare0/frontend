@@ -1,20 +1,40 @@
 import { api } from "./apiClient";
 
-export async function fetchBoardPosts({ category, sort, search }) {
-    const params = new URLSearchParams();
-    if(sort) params.set("sort", sort);
-    if(search) params.set("q", search);
+const CATEGORY_MAP = {
+  free: "GENERAL",
+  job: "QNA",
+  university: "NOTICE",
+};
 
-    const queryString = params.toString() ? `?${params.toString()}` : "";
-    return api(`/boards/${category}${queryString}`);
+export async function fetchBoardPosts({ category /*, sort, search*/ }) {
+  const serverCategory = CATEGORY_MAP[category];
+  if (!serverCategory) {
+    throw new Error(`알 수 없는 카테고리: ${category}`);
+  }
+
+  // 백엔드는 현재 sort, search 안 받으니까 일단 쿼리스트링 빼는 게 “백엔드 기준”임
+  return api(`/v1/posts/category/${serverCategory}`);
 }
 
 export async function fetchUserPosts() {
     return api(`/v1/posts/user`);
 }
 
-export async function writePost(payload) {
-    return api(`/v1/posts/${payload.category}`, { method: "POST", body: JSON.stringify(payload) });
+export async function fetchPostDetail(postId) {
+    return api(`/v1/posts/${postId}`);
+}
+
+export async function writePost({ category, title, content }) {
+  const serverCategory = CATEGORY_MAP[category]; // 매핑
+
+  return api(`/v1/posts`, {
+    method: "POST",
+    body: JSON.stringify({
+      title,
+      content,
+      category: serverCategory,
+    }),
+  });
 }
 
 export async function updatePost(postId, payload) {
@@ -31,7 +51,7 @@ export async function createComment({ postId, content }) {
   });
 }
 
-export async function fetchPostComments({ postId }) {
+export async function fetchPostComments(postId) {
   return api(`/v1/comments/post/${postId}`);
 }
 

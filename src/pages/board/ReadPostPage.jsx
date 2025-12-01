@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
-// import { fetchPostDetail, fetchPostComments } from "@/services/boardApi"; 
+import { fetchPostDetail, fetchPostComments, createComment/*, updateComment, deleteComment*/ } from "@/services/boardApi"; 
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
@@ -19,9 +19,27 @@ export default function ReadPostPage() {
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState("");
 
+
+    function mapComments(commentResponses) {
+        return commentResponses.map((c) => ({
+        id: c.commentId,
+        // FIXME: 아래 세 줄은 실제 CommentResponse 구조에 맞게 필드명 맞춰줘야 함
+        username: c.authorId ?? "익명",
+        text: c.content,
+        createdAt: "",
+        }));
+    }
+
+    async function reloadComments(currentPostId) {
+        const res = await fetchPostComments(currentPostId);
+        const rawComments = Array.isArray(res) ? res : (res.comments || []);
+        setComments(mapComments(rawComments));
+    }
+
     // 로직: 게시물 데이터 로드 및 댓글 목록 로드
     useEffect(() => {
         // 개발용 더미 데이터 로드
+        /*
         const dummyPost = {
             id: postId,
             category: category,
@@ -35,44 +53,57 @@ export default function ReadPostPage() {
                 { id: 1, username: "학생1", text: "좋은 정보 감사합니다!", createdAt: "10분 전" },
                 { id: 2, username: "학생2", text: "저도 이 내용 궁금했어요.", createdAt: "5분 전" },
             ]
-        };
+        };*/
 
         // 실제 API가 구현될경우 예시 코드
-        // async function loadPostData() {
-        //     try {
-        //         const [postData, commentsData] = await Promise.all([
-        //             fetchPostDetail(postId),
-        //             fetchPostComments(postId)
-        //         ]);
-        //         setPost(postData);
-        //         setComments(commentsData);
-        //     } catch (err) {
-        //         console.error(err);
-        //         navigate(`/board/${category}`);
-        //     }
-        // }
+        async function loadPostData() {
+            try {
+               const [postData, commentRes] = await Promise.all([
+                    fetchPostDetail(postId),
+                    fetchPostComments(postId)
+                ]);
+                setPost({
+                    id: postData.postId,
+                    category: postData.category,
+                    title: postData.title,
+                    username: postData.userId,
+                    createdAt: new Date(postData.createdAt).toLocaleString(), // 나중에 '1시간 전' 포매팅 유틸 만들어도 됨
+                    views: postData.viewCount,
+                    likes: postData.likeCount,
+                    text: postData.content,
+                });
 
-        setPost(dummyPost);
-        setComments(dummyPost.comments); // 더미 데이터의 댓글 목록 
+                const rawComments = Array.isArray(commentRes) ? commentRes : (commentRes.comments || []);
+
+                setComments(mapComments(rawComments));
+            } catch (err) {
+                console.error(err);
+                navigate(`/board/${category}`);
+            }
+        }
+
+        loadPostData();
     }, [category, postId, navigate]);
 
     // 로직: 댓글 제출 핸들러
-    const handleCommentSubmit = (e) => {
+    const handleCommentSubmit = async (e) => {
         e.preventDefault();
         if (!newCommentText.trim()) return;
 
         // 실제 API 댓글 예시
-        /*
+        
         try {
-            await addComment(postId, newCommentText);
+            await createComment({ postId, content: newCommentText.trim() });
             setNewCommentText("");
+            await reloadComments(postId);
             // 댓글 목록 새로고침 (또는 낙관적 업데이트)
         } catch (err) {
             console.error("댓글 추가 실패:", err);
         }
-        */
+        
 
         // 개발용: 프론트엔드에 새 댓글 추가
+        /*
         const newComment = {
             id: Date.now(),
             username: "현재 사용자",
@@ -81,6 +112,7 @@ export default function ReadPostPage() {
         };
         setComments((prev) => [...prev, newComment]);
         setNewCommentText("");
+        */
     };
 
     if (!post) {
