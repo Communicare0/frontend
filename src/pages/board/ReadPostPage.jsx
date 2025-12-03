@@ -104,7 +104,7 @@ export default function ReadPostPage() {
         try {
             const postDetail = await fetchPostDetail(postId); 
             
-            const commentsData = await fetchPostComments({ postId });
+            const commentsData = await fetchPostComments(postId);
             
             setPost({
                 ...postDetail,
