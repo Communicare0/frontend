@@ -1,0 +1,154 @@
+/* src/styles/modules/notification/NotificationPage.module.css */
+
+.notificationPage {
+    display: flex;
+    justify-content: center;
+    padding: 40px 20px;
+    min-height: 100vh;
+    background-color: #f9fafb; /* 배경 색상 */
+}
+
+.container {
+    width: 100%;
+    max-width: 600px; /* 게시물 영역과 비슷한 너비 */
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+.headerBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.pageTitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.readAllButton {
+    background: none;
+    border: none;
+    color: #5b5bff; /* 브랜드 색상 */
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.notificationList {
+    display: flex;
+    flex-direction: column;
+}
+
+/* 알림 항목 */
+.notificationItem {
+    display: flex;
+    gap: 16px;
+    padding: 20px 24px;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    position: relative;
+    transition: background-color 0.2s;
+}
+
+.notificationItem:hover {
+    background-color: #f9fafb;
+}
+
+/* 읽지 않은 알림 스타일 */
+.unread {
+    background-color: #eff6ff; /* 미확인 알림 배경색 강조 */
+}
+
+.unreadDot {
+    position: absolute;
+    top: 24px;
+    left: 10px;
+    width: 8px;
+    height: 8px;
+    background-color: #ef4444; /* 빨간색 점 */
+    border-radius: 50%;
+}
+
+
+.iconWrapper {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    padding-top: 5px; /* 내용에 맞춰 아이콘 위치 조정 */
+}
+
+.contentWrapper {
+    flex-grow: 1;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.sourceName {
+    font-size: 13px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.time {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #9ca3af;
+}
+.time svg path {
+    stroke: #9ca3af; /* Clock Icon 색상 */
+}
+
+
+.title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 4px 0;
+}
+
+.divider {
+    margin: 8px 0;
+    height: 1px;
+    background-color: #e5e7eb;
+}
+
+.snippet {
+    font-size: 14px;
+    color: #4b5563;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* 두 줄까지 표시 */
+    -webkit-box-orient: vertical;
+    margin: 0;
+}
+
+.goToMailbox {
+    display: block;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #5b5bff;
+    font-weight: 500;
+    text-align: right;
+}
+
+.emptyState {
+    padding: 40px 20px;
+    text-align: center;
+    color: #6b7280;
+    font-size: 16px;
+}
