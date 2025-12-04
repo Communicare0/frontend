@@ -1,0 +1,404 @@
+:root {
+    --primary-color: #4F46E5; 
+    --text-primary: #1F2937;
+    --text-secondary: #6B7280;
+    --border-color: #E5E7EB;
+    --bg-light: #F9FAFB;
+    --heart-color: #EF4444; 
+    --text-subtle: #9CA3AF;
+    --comment-input-bg: #F3F4F6; 
+    --connector-color: #A78BFA; 
+}
+
+body {
+    background-color: var(--bg-light); 
+}
+
+.boardPageContainer {
+    display: flex; 
+    max-width: 1280px; 
+    width: 100%;
+    margin: 40px auto; 
+    gap: 40px; 
+    box-sizing: border-box;
+    padding: 0 20px;
+}
+
+.postDetailArea {
+    flex-grow: 1; 
+    min-width: 0; 
+}
+
+.postLayout {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 800px; 
+    margin: 0 auto; 
+    padding: 24px;
+    background-color: white; 
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* 상단 헤더 및 프로필 */
+.postHeader {
+    display: flex;
+    align-items: center;
+    padding-bottom: 20px;
+}
+
+.backButton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    margin-right: 15px; 
+}
+
+.postProfile {
+    display: flex;
+    align-items: center;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.postProfile svg {
+    margin-right: 8px;
+    color: var(--text-primary);
+}
+
+.postProfileMeta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.postUsername {
+    font-weight: 600;
+    margin-right: 5px;
+}
+
+.postUserInfo {
+    color: var(--text-secondary);
+    margin-right: 5px;
+}
+
+.nationIcon {
+    display: inline-block;
+    width: 10px;
+    height: 7px;
+    border-radius: 1px;
+    background-color: #EF4444; 
+}
+
+
+/* 메인 콘텐츠 */
+.postMain {
+    padding: 0; 
+}
+
+.postTitle {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+    padding-bottom: 16px; 
+    border-bottom: 1px solid var(--border-color);
+}
+
+.postContent {
+    line-height: 1.6;
+    color: var(--text-primary);
+    margin: 10px 0 0 0; 
+    white-space: pre-wrap; 
+}
+
+/* 좋아요/공유 액션 바 */
+.postActionsRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0; 
+    border-bottom: 1px solid var(--border-color); 
+    color: var(--text-secondary);
+    font-weight: 600; 
+}
+
+.actionGroup {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    font-size: 14px;
+    color: var(--text-primary);
+}
+
+.likeButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 16px; 
+}
+
+.likeButton svg {
+    margin-right: 5px;
+    stroke: currentColor; 
+}
+
+.likeCount {
+    color: var(--text-primary); 
+}
+
+.shareButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    color: var(--text-primary);
+    font-size: 16px;
+}
+
+.shareButton svg {
+    margin-left: 5px;
+    color: var(--text-secondary);
+}
+
+.editDeleteGroup {
+    font-size: 14px;
+    color: var(--text-subtle);
+}
+
+.actionText {
+    cursor: pointer;
+}
+
+
+/* 댓글 입력 영역 */
+.commentInputSection {
+    padding: 20px 0; 
+    border-top: none; 
+}
+
+.commentForm {
+    display: flex;
+    gap: 0; 
+    align-items: center;
+    background-color: var(--comment-input-bg); 
+    padding: 0;
+    border-radius: 6px; 
+}
+
+.commentInput {
+    flex-grow: 1;
+    height: 40px; 
+    padding: 10px;
+    border: none;
+    border-radius: 6px 0 0 6px; 
+    font-size: 14px;
+    outline: none;
+    background-color: transparent; 
+}
+
+.commentSubmitBtn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    /* 왼쪽 모서리는 직선, 오른쪽 모서리는 둥글게 */
+    border-radius: 0 6px 6px 0; 
+    padding: 10px 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    height: 40px; 
+    white-space: nowrap;
+    font-size: 14px;
+}
+
+
+/* 댓글 목록 영역 */
+.commentListSection {
+    padding: 10px 0; 
+}
+
+.commentItem {
+    padding: 15px 0;
+    border-top: 1px solid var(--border-color);
+    display: grid;
+    grid-template-columns: 24px 1fr; 
+    column-gap: 15px;
+    overflow: hidden; 
+    position: relative; 
+}
+
+/* 대댓글 스타일 */
+.replyItem {
+    padding: 15px 0 0 0;
+    border-top: none; 
+    grid-template-columns: 24px 1fr; 
+    margin-left: 50px; 
+}
+
+/* 대댓글 연결선 */
+.replyConnector {
+    grid-column: 1 / 2; 
+    grid-row: 1 / 3; 
+    position: relative;
+    height: 100%;
+}
+
+.replyConnector::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 12px; 
+    width: 2px;
+    height: 100%;
+    background-color: var(--connector-color);
+}
+
+.replyConnector::after {
+    content: '';
+    position: absolute;
+    top: 25px; 
+    left: 12px;
+    width: 15px; 
+    height: 2px;
+    background-color: var(--connector-color);
+}
+
+
+/* 프로필 아이콘 및 메타 정보 */
+.commentMeta {
+    grid-column: 1 / 3; 
+    grid-row: 1; 
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: var(--text-primary);
+    margin-bottom: 5px; 
+}
+
+/* 대댓글 메타 정보 (프로필 아이콘, 이름 등) */
+.replyItem .commentMeta {
+    grid-column: 2 / 3; 
+}
+
+.commentMeta svg {
+    margin-right: 5px; 
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
+}
+
+.commentUserInfo {
+    color: var(--text-secondary);
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+/* 댓글 본문 컨테이너 */
+.commentTextContainer {
+    grid-column: 2 / 3; 
+    grid-row: 2; 
+    display: flex;
+    flex-direction: column;
+}
+
+/* 댓글 본문 컨테이너 위치 */
+.replyItem .commentTextContainer {
+    grid-column: 2 / 3;
+    grid-row: 2;
+}
+
+
+.commentText {
+    font-size: 14px;
+    line-height: 1.5;
+    margin: 0 0 5px 0; 
+}
+
+/* 댓글 액션 그룹 (좋아요, Add comment, 수정/삭제/신고) */
+.commentActions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.commentActionGroupLeft {
+    display: flex;
+    align-items: center;
+    gap: 15px; 
+}
+
+.commentActionGroupRight {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-subtle);
+}
+
+.commentLike {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: 12px;
+}
+
+.commentLike svg {
+    margin-right: 3px;
+    stroke: currentColor;
+}
+
+.addCommentButton {
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.addCommentButton svg {
+    color: var(--text-secondary);
+    margin-right: 3px;
+    width: 14px;
+    height: 14px;
+}
+
+.commentActionGroupRight .actionText {
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.reportText {
+    color: var(--text-subtle); 
+}
+
+/* 대댓글 입력 UI */
+.replyInputSection {
+    grid-column: 1 / 3;
+    padding-top: 15px;
+    padding-bottom: 5px;
+    margin-left: 50px; 
+}
+
+.replyItem .commentForm {
+    /* 대댓글 입력창*/
+    margin-left: -50px;
+}
