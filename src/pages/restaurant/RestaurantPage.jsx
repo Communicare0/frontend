@@ -1,6 +1,6 @@
 // src/pages/restaurant/RestaurantPage.jsx
 import React, { useState, useEffect, useRef } from "react"; // ✨ useEffect, useRef 추가
-// import s from "@styles/modules/restaurant/RestaurantPage.module.css"; 
+import s from "@styles/modules/restaurant/RestaurantPage.module.css";
 
 // 임시 아이콘 컴포넌트
 const ChevronDownIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -70,19 +70,8 @@ const WriteIcon = () => (
 const WriteReviewButton = ({ onClick }) => (
     <button
         onClick={onClick}
+        className={s.writeReviewButton}
         style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '56px',
-            height: '56px',
-            borderRadius: '50%',
-            backgroundColor: '#5b5bff',
-            color: 'white',
-            border: 'none',
-            cursor: 'pointer',
-            boxShadow: '0 4px 12px rgba(91, 91, 255, 0.4)',
-            transition: 'background-color 0.2s',
             position: 'absolute',
             bottom: '24px',
             right: '24px',
@@ -119,43 +108,27 @@ const RatingStars = ({ rating, size = 16 }) => {
 const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
     <div
         onClick={onClick}
-        style={{
-            display: "flex",
-            padding: "16px",
-            marginBottom: "8px",
-            backgroundColor: isSelected ? "#f5f5ff" : "#fff",
-            borderRadius: "8px",
-            border: isSelected ? "1px solid #5b5bff" : "1px solid #eee",
-            boxShadow: isSelected ? "0 2px 8px rgba(91, 91, 255, 0.1)" : "none",
-            cursor: "pointer",
-            transition: "all 0.2s"
-        }}
+        // ✨ className={s.listItem} 적용 및 조건부 클래스 사용
+        className={`${s.listItem} ${isSelected ? s.selected : ''}`}
     >
-        <div style={{ flex: 1, paddingRight: "16px" }}>
-            <h3 style={{ fontSize: "18px", fontWeight: "700", margin: "0 0 4px", color: "#333" }}>
+        <div className={s.itemInfo}>
+            <h3 className={s.itemTitle}>
                 {restaurant.title}
             </h3>
 
-            <div style={{ display: "flex", alignItems: "center", marginBottom: "4px" }}>
-                <span style={{ fontSize: "16px", fontWeight: "600", color: "#333", marginRight: "6px" }}>
+            <div className={s.itemRatingContainer}>
+                <span className={s.itemRatingText}>
                     {restaurant.rating.toFixed(1)}
                 </span>
                 <RatingStars rating={restaurant.rating} />
             </div>
 
-            <p style={{ fontSize: "14px", color: "#999", margin: "0 0 8px" }}>
+            <p className={s.itemAddress}>
                 {restaurant.address}
             </p>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <span style={{
-                    fontSize: "12px",
-                    color: "#5b5bff",
-                    backgroundColor: "#e8e8ff",
-                    padding: "3px 8px",
-                    borderRadius: "12px",
-                    fontWeight: "500"
-                }}>
+            <div className={s.itemTagsAndLink}>
+                <span className={s.itemCategoryTag}>
                     #{restaurant.category}
                 </span>
 
@@ -165,15 +138,7 @@ const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={(e) => { e.stopPropagation(); }}
-                        style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            textDecoration: 'none',
-                            fontSize: '14px',
-                            color: '#5b5bff',
-                            fontWeight: '600',
-                            transition: 'color 0.15s',
-                        }}
+                        className={s.itemMapLink}
                     >
                         <LinkIcon style={{ marginRight: '4px' }} />
                         Map Link
@@ -182,61 +147,38 @@ const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
             </div>
         </div>
 
-        <div style={{
-            width: "80px",
-            height: "80px",
-            borderRadius: "6px",
-            backgroundColor: "#f0f0f0",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            flexShrink: 0,
-            overflow: "hidden"
-        }}>
-            <span style={{ fontSize: "12px", color: "#999" }}>{restaurant.imageUrl.split(' ')[2] || 'Image'}</span>
+        <div className={s.itemImagePlaceholder}>
+            <span>{restaurant.imageUrl.split(' ')[2] || 'Image'}</span>
         </div>
     </div>
 );
 
 const ReviewListItem = ({ review }) => {
     return (
-        <div style={{
-            backgroundColor: "#fff",
-            borderRadius: "16px",
-            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.05)",
-            padding: "20px",
-            marginBottom: "16px",
-            border: "1px solid #eee"
-        }}>
-            {/* 프로필 및 메타 정보 */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: '12px' }}>
-                {/* 프로필 사진 (임시 아이콘) */}
+        <div className={s.reviewItem}>
+            <div className={s.reviewHeader}>
                 <ProfileIcon />
 
-                <div style={{ marginLeft: '12px', flex: 1 }}>
-                    {/* 닉네임, 별점, 학번/학과/국적 */}
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2px' }}>
-                        <span style={{ fontWeight: '700', fontSize: '15px' }}>
+                <div className={s.reviewMeta}>
+                    <div className={s.reviewUserLine}>
+                        <span className={s.reviewUsername}>
                             {review.username}
                         </span>
                         <RatingStars rating={review.rating} size={14} />
                     </div>
 
-                    <div style={{ fontSize: '12px', color: '#888' }}>
-                        {/* 학번, 학과, 국적 */}
+                    <div className={s.reviewUserInfo}>
                         <span>{review.studentId} / {review.major}</span>
-                        <span style={{ margin: '0 6px' }}>•</span>
-                        <FlagIcon /> {/* 임시 국기 아이콘 */}
+                        <span className={s.reviewSeparator}>•</span>
+                        <FlagIcon />
                         <span>{review.country}</span>
                     </div>
                 </div>
             </div>
 
-            {/* 구분선 */}
-            <div style={{ height: '1px', backgroundColor: '#e0e0e0', margin: '12px 0' }} />
+            <div className={s.reviewDivider} />
 
-            {/* 리뷰 내용 */}
-            <p style={{ fontSize: '14px', lineHeight: '1.5', margin: '0', color: '#333' }}>
+            <p className={s.reviewContent}>
                 {review.content}
             </p>
         </div>
@@ -481,28 +423,14 @@ export default function RestaurantPage() {
         setIsFormOpen(false);
     };
     return (
-        <div style={{
-            display: "flex",
-            justifyContent: "center",
-            width: "100%",
-            padding: "24px 0"
-        }}>
-            <div style={{ display: "flex", width: "1100px", maxWidth: "100%", gap: "24px", padding: "0 20px" }}>
+        <div className={s.pageContainer}>
+            <div className={s.mainContent}>
 
                 {/* ⬅️ 식당 목록 박스 영역 (왼쪽) */}
-                <div style={{
-                    width: "400px",
-                    flexShrink: 0,
-                    backgroundColor: "#f9f9f9",
-                    borderRadius: "12px",
-                    boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                    padding: "16px",
-                    display: "flex",
-                    flexDirection: "column",
-                    height: "800px",
-                }}>
+                <div className={s.listBox}>
+
                     {/* 상단 카테고리 / 필터 드롭다운 */}
-                    <div style={{ display: "flex", gap: "8px", marginBottom: "16px", flexShrink: 0 }}>
+                    <div className={s.dropdownContainer}>
                         <CategoryDropdown
                             value={selectedCategory}
                             onChange={setSelectedCategory}
@@ -510,12 +438,13 @@ export default function RestaurantPage() {
                         />
                         <CategoryDropdown
                             value={selectedFilter}
-                            onChange={setSelectedFilter} // 필터 상태 업데이트
-                            options={['Rating', 'Distance', 'New']} // Rating, Distance, New 옵션
+                            onChange={setSelectedFilter}
+                            options={['Rating', 'Distance', 'New']}
                         />
                     </div>
+
                     {/* 식당 리스트: 필터링 및 정렬된 목록 사용 */}
-                    <div style={{ flex: 1, overflowY: "auto", paddingRight: "8px" }}>
+                    <div className={`${s.listScrollArea} custom-scroll-list`}>
                         {filteredAndSortedRestaurants.length > 0 ? (
                             filteredAndSortedRestaurants.map((rest) => (
                                 <RestaurantListItem
@@ -526,29 +455,20 @@ export default function RestaurantPage() {
                                 />
                             ))
                         ) : (
-                            <div style={{ textAlign: "center", padding: "50px", color: "#888" }}>
+                            <div className={s.noReviewMessage} style={{ color: '#888' }}>
+                                {/* 스타일 클래스를 재사용하고, color만 인라인으로 유지 */}
                                 선택된 조건에 맞는 식당이 없습니다.
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* ➡️ 식당 상세 정보 영역 (오른쪽) - 리뷰 목록 및 작성 버튼 포함 */}
+                {/* ➡️ 식당 상세 정보 영역 (오른쪽) */}
                 <div
                     ref={reviewListRef}
-                    style={{
-                        flex: 1,
-                        backgroundColor: "#fff",
-                        borderRadius: "12px",
-                        padding: "32px",
-                        boxShadow: "0 4px 12px rgba(0, 0, 0, 0.05)",
-                        border: "1px solid #eee",
-                        height: "800px",
-                        overflowY: "auto",
-                        position: 'relative',
-                    }}
+                    className={s.reviewBox}
                 >
-                    <h2 style={{ marginBottom: "20px", fontSize: "24px", fontWeight: "700" }}>
+                    <h2 className={s.reviewTitle}>
                         리뷰 목록 ({currentReviews.length}개)
                     </h2>
 
@@ -557,13 +477,13 @@ export default function RestaurantPage() {
                             <ReviewListItem key={review.id} review={review} />
                         ))
                     ) : (
-                        <div style={{ textAlign: "center", padding: "50px", color: "#aaa" }}>
+                        <div className={s.noReviewMessage}>
                             선택된 식당에 대한 리뷰가 아직 없습니다.
                         </div>
                     )}
 
                     {/* 리뷰 작성 버튼 */}
-                    <WriteReviewButton onClick={handleWriteReview} />
+                    <WriteReviewButton onClick={() => setIsFormOpen(true)} />
                 </div>
             </div>
             {isFormOpen && (
