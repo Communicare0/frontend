@@ -1,0 +1,65 @@
+.boardLayout {
+    display: flex;
+    height: 100%;
+    align-items: flex-start;
+}
+
+.boardMain {
+    flex: 1;
+    padding: 32px 48px;
+    position: relative;
+}
+
+.boardMainHeader {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.boartSortBtn {
+    border: none;
+    background: transparent;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.boardSearchInput {
+    width: 100%;
+    padding: 6px 8px;
+    border: 1px solid #ccc;
+    border-radius: 2px;
+    font-size: 12px;
+}
+
+.boardPostList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.boardTopBtn, .boardWriteBtn {
+    position: fixed;
+    right: 48px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    border: none;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+.boardWriteBtn {
+    bottom: 48px;
+}
+
+.boardTopBtn {
+    bottom: 120px;
+    color: black;
+}
