@@ -38,24 +38,6 @@ export default function ReadPostPage() {
 
     // 로직: 게시물 데이터 로드 및 댓글 목록 로드
     useEffect(() => {
-        // 개발용 더미 데이터 로드
-        /*
-        const dummyPost = {
-            id: postId,
-            category: category,
-            title: "Title",
-            username: "User name",
-            createdAt: "1시간 전",
-            views: 45,
-            likes: 12,
-            text: "게시물 상세 내용입니다. 여기에 글의 본문이 표시됩니다. 피그마 이미지와 같이 내용이 길어질 경우 스크롤 될 수 있습니다. 모든 내용은 동적으로 표시됩니다.",
-            comments: [
-                { id: 1, username: "학생1", text: "좋은 정보 감사합니다!", createdAt: "10분 전" },
-                { id: 2, username: "학생2", text: "저도 이 내용 궁금했어요.", createdAt: "5분 전" },
-            ]
-        };*/
-
-        // 실제 API가 구현될경우 예시 코드
         async function loadPostData() {
             try {
                const [postData, commentRes] = await Promise.all([
@@ -100,19 +82,6 @@ export default function ReadPostPage() {
         } catch (err) {
             console.error("댓글 추가 실패:", err);
         }
-        
-
-        // 개발용: 프론트엔드에 새 댓글 추가
-        /*
-        const newComment = {
-            id: Date.now(),
-            username: "현재 사용자",
-            text: newCommentText.trim(),
-            createdAt: "방금 전"
-        };
-        setComments((prev) => [...prev, newComment]);
-        setNewCommentText("");
-        */
     };
 
     if (!post) {

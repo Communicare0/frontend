@@ -38,10 +38,16 @@ export async function writePost({ category, title, content }) {
 }
 
 export async function updatePost(postId, payload) {
-    return api(`/v1/posts/${postId}`, {
-        method: "PUT",
-        body: JSON.stringify(payload),
-    });
+  return api(`/v1/posts/${postId}`, {
+      method: "PUT",
+      body: JSON.stringify(payload),
+  });
+}
+
+export async function deletePost(postId) {
+  return api(`v1/posts/${postId}`, {
+    method: "DELETE",
+  });
 }
 
 export async function createComment({ postId, content }) {
@@ -66,8 +72,4 @@ export async function deleteComment({ commentId }) {
   return api(`/v1/comments/${commentId}`, {
     method: "DELETE",
   });
-}
-
-export async function testPost() {
-    return api(`/v1/comments/post/11111111-2222-3333-4444-555555555555`);
 }

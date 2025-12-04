@@ -3,7 +3,6 @@ import { useParams, Link, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import PostCard from "@/components/board/PostCard";
 import { fetchBoardPosts } from "@/services/boardApi";
-import { testPost } from "../../services/boardApi";
 
 import s from "@styles/modules/board/BoardPage.module.css";
 
@@ -100,17 +99,6 @@ export default function BoardPage() {
                         </Link>
                     ))}
                 </div>
-
-                <button onClick={async () => {
-                    try {
-                        const res = await testPost();
-                        console.log("응답 도착:", res);
-                    } catch (e) {
-                        console.error("요청 실패:", e);
-                    }
-                    }}>
-                    test
-                </button>
                         
                 <button className={s.boardTopBtn} onClick={handleTopClick}>
                     Top

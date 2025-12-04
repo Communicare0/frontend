@@ -70,38 +70,6 @@ export default function LoginForm() {
         } finally {
             setLoading(false);
         }
-        
-        /* 기존의 코드
-        e.preventDefault();
-        const validationErrors = validate();
-        if (Object.keys(validationErrors).length > 0) {
-            setErrors(validationErrors);
-            return;
-        }
-
-        setLoading(true);
-        try {
-            const res = await login({
-                email: values.email,
-                password: values.password,
-            });
-
-            if (!res.ok) {
-                const data = await res.json();
-                setGlobalError(data.message || "로그인에 실패했습니다.");
-            } else {
-                //추가 및 변경===============================================================
-                const data = await res.json();
-                setUser(data.user);
-                navigate("/", { replace: true });
-                //백엔드로부터 사용자 정보 받아 전역상태 저장 -> 홈화면으로 이동=====================
-            }
-        } catch (err) {
-            console.error(err);
-            setGlobalError("서버 연결에 실패했습니다.");
-        } finally {
-            setLoading(false);
-        }*/
     };
 
     const handleGoogleLogin = () => {
