@@ -73,3 +73,41 @@ export async function deleteComment({ commentId }) {
     method: "DELETE",
   });
 }
+
+export async function likePost(postId) {
+    return api(`/v1/posts/${postId}/like`, {
+        method: "POST",
+    });
+}
+
+export async function unlikePost(postId) {
+    return api(`/v1/posts/${postId}/like`, {
+        method: "DELETE",
+    });
+}
+
+export async function reportPost(postId, reason) {
+    return api(`/v1/reports/post/${postId}`, {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+    });
+}
+
+export async function likeComment(commentId) {
+    return api(`/v1/comments/${commentId}/like`, {
+        method: "POST",
+    });
+}
+
+export async function unlikeComment(commentId) {
+    return api(`/v1/comments/${commentId}/like`, {
+        method: "DELETE",
+    });
+}
+
+export async function reportComment(commentId, reason) {
+    return api(`/v1/reports/comment/${commentId}`, {
+        method: "POST",
+        body: JSON.stringify({ reason }),
+    });
+}

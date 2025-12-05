@@ -26,17 +26,17 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 800px; /* 상세 페이지의 최대 너비 지정 */
+    max-width: 800px; 
     margin: 0 auto; 
     padding: 24px;
-    background-color: white; /* 게시물 카드는 흰색 배경 */
+    background-color: white; 
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     min-height: 80vh; 
 }
 
 
-/* 헤더 영역 (뒤로가기, 공유) */
+/* 게시글 헤더 */
 .postHeader {
     display: flex;
     justify-content: space-between;
@@ -45,7 +45,7 @@
     border-bottom: 1px solid var(--border-color);
 }
 
-.backButton, .shareButton {
+.backButton {
     background: none;
     border: none;
     cursor: pointer;
@@ -68,12 +68,60 @@
     margin: 0 0 8px;
 }
 
+/* 작성자 프로필 정보 그룹 (이름/학번/학과/국적 + 시간/조회수) */
+.postAuthorInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 프로필 메타: 사진, 이름, 정보, 국기 */
+.userProfileMeta {
+    display: flex;
+    align-items: center;
+    gap: 4px; 
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.profilePicture {
+    width: 32px; /* 피그마 UI 기준 */
+    height: 32px;
+    border-radius: 50%;
+    background-color: #ddd; 
+    margin-right: 4px;
+}
+
+.profileUsername {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.profileSeparator {
+    color: #ccc; 
+}
+
+.profileYear, .profileInfo {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.nationIcon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+/* 시간/조회수 등 부가 메타 정보 */
 .postMeta {
     display: flex;
     align-items: center;
     font-size: 14px;
     color: var(--text-secondary);
-    margin-bottom: 24px;
+    gap: 4px;
 }
 
 .postSeparator {
@@ -81,64 +129,90 @@
     color: var(--border-color);
 }
 
+
 .postContent {
     line-height: 1.6;
     color: var(--text-primary);
     margin-bottom: 30px; 
-    white-space: pre-wrap; 
+    white-space: pre-wrap;
+    min-height: 200px;
 }
 
-/* 좋아요/댓글 액션 바 */
-.postActions {
+/* 게시글 하단 컨트롤 영역 (좋아요, 공유, 수정/삭제/신고) */
+.postFooterControls {
     display: flex;
+    justify-content: space-between; 
+    align-items: center;
     padding: 16px 0;
     border-top: 1px solid var(--border-color);
     border-bottom: 1px solid var(--border-color);
-    gap: 20px;
-    color: var(--text-secondary);
+    margin-bottom: 24px;
 }
 
-.actionItem {
+.interactionGroup {
+    display: flex;
+    gap: 16px;
+}
+
+.likeButton, .shareButton {
     display: flex;
     align-items: center;
-    font-size: 14px;
+    gap: 4px;
+    background: none;
+    border: none;
     cursor: pointer;
-    user-select: none;
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 0;
 }
 
-.actionItem svg {
-    margin-right: 6px;
+.likeButton svg {
+    margin-right: 0;
+    color: var(--heart-color);
 }
 
+.postControls, .commentControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 수정/삭제/신고 버튼 공통 스타일 */
+.controlButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+}
 
 /* 댓글 입력 영역 */
-
 .commentInputSection {
-    padding: 20px 0;
+    padding: 15px;
     background-color: var(--bg-light); 
     border-radius: 8px;
     margin-top: 20px;
-    padding: 15px;
 }
 
 .commentForm {
     display: flex;
     align-items: flex-end; 
-    gap: 10px;
+    gap: 12px;
 }
 
-.commentTextarea {
+.commentInput {
     flex-grow: 1;
-    min-height: 60px;
-    padding: 10px;
+    min-height: 80px; 
+    padding: 12px;
     border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border-radius: 8px;
     resize: vertical;
     font-size: 14px;
     outline: none;
 }
 
-.commentTextarea:focus {
+.commentInput:focus {
     border-color: var(--primary-color);
 }
 
@@ -147,11 +221,11 @@
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 10px 15px;
-    font-weight: 600;
+    padding: 0 20px;
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
-    height: 40px; /* 높이 고정 */
+    height: 40px; 
     white-space: nowrap;
 }
 
@@ -178,22 +252,56 @@
     border-top: 1px solid var(--border-color);
 }
 
-.commentMeta {
+.commentHeader {
     display: flex;
     align-items: center;
     margin-bottom: 4px;
-    font-size: 13px;
-    color: var(--text-secondary);
 }
 
-.commentUsername {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-right: 8px;
+/* 🚩 댓글 본문 및 하단 컨트롤 */
+.commentBody {
+    margin-left: 36px; /* 프로필 사진 너비만큼 들여쓰기 */
+    display: flex;
+    flex-direction: column;
 }
 
 .commentText {
     font-size: 14px;
     line-height: 1.5;
-    margin: 0;
+    margin: 0 0 8px;
+    color: var(--text-primary);
+}
+
+.commentFooterControls {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.commentMetaInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.commentTime {
+    font-size: 12px;
+}
+
+.commentLikeButton {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 0;
+}
+
+.commentLikeButton svg {
+    margin-right: 0;
 }
