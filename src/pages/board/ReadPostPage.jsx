@@ -75,7 +75,6 @@ export default function ReadPostPage() {
     }
 
     async function reloadComments(currentPostId) {
-        // ... (기존 로직 유지)
         const res = await fetchPostComments(currentPostId);
         const rawComments = Array.isArray(res) ? res : (res.comments || []);
         setComments(mapComments(rawComments));
@@ -180,7 +179,6 @@ export default function ReadPostPage() {
     
     // 로직: 댓글 수정 핸들러
     const handleCommentEdit = async (commentId, currentContent) => {
-        // ... (기존 로직 유지)
         const newContent = prompt("수정할 내용을 입력해주세요:", currentContent);
         if (!newContent || newContent.trim() === currentContent.trim()) return;
 
@@ -194,9 +192,8 @@ export default function ReadPostPage() {
         }
     };
 
-    // 🚩 로직: 댓글 삭제 핸들러
+    // 로직: 댓글 삭제 핸들러
     const handleCommentDelete = async (commentId) => {
-        // ... (기존 로직 유지)
         if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
         try {
             await deleteComment({ commentId });
@@ -208,7 +205,7 @@ export default function ReadPostPage() {
         }
     };
 
-    // 🚩 로직: 댓글 신고 핸들러
+    // 로직: 댓글 신고 핸들러
     const handleCommentReport = async (commentId) => {
         const reason = prompt("댓글 신고 사유를 입력해 주세요.");
         if (!reason || !reason.trim()) return;
@@ -340,7 +337,7 @@ export default function ReadPostPage() {
                         <h3 className={s.commentListTitle}>댓글 ({comments.length})</h3>
                         <div className={s.commentList}>
                             {comments.map((comment) => {
-                                // 🚩 댓글 작성자 정보 (더미)
+                                // 댓글 작성자 정보 (더미)
                                 const commentAuthorInfo = DUMMY_USER_INFO[comment.authorId] || { studentYear: "??", subject: "알수없음", nationCode: "??", isMe: false };
                                 const isCommentAuthor = comment.authorId === currentUserId; 
                                 const commentMetaId = `comment-meta-${comment.id}`;
