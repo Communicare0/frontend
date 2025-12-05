@@ -46,8 +46,8 @@ const DUMMY_USER_INFO = {
     "author456": { studentYear: "22학번", subject: "컴퓨터공학", nationCode: "US", isMe: false },
     "commenter789": { studentYear: "23학번", subject: "경제학과", nationCode: "JP", isMe: false },
 };
-//const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
-const currentUserId = "a11d32b0-a40d-4350-a945-64ead098c3d0";
+const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
+//const currentUserId = "a11d32b0-a40d-4350-a945-64ead098c3d0";
 
 
 
