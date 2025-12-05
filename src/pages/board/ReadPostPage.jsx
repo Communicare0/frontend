@@ -46,7 +46,9 @@ const DUMMY_USER_INFO = {
     "author456": { studentYear: "22학번", subject: "컴퓨터공학", nationCode: "US", isMe: false },
     "commenter789": { studentYear: "23학번", subject: "경제학과", nationCode: "JP", isMe: false },
 };
-const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
+//const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
+const currentUserId = "a11d32b0-a40d-4350-a945-64ead098c3d0";
+
 
 
 export default function ReadPostPage() {
@@ -197,7 +199,10 @@ export default function ReadPostPage() {
             alert("게시글이 신고되었습니다. 관리자 검토 후 처리됩니다.");
         } catch (err) {
             console.error("게시글 신고 실패:", err);
-            alert("게시글 신고에 실패했습니다.");
+
+            // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
+            const status = err.status || '알 수 없음';
+            alert(`게시글 신고에 실패했습니다. (HTTP ${status})`);
         }
     };
 
@@ -268,7 +273,10 @@ export default function ReadPostPage() {
             alert("댓글이 신고되었습니다. 관리자 검토 후 처리됩니다.");
         } catch (err) {
             console.error("댓글 신고 실패:", err);
-            alert("댓글 신고에 실패했습니다.");
+
+            // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
+            const status = err.status || '알 수 없음';
+            alert(`댓글 신고에 실패했습니다. (HTTP ${status})`);
         }
     };
 
