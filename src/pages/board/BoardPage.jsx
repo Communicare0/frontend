@@ -10,8 +10,8 @@ export default function BoardPage() {
     const { category } = useParams();
     const navigate = useNavigate();
     
-    const [posts, setPosts]=  useState([]);
-    const [sortOption, setSortOption]=  useState("like_desc");
+    const [posts, setPosts] =  useState([]);
+    const [sortOption, setSortOption] =  useState("like_desc");
     const [search, setSearch] = useState("");
 
     useEffect(() => {
