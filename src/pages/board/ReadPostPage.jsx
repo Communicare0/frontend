@@ -1,91 +1,88 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
-/* import { 
+import {
     fetchPostDetail,
-    fetchPostComments, 
-    createComment 
-} from "@/services/boardApi"; */
-
-//개발용 모의(MOCK) API 함수 정의
-
-const DUMMY_POST = {
-    postId: "dummy-post-1",
-    title: "개발용 더미 게시글입니다",
-    text: "서버 연결 없이 UI 확인을 위해 로드된 임시 내용입니다.",
-    username: "테스트 작성자",
-    likeCount: 42,
-    createdAt: new Date().toISOString(),
-};
-
-const DUMMY_COMMENTS = [
-    {
-        id: 1,
-        username: "유저 A",
-        age: 25,
-        subject: "프론트",
-        text: "첫 번째 댓글입니다.",
-        likes: 12,
-        isLiked: false,
-        canReply: true,
-        canEdit: true,
-        canReport: true,
-        replies: []
-    },
-    {
-        id: 2,
-        username: "유저 B",
-        age: 30,
-        subject: "백엔드",
-        text: "두번째 댓글.",
-        likes: 5,
-        isLiked: true,
-        canReply: true,
-        canEdit: false,
-        canReport: true,
-        replies: [
-            {
-                id: 3,
-                username: "답변자",
-                age: 22,
-                subject: "풀스택",
-                text: "대댓글이 성공적으로 렌더링됩니다.",
-                likes: 2,
-                isLiked: false,
-                canReply: false,
-                canEdit: true,
-                canReport: true,
-            }
-        ]
-    }
-];
-
-// 모의 API 함수 정의
-const fetchPostDetail = async (postId) => {
-    await new Promise(resolve => setTimeout(resolve, 300)); // 로딩 시뮬레이션
-    return DUMMY_POST;
-};
-
-const fetchPostComments = async ({ postId }) => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return DUMMY_COMMENTS;
-};
-
-const createComment = async ({ postId, content }) => {
-    await new Promise(resolve => setTimeout(resolve, 300));
-    return { success: true, newComment: { id: Date.now(), content } }; 
-};
-
-// =================================================================
+    fetchPostComments,
+    createComment,
+    updatePost, // API 연동을 위해 임포트 유지
+    deletePost, // API 연동을 위해 임포트 유지
+    updateComment, // API 연동을 위해 임포트 유지
+    deleteComment // API 연동을 위해 임포트 유지
+} from "@/services/boardApi";
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
+
+// ======================= 상수 및 아이콘 정의  =======================
+
+const TEMP_USER_ID = "current-user-id-for-auth-check"; // 🚨 인증 Epic 구현 전 임시 사용자 ID
+const IS_OWNER_ENABLED = true; // 🚨 UI 테스트를 위해 권한 임시 활성화
+
+// API 호출 실패 시 사용될 임시 Mock 데이터 (게시글)
+const FALLBACK_POST = {
+    postId: "fallback-post",
+    title: "⚠️ API 로드 실패: 임시 게시글",
+    content: "서버 연결에 실패하여 표시되는 테스트 내용입니다.",
+    author: { nickname: "테스트 관리자" },
+    createdAt: new Date().toISOString(),
+    likeCount: 99,
+    viewCount: 1000,
+};
+
+// API 호출 실패 시 사용될 임시 Mock 데이터 (댓글)
+const FALLBACK_COMMENTS = [
+    { commentId: "fc-1", author: { nickname: "User A" }, content: "임시 댓글입니다. (수정/삭제 가능)", age: 20, subject: "컴퓨터", likes: 3, isLiked: false, canEdit: true, canReport: false },
+    { commentId: "fc-2", author: { nickname: "User B" }, content: "서버 연결 확인 필요. (신고 가능)", age: 22, subject: "경영", likes: 1, isLiked: false, canEdit: false, canReport: true },
+];
 
 const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ShareIcon = () => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 8a3 3 0 100-6 3 3 0 000 6zM6 15a3 3 0 100-6 3 3 0 000 6zM18 22a3 3 0 100-6 3 3 0 000 6zM8.59 13.51l6.83-3.79M15.41 12.49l-6.83 3.79" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const HeartIcon = ({ isLiked = false }) => <svg width="18" height="18" viewBox="0 0 24 24" fill={isLiked ? "var(--heart-color)" : "none"} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke={isLiked ? "none" : "currentColor"} strokeWidth="1.5" /></svg>;
-const CommentIcon = () => <svg width="14" height="14" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2v10z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="3.5" /><path d="M19.998 18c-0.002-2.909-2.355-5.25-5.25-5.25h-5.5c-2.895 0-5.248 2.341-5.25 5.25v2.25h16.002v-2.25z" /></svg>;
 const NationIcon = () => <span className={s.nationIcon} style={{ backgroundColor: '#EF4444', display: 'inline-block', width: '10px', height: '7px', borderRadius: '1px' }}></span>;
+
+// 현재 백엔드 응답을 프론트엔드 UI 구조에 맞게 매핑하는 함수 (임시)
+function mapPostData(postResponse) {
+    if (!postResponse) return null;
+
+    // 💡 권한 임시 활성화
+    const isOwner = IS_OWNER_ENABLED; 
+
+    return {
+        id: postResponse.postId,
+        category: postResponse.category,
+        title: postResponse.title,
+        text: postResponse.content,
+        username: postResponse.author?.nickname || "익명",
+        createdAt: new Date(postResponse.createdAt).toLocaleDateString(),
+        likes: postResponse.likeCount || 0,
+        views: postResponse.viewCount || 0,
+        canEdit: postResponse.canEdit || isOwner, // Mock/Fallback 데이터에 canEdit이 없으면 isOwner 사용
+        canDelete: postResponse.canDelete || isOwner, // Mock/Fallback 데이터에 canDelete가 없으면 isOwner 사용
+    };
+}
+
+// 댓글 데이터 구조를 백엔드 응답에 맞게 매핑하는 함수  (임시)
+function mapComments(commentResponses) {
+    const rawComments = Array.isArray(commentResponses) ? commentResponses : (commentResponses.comments || []);
+
+    return rawComments.map((c) => {
+        // 💡 권한 임시 활성화
+        const isOwner = IS_OWNER_ENABLED; 
+        return {
+            id: c.commentId,
+            username: c.author?.nickname ?? "익명",
+            text: c.content,
+            age: c.age || 20, 
+            subject: c.subject || "학과 미정", 
+            likes: c.likes || 0,
+            isLiked: c.isLiked || false,
+            canEdit: c.canEdit || isOwner, // Mock/Fallback 데이터 필드 없으면 isOwner 사용
+            canDelete: c.canDelete || isOwner,
+            canReport: c.canReport || !isOwner, 
+        };
+    });
+}
 
 
 export default function ReadPostPage() {
@@ -95,37 +92,42 @@ export default function ReadPostPage() {
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState("");
     const [isPostLiked, setIsPostLiked] = useState(false);
-    const [replyToCommentId, setReplyToCommentId] = useState(null);
-    const [replyText, setReplyText] = useState("");
-    const [updateKey, setUpdateKey] = useState(0); 
-    const effectRan = useRef(false);
+
+    // 댓글 목록 새로고침
+    const reloadComments = async (currentPostId) => {
+        try {
+            const res = await fetchPostComments(currentPostId);
+            setComments(mapComments(res));
+        } catch (err) {
+            console.error("댓글 목록 로드 실패:", err);
+        }
+    }
 
     const loadPostData = async () => {
         try {
-            const postDetail = await fetchPostDetail(postId); 
-            
-            const commentsData = await fetchPostComments(postId);
-            
-            setPost({
-                ...postDetail,
-                likes: postDetail.likeCount || 0,
-            }); 
-            setComments(commentsData);
-            
+            const [postRes, commentRes] = await Promise.all([
+                fetchPostDetail(postId),
+                fetchPostComments(postId)
+            ]);
+
+            setPost(mapPostData(postRes));
+            setComments(mapComments(commentRes));
+
         } catch (err) {
-            console.error("게시물 로드 실패:", err);
-            alert("게시물 정보를 불러오는데 실패했거나 존재하지 않는 게시물입니다.");
-            navigate(`/board/${category}`);
+            console.error("게시물 로드 실패: API 호출 오류", err);
+            
+            // 🚨 API 호출 실패 시, fallback Mock 데이터를 사용하여 UI를 표시
+            alert("⚠️ 서버 연결에 실패했습니다. 임시 Mock 데이터를 표시합니다. 콘솔에서 오류를 확인하세요.");
+            setPost(mapPostData(FALLBACK_POST));
+            setComments(mapComments(FALLBACK_COMMENTS));
         }
     };
 
     useEffect(() => {
-        if (process.env.NODE_ENV !== 'development' || !effectRan.current) {
-            loadPostData();
-            effectRan.current = true;
-        }
+        loadPostData();
     }, [category, postId, navigate]);
-    
+
+    // 좋아요 기능은 현재 백엔드 API 미지원으로 프론트엔드 상태만 임시 업데이트
     const handlePostLikeToggle = () => {
         setPost(prev => ({
             ...prev,
@@ -134,27 +136,15 @@ export default function ReadPostPage() {
         setIsPostLiked(prev => !prev);
     };
 
+    // 댓글 좋아요 기능은 현재 백엔드 API 미지원으로 프론트엔드 상태만 임시 업데이트
     const handleCommentLikeToggle = (commentId) => {
         setComments(prevComments => prevComments.map(comment => {
             if (comment.id === commentId) {
                 return {
                     ...comment,
                     isLiked: !comment.isLiked,
-                    likes: comment.likes + (comment.isLiked ? -1 : 1)
+                    likes: (comment.likes || 0) + (comment.isLiked ? -1 : 1)
                 };
-            }
-            const updatedReplies = comment.replies.map(reply => {
-                if (reply.id === commentId) {
-                    return {
-                        ...reply,
-                        isLiked: !reply.isLiked,
-                        likes: (reply.likes || 0) + (reply.isLiked ? -1 : 1)
-                    };
-                }
-                return reply;
-            });
-            if (updatedReplies !== comment.replies) {
-                return { ...comment, replies: updatedReplies };
             }
             return comment;
         }));
@@ -167,64 +157,75 @@ export default function ReadPostPage() {
 
         try {
             await createComment({ postId, content: trimmedComment });
-            if (process.env.NODE_ENV !== 'production' && typeof fetchPostComments === 'function' && fetchPostComments.name === 'fetchPostComments') {
-                 const commentsData = await fetchPostComments({ postId });
-                 setComments(commentsData);
-            } else {
-                 // 실제 API 연결 가정 시:
-                 const commentsData = await fetchPostComments({ postId });
-                 setComments(commentsData);
-            }
-            
+            await reloadComments(postId);
             setNewCommentText("");
 
         } catch (err) {
             console.error("댓글 등록 실패:", err);
-            alert("댓글 등록에 실패했습니다.");
+            alert("댓글 등록에 실패했습니다. (API 오류)");
         }
     };
 
-    const handleReplySubmit = async (e, parentId) => {
-        e.preventDefault();
-        const trimmedReply = replyText.trim();
-        if (!trimmedReply) return;
+    // ======================== 핸들러 함수 ========================
 
-        const newReply = {
-            id: Date.now(),
-            username: "답글 작성자",
-            age: 22,
-            subject: "답글 주제",
-            text: trimmedReply,
-            likes: 0,
-            isLiked: false,
-            canReport: true,
-        };
+    const handleDeletePost = async () => {
+        if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
 
-        const updatedComments = comments.map(comment => {
-            if (comment.id === parentId) {
-                return {
-                    ...comment,
-                    replies: [...(comment.replies || []), newReply]
-                };
-            }
-            return comment;
-        });
-
-        setComments(updatedComments);
-        setReplyToCommentId(null);
-        setReplyText("");
-        setUpdateKey(prev => prev + 1); 
+        try {
+            // 🚨 deletePost(userId, postId)
+            await deletePost(TEMP_USER_ID, post.id); 
+            alert("게시글이 삭제되었습니다.");
+            navigate(`/board/${category}`);
+        } catch (err) {
+            console.error("게시글 삭제 실패:", err);
+            alert("게시글 삭제에 실패했습니다. (API 오류 또는 권한 없음)");
+        }
     };
 
-    const CommentItem = ({ comment, isReply = false }) => (
-        <div key={comment.id} className={`${s.commentItem} ${isReply ? s.replyItem : ''}`}>
-            
-            {isReply && <div className={s.replyConnector}></div>} 
+    const handleDeleteComment = async (commentId) => {
+        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
 
+        try {
+            // 🚨 deleteComment({ userId, commentId })
+            await deleteComment({ userId: TEMP_USER_ID, commentId }); 
+            alert("댓글이 삭제되었습니다.");
+            await reloadComments(postId);
+        } catch (err) {
+            console.error("댓글 삭제 실패:", err);
+            alert("댓글 삭제에 실패했습니다. (API 오류 또는 권한 없음)");
+        }
+    };
+
+    // 💡 게시글 수정 페이지 이동 핸들러 (WritePostPage로 연결)
+    const handleEditPost = () => {
+        // routes.jsx에 추가된 경로로 이동
+        navigate(`/board/${category}/${postId}/edit`); 
+    };
+    
+    // 댓글 수정 로직 (현재는 API 호출만 준비 - 인라인 수정 UI 구현 필요)
+    const handleEditComment = async (commentId) => {
+        const newContent = prompt("수정할 댓글 내용을 입력해주세요:");
+        if (!newContent || newContent.trim() === "") return;
+
+        try {
+            // 🚨 updateComment({ commentId, content })
+            await updateComment({ commentId, content: newContent.trim() });
+            alert("댓글이 수정되었습니다.");
+            await reloadComments(postId); 
+        } catch (err) {
+            console.error("댓글 수정 실패:", err);
+            alert("댓글 수정에 실패했습니다. (API 오류 또는 권한 없음)");
+        }
+    };
+
+    // ======================== 컴포넌트 렌더링 ========================
+
+    const CommentItem = ({ comment }) => (
+        <div key={comment.id} className={s.commentItem}> 
             <div className={s.commentMeta}>
                 <ProfileIcon />
                 <span className={s.commentUsername}>{comment.username}</span>
-                <span className={s.commentUserInfo}>{comment.age} / {comment.subject} /</span>
+                <span className={s.commentUserInfo}>{comment.age} / {comment.subject}</span>
                 <NationIcon />
             </div>
 
@@ -233,60 +234,42 @@ export default function ReadPostPage() {
 
                 <div className={s.commentActions}>
                     <div className={s.commentActionGroupLeft}>
-                        {comment.likes !== undefined && (
-                            <button className={s.commentLike} onClick={() => handleCommentLikeToggle(comment.id)}>
-                                <HeartIcon isLiked={comment.isLiked} />
-                                <span>{comment.likes}</span>
-                            </button>
-                        )}
-                        {comment.canReply && (
-                            <button
-                                className={s.addCommentButton}
-                                onClick={() => setReplyToCommentId(comment.id)}
-                            >
-                                <CommentIcon />
-                                <span>Add comment</span>
-                            </button>
-                        )}
+                        <button className={s.commentLike} onClick={() => handleCommentLikeToggle(comment.id)}>
+                            <HeartIcon isLiked={comment.isLiked} />
+                            <span>{comment.likes}</span>
+                        </button>
                     </div>
-
                     <div className={s.commentActionGroupRight}>
-                        {comment.canEdit && <span className={s.actionText}>수정 / 삭제</span>}
+                        {/* 💡 댓글 수정/삭제 핸들러 연결 */}
+                        {(comment.canEdit || comment.canDelete) && (
+                            <>
+                                <span
+                                    className={s.actionText}
+                                    onClick={() => handleEditComment(comment.id)} 
+                                >
+                                    수정
+                                </span>
+                                <span
+                                    className={s.actionText}
+                                    onClick={() => handleDeleteComment(comment.id)} 
+                                >
+                                    / 삭제
+                                </span>
+                            </>
+                        )}
+                        {/* 신고 버튼 */}
                         {comment.canReport && <span className={`${s.actionText} ${s.reportText}`}>신고</span>}
                     </div>
                 </div>
             </div>
-
-            {replyToCommentId === comment.id && (
-                <div className={s.replyInputSection}>
-                    <form onSubmit={(e) => handleReplySubmit(e, comment.id)} className={s.commentForm}>
-                        <input
-                            type="text"
-                            className={s.commentInput}
-                            value={replyText}
-                            onChange={(e) => setReplyText(e.target.value)}
-                            placeholder={`${comment.username}에게 답글`}
-                        />
-                        <button
-                            type="submit"
-                            className={s.commentSubmitBtn}
-                            disabled={!replyText.trim()}
-                        >
-                            등록
-                        </button>
-                    </form>
-                </div>
-            )}
-
-            {comment.replies && comment.replies.map(reply => (
-                <CommentItem key={reply.id} comment={reply} isReply={true} />
-            ))}
         </div>
     );
 
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
+
+    const totalComments = comments.length;
 
     return (
         <div className={s.boardPageContainer}>
@@ -305,8 +288,11 @@ export default function ReadPostPage() {
                             <ProfileIcon />
                             <div className={s.postProfileMeta}>
                                 <span className={s.postUsername}>{post.username}</span>
-                                <span className={s.postUserInfo}>20 / subject / nation icon</span>
+                                <span className={s.postUserInfo}>20 / subject</span>
                                 <NationIcon />
+                                <span className={s.postTime}>
+                                    {post.createdAt}
+                                </span>
                             </div>
                         </div>
                     </header>
@@ -329,7 +315,23 @@ export default function ReadPostPage() {
                                 </button>
                             </div>
                             <div className={s.editDeleteGroup}>
-                                <span className={s.actionText}>수정 / 삭제</span>
+                                {/* 💡 게시글 수정/삭제 핸들러 연결 */}
+                                {(post.canEdit || post.canDelete) && (
+                                    <>
+                                        <span
+                                            className={s.actionText}
+                                            onClick={handleEditPost} // 수정 페이지 이동
+                                        >
+                                            수정
+                                        </span>
+                                        <span
+                                            className={s.actionText}
+                                            onClick={handleDeletePost} // 삭제 API 호출
+                                        >
+                                            / 삭제
+                                        </span>
+                                    </>
+                                )}
                             </div>
                         </div>
                     </section>
@@ -354,7 +356,8 @@ export default function ReadPostPage() {
                     </section>
 
                     <section className={s.commentListSection}>
-                        <div className={s.commentList} key={updateKey}>
+                        <h3 className={s.commentListTitle}>댓글 ({totalComments})</h3>
+                        <div className={s.commentList}>
                             {comments.map((comment) => (
                                 <CommentItem key={comment.id} comment={comment} />
                             ))}
