@@ -45,7 +45,7 @@ export async function updatePost(postId, payload) {
 }
 
 export async function deletePost(postId) {
-  return api(`v1/posts/${postId}`, {
+  return api(`/v1/posts/${postId}`, {
     method: "DELETE",
   });
 }

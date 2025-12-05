@@ -1,3 +1,5 @@
+/* ReadPostPage.module.css */
+
 :root {
     --primary-color: #4F46E5; 
     --text-primary: #1F2937;
@@ -36,10 +38,9 @@
 }
 
 
-/* 게시글 헤더 */
+/* 게시글 헤더 (뒤로가기 버튼) */
 .postHeader {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border-color);
@@ -68,7 +69,25 @@
     margin: 0 0 8px;
 }
 
-/* 작성자 프로필 정보 그룹 (이름/학번/학과/국적 + 시간/조회수) */
+/* 인라인 수정 모드 타이틀 입력 필드 */
+.editTitleInput {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.editTitleInput:focus {
+    border-color: var(--primary-color);
+}
+
+/* 작성자 프로필 정보 그룹 */
 .postAuthorInfo {
     display: flex;
     align-items: center;
@@ -88,7 +107,7 @@
 }
 
 .profilePicture {
-    width: 32px; /* 피그마 UI 기준 */
+    width: 32px;
     height: 32px;
     border-radius: 50%;
     background-color: #ddd; 
@@ -134,11 +153,32 @@
     line-height: 1.6;
     color: var(--text-primary);
     margin-bottom: 30px; 
-    white-space: pre-wrap;
-    min-height: 200px;
+    white-space: pre-wrap; 
+    min-height: 200px; 
 }
 
-/* 게시글 하단 컨트롤 영역 (좋아요, 공유, 수정/삭제/신고) */
+/* 인라인 수정 모드 내용 입력 필드 */
+.editContentTextarea {
+    line-height: 1.6;
+    color: var(--text-primary);
+    min-height: 200px; 
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    margin-top: -10px; 
+}
+
+.editContentTextarea:focus {
+    border-color: var(--primary-color);
+}
+
+
+/* 게시글 하단 컨트롤 영역 (좋아요, 공유, 수정/삭제/신고/저장/취소) */
 .postFooterControls {
     display: flex;
     justify-content: space-between; 
@@ -221,19 +261,23 @@
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 0 20px;
+    
+    padding: 10px 20px; 
+    
     font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
-    height: 40px; 
+    
+    flex-shrink: 0; 
     white-space: nowrap;
+    
+    align-self: stretch; 
 }
 
 .commentSubmitBtn:disabled {
     background-color: var(--text-secondary);
     cursor: not-allowed;
 }
-
 
 /* 댓글 목록 영역 */
 .commentListSection {
@@ -258,9 +302,9 @@
     margin-bottom: 4px;
 }
 
-/* 🚩 댓글 본문 및 하단 컨트롤 */
+/* 댓글 본문 및 하단 컨트롤 */
 .commentBody {
-    margin-left: 36px; /* 프로필 사진 너비만큼 들여쓰기 */
+    margin-left: 36px; 
     display: flex;
     flex-direction: column;
 }
