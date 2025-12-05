@@ -1,6 +1,11 @@
 // src/pages/restaurant/RestaurantPage.jsx
-import React, { useState, useEffect, useRef } from "react"; // ✨ useEffect, useRef 추가
+import React, { useState, useEffect, useRef } from "react";
 import s from "@styles/modules/restaurant/RestaurantPage.module.css";
+import { 
+    fetchAllRestaurants, 
+    fetchReviewsByRestaurantId, 
+    createReview 
+} from "@/services/restaurantApi"; 
 
 // 임시 아이콘 컴포넌트
 const ChevronDownIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
@@ -11,50 +16,6 @@ const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="non
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" fill="#6D28D9" fillOpacity="0.2" /><path d="M17.5 19.5c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5" stroke="#6D28D9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 // 임시 국기 아이콘 (예시: 한국 국기)
 const FlagIcon = () => <span role="img" aria-label="South Korea Flag">🇰🇷</span>;
-
-const INITIAL_REVIEWS = [
-    {
-        id: 101,
-        postId: 1, // '할랄 레스토랑 A' 리뷰
-        username: "학생1",
-        studentId: 20,
-        major: "컴퓨터공학",
-        country: "한국",
-        rating: 5.0,
-        content: "정말 맛있는 할랄 음식점입니다! 깨끗하고 분위기도 좋아요. 특히 양고기 커리가 일품입니다."
-    },
-    {
-        id: 102,
-        postId: 1,
-        username: "학생2",
-        studentId: 22,
-        major: "경영학",
-        country: "말레이시아",
-        rating: 4.0,
-        content: "훌륭한 영감을 주는 글입니다. 제가 이 글에 쏟아부은 창의성을 정말 좋아합니다. 특히 색상 팔레트가 매우 좋습니다."
-    },
-    {
-        id: 103,
-        postId: 2, // '무슬림 친화 마트 B' 리뷰
-        username: "학생3",
-        studentId: 21,
-        major: "국제학",
-        country: "터키",
-        rating: 4.5,
-        content: "필요한 식재료가 많아서 자주 이용합니다. 주인분도 친절하세요. 번역 기능이 있으면 더 좋을 것 같아요."
-    },
-];
-
-const dummyRestaurants = [
-    { id: 1, title: "할랄 레스토랑 A", rating: 4.5, address: "수원시 팔달구 매산로", category: "Halal Certified", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example1" },
-    { id: 2, title: "무슬림 친화 마트 B", rating: 4.0, address: "수원시 영통구 봉영로", category: "Muslim Friendly", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example2" },
-    { id: 3, title: "터키 음식점 C", rating: 3.8, address: "서울시 용산구 이태원", category: "Self Certified", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example3" },
-    { id: 4, title: "아랍 카페 D", rating: 5.0, address: "서울시 마포구", category: "Cafe & Dessert", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example4" },
-    { id: 5, title: "인도 카레집 E", rating: 4.2, address: "부산시 해운대구", category: "Halal Certified", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example5" },
-    { id: 6, title: "할랄 닭갈비 F", rating: 4.7, address: "춘천시 동내면", category: "Korean Halal", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example6" },
-    { id: 7, title: "새로운 스팟 G", rating: 3.5, address: "광주시 북구", category: "New Spot", imageUrl: "", googleMapUrl: "" },
-    { id: 8, title: "할랄 레스토랑 H", rating: 4.1, address: "수원시 팔달구 매산로", category: "Halal Certified", imageUrl: "", googleMapUrl: "https://maps.app.goo.gl/example8" },
-];
 
 const WriteIcon = () => (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -108,7 +69,6 @@ const RatingStars = ({ rating, size = 16 }) => {
 const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
     <div
         onClick={onClick}
-        // ✨ className={s.listItem} 적용 및 조건부 클래스 사용
         className={`${s.listItem} ${isSelected ? s.selected : ''}`}
     >
         <div className={s.itemInfo}>
@@ -118,7 +78,7 @@ const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
 
             <div className={s.itemRatingContainer}>
                 <span className={s.itemRatingText}>
-                    {restaurant.rating.toFixed(1)}
+                    {restaurant.rating?.toFixed(1) || 'N/A'}
                 </span>
                 <RatingStars rating={restaurant.rating} />
             </div>
@@ -128,8 +88,9 @@ const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
             </p>
 
             <div className={s.itemTagsAndLink}>
+                {/* category는 백엔드 enum 값을 titleCase 등으로 변환하여 사용해야 함 */}
                 <span className={s.itemCategoryTag}>
-                    #{restaurant.category}
+                    #{restaurant.restaurantType || 'GENERAL'} 
                 </span>
 
                 {restaurant.googleMapUrl && (
@@ -148,10 +109,26 @@ const RestaurantListItem = ({ restaurant, isSelected, onClick }) => (
         </div>
 
         <div className={s.itemImagePlaceholder}>
-            <span>{restaurant.imageUrl.split(' ')[2] || 'Image'}</span>
+            {/* 임시 플레이스홀더 */}
+            <span>Image</span> 
         </div>
     </div>
 );
+
+// 백엔드 리뷰 객체를 프론트엔드 컴포넌트 형식에 맞게 변환
+const mapReviewForUI = (review) => {
+    // 실제 백엔드 응답(RestaurantReview) 필드에 맞게 매핑
+    return {
+        id: review.restaurantReviewId,
+        rating: review.rating,
+        content: review.ratingGoodReason || review.ratingOtherReason || '리뷰 내용 없음', // 내용 필드 임시 매핑
+        // 사용자 정보 (Author) 필드를 가정하여 매핑
+        username: review.author.username || review.author.userId,
+        studentId: review.author.studentId || 'N/A', 
+        major: review.author.major || 'N/A',
+        country: review.author.country || 'N/A', 
+    };
+};
 
 const ReviewListItem = ({ review }) => {
     return (
@@ -184,17 +161,19 @@ const ReviewListItem = ({ review }) => {
         </div>
     );
 }
+
 const ReviewFormModal = ({ onClose, onSubmit, selectedRestaurantId }) => {
     // 현재 사용자 더미 정보 (실제 구현 시 로그인 사용자 정보 사용)
     const currentUser = {
-        username: "현재 사용자",
+        // 실제로는 Redux/Context 등에서 로그인 사용자 정보 가져옴
+        username: "현재 사용자", 
         studentId: 23,
         major: "디자인학과",
         country: "미국",
     };
 
     const [rating, setRating] = useState(0);
-    const [content, setContent] = useState("");
+    const [content, setContent] = useState(""); 
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -202,9 +181,16 @@ const ReviewFormModal = ({ onClose, onSubmit, selectedRestaurantId }) => {
             alert("별점과 내용을 모두 입력해주세요.");
             return;
         }
-        onSubmit({ rating, content: content.trim() });
-    };
+        
+        const payload = {
+            restaurantId: selectedRestaurantId,
+            rating: rating,
+            ratingGoodReason: content.trim(),
+        };
 
+        onSubmit(payload);
+    };
+    
     return (
         // 모달 오버레이 배경
         <div style={{
@@ -330,41 +316,84 @@ const ReviewFormModal = ({ onClose, onSubmit, selectedRestaurantId }) => {
     );
 };
 
+
 export default function RestaurantPage() {
-    const [selectedCategory, setSelectedCategory] = useState("Halal");
+    const [restaurants, setRestaurants] = useState([]);
+    const [reviews, setReviews] = useState([]);
+
+    const [selectedCategory, setSelectedCategory] = useState("All"); // 기본 카테고리 'All'로 변경
     const [selectedFilter, setSelectedFilter] = useState("Rating");
-    const [selectedRestaurantId, setSelectedRestaurantId] = useState(dummyRestaurants[0].id);
+    const [selectedRestaurantId, setSelectedRestaurantId] = useState(null); 
     const [isFormOpen, setIsFormOpen] = useState(false);
-    const [allReviews, setAllReviews] = useState(INITIAL_REVIEWS);
+    
     const reviewListRef = useRef(null);
 
-    const currentReviews = allReviews.filter(r => r.postId === selectedRestaurantId);
+    // --- 데이터 로딩 로직 ---
+
+    // 1. 식당 목록 로드
+    useEffect(() => {
+        async function loadRestaurants() {
+            try {
+                // API 호출: 모든 식당 목록 조회
+                const data = await fetchAllRestaurants();
+                setRestaurants(data);
+
+                // 목록 로드 후, 첫 번째 식당을 선택
+                if (data.length > 0 && selectedRestaurantId === null) {
+                    setSelectedRestaurantId(data[0].restaurantId);
+                }
+            } catch (error) {
+                console.error("식당 목록 로드 실패:", error);
+            }
+        }
+        loadRestaurants();
+    }, []); 
+
+    // 2. 선택된 식당에 대한 리뷰 목록 로드
+    const loadReviews = async (id) => {
+        if (!id) {
+            setReviews([]);
+            return;
+        }
+        try {
+            // API 호출: 특정 식당 리뷰 목록 조회
+            const data = await fetchReviewsByRestaurantId(id);
+            // 백엔드 응답을 UI에서 사용할 형식으로 변환
+            setReviews(data.map(mapReviewForUI));
+        } catch (error) {
+            console.error(`리뷰 목록 로드 실패 (ID: ${id}):`, error);
+            setReviews([]);
+        }
+    };
+
+    useEffect(() => {
+        loadReviews(selectedRestaurantId);
+    }, [selectedRestaurantId]); // 선택된 식당 ID가 바뀔 때마다 리뷰 목록 로드
 
 
     const filterAndSortRestaurants = () => {
         // 1. 카테고리 필터링 적용
-        let list = dummyRestaurants.filter(rest => {
+        let list = restaurants.filter(rest => {
             if (selectedCategory === 'All') {
                 return true;
             }
-            // 카테고리 포함 관계 필터링 (예: 'Halal' 선택 시 'Halal Certified' 포함)
-            return rest.category.includes(selectedCategory);
+            // 백엔드 RestaurantType이 String으로 넘어온다고 가정
+            return rest.restaurantType?.toUpperCase().includes(selectedCategory.toUpperCase().replace(/\s/g, '_')); 
         });
 
-        // 2. 필터 타입에 따른 정렬 적용 (Sorting)
+        // 2. 필터 타입에 따른 정렬 적용
         list = list.sort((a, b) => {
+            // avgRating을 사용 
+            const ratingA = a.avgRating || 0;
+            const ratingB = b.avgRating || 0;
+
             switch (selectedFilter) {
                 case 'Rating':
-                    // 평점 높은 순 (내림차순)
-                    return b.rating - a.rating;
+                    return ratingB - ratingA;
                 case 'Distance':
-                    // 거리 가까운 순 (오름차순, 임시 distance 필드가 있다고 가정)
-                    // 실제 데이터가 없으면 임시로 id로 정렬하여 변화를 보여줌
-                    return (a.distance || a.id) - (b.distance || b.id);
+                    return (a.distance || a.restaurantId) > (b.distance || b.restaurantId) ? 1 : -1;
                 case 'New':
-                    // 최신 등록 순 (내림차순, 임시 createdAt 필드가 있다고 가정)
-                    // 실제 데이터가 없으면 임시로 id 역순 정렬
-                    return (b.createdAt?.getTime() || b.id) - (a.createdAt?.getTime() || a.id);
+                    return (new Date(b.createdAt).getTime() || b.restaurantId) - (new Date(a.createdAt).getTime() || a.restaurantId);
                 default:
                     return 0;
             }
@@ -372,25 +401,28 @@ export default function RestaurantPage() {
 
         return list;
     };
+    
     const filteredAndSortedRestaurants = filterAndSortRestaurants();
-    // 필터링된 식당 목록이 바뀌면, 선택된 식당 ID를 첫 번째 항목으로 재설정 (목록이 비어있지 않은 경우)
+    
+    // 필터링/정렬 결과가 바뀔 때마다 첫 번째 항목을 선택
     useEffect(() => {
-        if (filteredAndSortedRestaurants.length > 0 && selectedRestaurantId !== filteredAndSortedRestaurants[0].id) {
-            setSelectedRestaurantId(filteredAndSortedRestaurants[0].id);
+        if (filteredAndSortedRestaurants.length > 0) {
+            const firstId = filteredAndSortedRestaurants[0].restaurantId;
+            // 현재 선택된 ID가 목록의 첫 번째 ID와 다르면 업데이트
+            if (selectedRestaurantId !== firstId) { 
+                setSelectedRestaurantId(firstId);
+            }
+        } else if (restaurants.length > 0 && filteredAndSortedRestaurants.length === 0) {
+            setSelectedRestaurantId(null);
         }
-        // 필터링 결과가 바뀌어도 (정렬 순서만 바뀌어도), 첫 번째 항목으로 포커스를 옮김
-    }, [selectedCategory, selectedFilter]);
+    }, [selectedCategory, selectedFilter, restaurants]);
 
+    // 리뷰 목록 자동 스크롤
     useEffect(() => {
         if (reviewListRef.current) {
             reviewListRef.current.scrollTop = reviewListRef.current.scrollHeight;
         }
-    }, [currentReviews]);
-
-    // 리뷰 작성 버튼 클릭 핸들러 (임시)
-    const handleWriteReview = () => {
-        setIsFormOpen(true);
-    };
+    }, [reviews]);
 
     // 리뷰 폼 닫기 핸들러
     const handleCloseForm = () => {
@@ -398,30 +430,27 @@ export default function RestaurantPage() {
     };
 
     // 리뷰 폼 제출 핸들러
-    const handleSubmitReview = ({ rating, content }) => {
-        const currentUser = {
-            username: "현재 사용자",
-            studentId: 23,
-            major: "디자인학과",
-            country: "미국",
-        };
+    const handleSubmitReview = async (payload) => {
+        try {
+            await createReview(payload);
+            
+            alert("리뷰가 성공적으로 등록되었습니다!");
+            setIsFormOpen(false);
+            
+            loadReviews(selectedRestaurantId);
 
-        const newReview = {
-            id: Date.now(),
-            postId: selectedRestaurantId,
-            rating: rating,
-            content: content,
-            username: currentUser.username,
-            studentId: currentUser.studentId,
-            major: currentUser.major,
-            country: currentUser.country,
-        };
+            const updatedRestaurants = await fetchAllRestaurants();
+            setRestaurants(updatedRestaurants);
 
-        setAllReviews(prevReviews => [...prevReviews, newReview]);
-
-        alert("리뷰가 성공적으로 등록되었습니다!");
-        setIsFormOpen(false);
+        } catch (error) {
+            console.error("리뷰 등록 실패:", error);
+            alert("리뷰 등록에 실패했습니다: " + (error.message || "알 수 없는 오류"));
+        }
     };
+
+    const selectedRestaurant = restaurants.find(r => r.restaurantId === selectedRestaurantId);
+
+
     return (
         <div className={s.pageContainer}>
             <div className={s.mainContent}>
@@ -434,7 +463,7 @@ export default function RestaurantPage() {
                         <CategoryDropdown
                             value={selectedCategory}
                             onChange={setSelectedCategory}
-                            options={['All', 'Halal', 'Muslim Friendly', 'New Spot']}
+                            options={['All', 'HALAL', 'KOSHER', 'VEGAN', 'NONE']} // 백엔드 Enum 값 기반으로 옵션 변경
                         />
                         <CategoryDropdown
                             value={selectedFilter}
@@ -445,18 +474,21 @@ export default function RestaurantPage() {
 
                     {/* 식당 리스트: 필터링 및 정렬된 목록 사용 */}
                     <div className={`${s.listScrollArea} custom-scroll-list`}>
-                        {filteredAndSortedRestaurants.length > 0 ? (
+                        {restaurants.length === 0 && !selectedRestaurantId ? (
+                             <div className={s.noReviewMessage} style={{ color: '#888' }}>
+                                식당 목록을 로드 중이거나 등록된 식당이 없습니다.
+                            </div>
+                        ) : filteredAndSortedRestaurants.length > 0 ? (
                             filteredAndSortedRestaurants.map((rest) => (
                                 <RestaurantListItem
-                                    key={rest.id}
+                                    key={rest.restaurantId} // ID 필드명 변경
                                     restaurant={rest}
-                                    isSelected={rest.id === selectedRestaurantId}
-                                    onClick={() => setSelectedRestaurantId(rest.id)}
+                                    isSelected={rest.restaurantId === selectedRestaurantId}
+                                    onClick={() => setSelectedRestaurantId(rest.restaurantId)} // ID 필드명 변경
                                 />
                             ))
                         ) : (
                             <div className={s.noReviewMessage} style={{ color: '#888' }}>
-                                {/* 스타일 클래스를 재사용하고, color만 인라인으로 유지 */}
                                 선택된 조건에 맞는 식당이 없습니다.
                             </div>
                         )}
@@ -469,24 +501,26 @@ export default function RestaurantPage() {
                     className={s.reviewBox}
                 >
                     <h2 className={s.reviewTitle}>
-                        리뷰 목록 ({currentReviews.length}개)
+                        {selectedRestaurant ? `${selectedRestaurant.name} ` : ''} 리뷰 목록 ({reviews.length}개)
                     </h2>
 
-                    {currentReviews.length > 0 ? (
-                        currentReviews.map((review) => (
+                    {selectedRestaurantId && reviews.length > 0 ? (
+                        reviews.map((review) => (
                             <ReviewListItem key={review.id} review={review} />
                         ))
                     ) : (
                         <div className={s.noReviewMessage}>
-                            선택된 식당에 대한 리뷰가 아직 없습니다.
+                            {selectedRestaurant ? `${selectedRestaurant.name}에 대한 리뷰가 아직 없습니다.` : '식당을 선택해주세요.'}
                         </div>
                     )}
 
-                    {/* 리뷰 작성 버튼 */}
-                    <WriteReviewButton onClick={() => setIsFormOpen(true)} />
+                    {/* 리뷰 작성 버튼은 식당이 선택된 경우에만 노출 */}
+                    {selectedRestaurantId && (
+                        <WriteReviewButton onClick={() => setIsFormOpen(true)} />
+                    )}
                 </div>
             </div>
-            {isFormOpen && (
+            {isFormOpen && selectedRestaurantId && (
                 <ReviewFormModal
                     onClose={handleCloseForm}
                     onSubmit={handleSubmitReview}
