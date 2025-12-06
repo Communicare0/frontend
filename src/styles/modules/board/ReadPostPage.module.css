@@ -1,3 +1,5 @@
+/* ReadPostPage.module.css */
+
 :root {
     --primary-color: #4F46E5; 
     --text-primary: #1F2937;
@@ -26,26 +28,25 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    max-width: 800px; /* 상세 페이지의 최대 너비 지정 */
+    max-width: 800px; 
     margin: 0 auto; 
     padding: 24px;
-    background-color: white; /* 게시물 카드는 흰색 배경 */
+    background-color: white; 
     border-radius: 12px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     min-height: 80vh; 
 }
 
 
-/* 헤더 영역 (뒤로가기, 공유) */
+/* 게시글 헤더 (뒤로가기 버튼) */
 .postHeader {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border-color);
 }
 
-.backButton, .shareButton {
+.backButton {
     background: none;
     border: none;
     cursor: pointer;
@@ -68,12 +69,78 @@
     margin: 0 0 8px;
 }
 
+/* 인라인 수정 모드 타이틀 입력 필드 */
+.editTitleInput {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 4px 8px;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+}
+
+.editTitleInput:focus {
+    border-color: var(--primary-color);
+}
+
+/* 작성자 프로필 정보 그룹 */
+.postAuthorInfo {
+    display: flex;
+    align-items: center;
+    justify-content: space-between; 
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* 프로필 메타: 사진, 이름, 정보, 국기 */
+.userProfileMeta {
+    display: flex;
+    align-items: center;
+    gap: 4px; 
+    font-size: 14px;
+    color: var(--text-secondary);
+}
+
+.profilePicture {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #ddd; 
+    margin-right: 4px;
+}
+
+.profileUsername {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.profileSeparator {
+    color: #ccc; 
+}
+
+.profileYear, .profileInfo {
+    font-size: 13px;
+    color: var(--text-secondary);
+}
+
+.nationIcon {
+    width: 16px;
+    height: 16px;
+    border-radius: 2px;
+}
+
+/* 시간/조회수 등 부가 메타 정보 */
 .postMeta {
     display: flex;
     align-items: center;
     font-size: 14px;
     color: var(--text-secondary);
-    margin-bottom: 24px;
+    gap: 4px;
 }
 
 .postSeparator {
@@ -81,64 +148,111 @@
     color: var(--border-color);
 }
 
+
 .postContent {
     line-height: 1.6;
     color: var(--text-primary);
     margin-bottom: 30px; 
     white-space: pre-wrap; 
+    min-height: 200px; 
 }
 
-/* 좋아요/댓글 액션 바 */
-.postActions {
-    display: flex;
-    padding: 16px 0;
-    border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
-    gap: 20px;
-    color: var(--text-secondary);
-}
-
-.actionItem {
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    cursor: pointer;
-    user-select: none;
-}
-
-.actionItem svg {
-    margin-right: 6px;
-}
-
-
-/* 댓글 입력 영역 */
-
-.commentInputSection {
-    padding: 20px 0;
-    background-color: var(--bg-light); 
-    border-radius: 8px;
-    margin-top: 20px;
-    padding: 15px;
-}
-
-.commentForm {
-    display: flex;
-    align-items: flex-end; 
-    gap: 10px;
-}
-
-.commentTextarea {
-    flex-grow: 1;
-    min-height: 60px;
+/* 인라인 수정 모드 내용 입력 필드 */
+.editContentTextarea {
+    line-height: 1.6;
+    color: var(--text-primary);
+    min-height: 200px; 
+    width: 100%;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     resize: vertical;
     font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    margin-top: -10px; 
+}
+
+.editContentTextarea:focus {
+    border-color: var(--primary-color);
+}
+
+
+/* 게시글 하단 컨트롤 영역 (좋아요, 공유, 수정/삭제/신고/저장/취소) */
+.postFooterControls {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    padding: 16px 0;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 24px;
+}
+
+.interactionGroup {
+    display: flex;
+    gap: 16px;
+}
+
+.likeButton, .shareButton {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    color: var(--text-secondary);
+    padding: 0;
+}
+
+.likeButton svg {
+    margin-right: 0;
+    color: var(--heart-color);
+}
+
+.postControls, .commentControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 수정/삭제/신고 버튼 공통 스타일 */
+.controlButton {
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    font-size: 12px;
+    cursor: pointer;
+    padding: 0;
+}
+
+/* 댓글 입력 영역 */
+.commentInputSection {
+    padding: 15px;
+    background-color: var(--bg-light); 
+    border-radius: 8px;
+    margin-top: 20px;
+}
+
+.commentForm {
+    display: flex;
+    align-items: flex-end; 
+    gap: 12px;
+}
+
+.commentInput {
+    flex-grow: 1;
+    min-height: 80px; 
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    resize: vertical;
+    font-size: 14px;
     outline: none;
 }
 
-.commentTextarea:focus {
+.commentInput:focus {
     border-color: var(--primary-color);
 }
 
@@ -147,19 +261,23 @@
     color: white;
     border: none;
     border-radius: 6px;
-    padding: 10px 15px;
-    font-weight: 600;
+    
+    padding: 10px 20px; 
+    
+    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
-    height: 40px; /* 높이 고정 */
+    
+    flex-shrink: 0; 
     white-space: nowrap;
+    
+    align-self: stretch; 
 }
 
 .commentSubmitBtn:disabled {
     background-color: var(--text-secondary);
     cursor: not-allowed;
 }
-
 
 /* 댓글 목록 영역 */
 .commentListSection {
@@ -178,22 +296,56 @@
     border-top: 1px solid var(--border-color);
 }
 
-.commentMeta {
+.commentHeader {
     display: flex;
     align-items: center;
     margin-bottom: 4px;
-    font-size: 13px;
-    color: var(--text-secondary);
 }
 
-.commentUsername {
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-right: 8px;
+/* 댓글 본문 및 하단 컨트롤 */
+.commentBody {
+    margin-left: 36px; 
+    display: flex;
+    flex-direction: column;
 }
 
 .commentText {
     font-size: 14px;
     line-height: 1.5;
-    margin: 0;
+    margin: 0 0 8px;
+    color: var(--text-primary);
+}
+
+.commentFooterControls {
+    display: flex;
+    justify-content: space-between; 
+    align-items: center;
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.commentMetaInfo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.commentTime {
+    font-size: 12px;
+}
+
+.commentLikeButton {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    color: var(--text-secondary);
+    padding: 0;
+}
+
+.commentLikeButton svg {
+    margin-right: 0;
 }

@@ -1,15 +1,54 @@
+// src/pages/board/ReadPostPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
-import { fetchPostDetail, fetchPostComments, createComment/*, updateComment, deleteComment*/ } from "@/services/boardApi"; 
+import {
+    fetchPostDetail,
+    fetchPostComments,
+    createComment,
+    updatePost,
+    deletePost,
+    updateComment,
+    deleteComment,
+    likePost,
+    unlikePost,
+    reportPost,
+    likeComment,
+    unlikeComment,
+    reportComment,
+} from "@/services/boardApi";
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
-// 임시 아이콘 컴포넌트 
+// 아이콘 컴포넌트
 const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 7.5L13.3333 3.33333M17.5 7.5L13.3333 11.6667M17.5 7.5H9.16667C8.44928 7.5 7.76159 7.79097 7.25825 8.3044C6.75492 8.81784 6.47917 9.51087 6.47917 10.2333V14.4167C6.47917 15.1391 6.75492 15.8322 7.25825 16.3456C7.76159 16.859 8.44928 17.15 9.16667 17.15H17.5" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const LikeIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.49999 17.5L2.5 10.8333V4.16667H7.49999C8.21738 4.16667 8.90507 4.45763 9.40841 4.97107C9.91174 5.48451 10.1875 6.17754 10.1875 6.9V9.16667M7.49999 17.5H12.5L15.4167 10.8333C15.4167 10.1109 15.7077 9.42322 16.2211 8.91989C16.7345 8.41655 17.4276 8.1408 18.15 8.1408H19.1667V4.16667H10.1875C9.46507 4.16667 8.77738 3.87571 8.26394 3.36231C7.75051 2.8489 7.45833 2.16122 7.45833 1.4388V1.04167C7.45833 0.817366 7.4116 0.596041 7.31956 0.392949C7.22752 0.189857 7.09115 0.00977464 6.91989 -0.161494C6.74862 -0.332763 6.5385 -0.470557 6.30537 -0.569591C6.07223 -0.668625 5.82025 -0.72591 5.56417 -0.738096L-0.00000109289 0L2.5 10.8333V17.5H7.49999Z" stroke="#EF4444" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const CommentIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 17.5C10.663 17.5 11.313 17.3683 11.9213 17.112C12.5297 16.8557 13.0886 16.4795 13.5705 16.0098C14.0524 15.5402 14.4502 14.9818 14.7439 14.3644C15.0376 13.747 15.2215 13.0827 15.2866 12.4042C15.4058 11.1965 15.2036 9.9702 14.6974 8.84713C14.1912 7.72407 13.3934 6.74681 12.3853 6.00762C11.3771 5.26844 10.1983 4.78696 8.97191 4.59591C7.74556 4.40486 6.49504 4.50974 5.3435 4.90098C4.19196 5.29222 3.17066 5.95543 2.37895 6.83789C1.58724 7.72036 1.05607 8.78456 0.835467 9.94056C0.614868 11.0966 0.718872 12.2982 1.15177 13.4076C1.58466 14.517 2.33668 15.4851 3.32833 16.2238C3.89973 16.6433 4.54226 16.969 5.22558 17.1853C5.90891 17.4017 6.62688 17.505 7.34861 17.4907L10 17.5Z" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+const LikedIcon = ({ color = "#EF4444" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
+const UnlikedIcon = ({ color = "#6B7280" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
+
+// 프로필 메타 컴포넌트
+const UserProfileMeta = ({ userId, studentYear, subject, nationCode }) => (
+    <div className={s.userProfileMeta}>
+        <img className={s.profilePicture} src={`/profile/${userId}.png`} alt="프로필 사진" />
+        <span className={s.profileUsername}>{userId}</span>
+        <span className={s.profileSeparator}>/</span>
+        <span className={s.profileYear}>{studentYear}</span>
+        <span className={s.profileSeparator}>/</span>
+        <span className={s.profileInfo}>{subject}</span>
+        <span className={s.profileSeparator}>/</span>
+        <img className={s.nationIcon} src={`/flags/${nationCode}.png`} alt="국기 아이콘" />
+    </div>
+);
+
+// 더미 사용자 정보 및 현재 사용자 ID
+const DUMMY_USER_INFO = {
+    "user123": { studentYear: "20학번", subject: "경영학과", nationCode: "KR", isMe: true },
+    "author456": { studentYear: "22학번", subject: "컴퓨터공학", nationCode: "US", isMe: false },
+    "commenter789": { studentYear: "23학번", subject: "경제학과", nationCode: "JP", isMe: false },
+};
+const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
+//const currentUserId = "a11d32b0-a40d-4350-a945-64ead098c3d0";
+
 
 
 export default function ReadPostPage() {
@@ -19,44 +58,61 @@ export default function ReadPostPage() {
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState("");
 
+    // 게시글 인라인 수정 관련 상태
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedTitle, setEditedTitle] = useState("");
+    const [editedContent, setEditedContent] = useState("");
+
 
     function mapComments(commentResponses) {
         return commentResponses.map((c) => ({
-        id: c.commentId,
-        // FIXME: 아래 세 줄은 실제 CommentResponse 구조에 맞게 필드명 맞춰줘야 함
-        username: c.authorId ?? "익명",
-        text: c.content,
-        createdAt: "",
+            id: c.commentId,
+            username: c.authorId ?? "익명",
+            text: c.content,
+            createdAt: new Date(c.createdAt).toLocaleString(),
+            authorId: c.authorId,
+            likes: c.likeCount || 0,
+            isLiked: c.isLikedByMe || false,
         }));
     }
 
     async function reloadComments(currentPostId) {
-        const res = await fetchPostComments(currentPostId);
-        const rawComments = Array.isArray(res) ? res : (res.comments || []);
-        setComments(mapComments(rawComments));
+        try {
+            const res = await fetchPostComments(currentPostId);
+            const rawComments = Array.isArray(res) ? res : (res.comments || []);
+            setComments(mapComments(rawComments));
+        } catch (err) {
+            console.error("댓글 로드 실패:", err);
+        }
     }
 
-    // 로직: 게시물 데이터 로드 및 댓글 목록 로드
+
     useEffect(() => {
         async function loadPostData() {
             try {
-               const [postData, commentRes] = await Promise.all([
+                const [postData, commentRes] = await Promise.all([
                     fetchPostDetail(postId),
                     fetchPostComments(postId)
                 ]);
-                setPost({
+
+                const loadedPost = {
                     id: postData.postId,
                     category: postData.category,
                     title: postData.title,
                     username: postData.userId,
-                    createdAt: new Date(postData.createdAt).toLocaleString(), // 나중에 '1시간 전' 포매팅 유틸 만들어도 됨
+                    createdAt: new Date(postData.createdAt).toLocaleString(),
                     views: postData.viewCount,
-                    likes: postData.likeCount,
+                    likes: postData.likeCount || 0,
+                    isLiked: postData.isLikedByMe || false,
                     text: postData.content,
-                });
+                }
+
+                setPost(loadedPost);
+                // 로드 시 수정 상태 초기화
+                setEditedTitle(loadedPost.title);
+                setEditedContent(loadedPost.text);
 
                 const rawComments = Array.isArray(commentRes) ? commentRes : (commentRes.comments || []);
-
                 setComments(mapComments(rawComments));
             } catch (err) {
                 console.error(err);
@@ -67,39 +123,195 @@ export default function ReadPostPage() {
         loadPostData();
     }, [category, postId, navigate]);
 
-    // 로직: 댓글 제출 핸들러
+    // 게시글 수정 모드 진입 핸들러
+    const handlePostEdit = () => {
+        // 인라인 수정 모드 활성화 및 현재 데이터로 임시 상태 초기화
+        setEditedTitle(post.title);
+        setEditedContent(post.text);
+        setIsEditing(true);
+    };
+
+    // 게시글 저장 핸들러
+    const handlePostSave = async () => {
+        if (!editedTitle.trim() || !editedContent.trim()) {
+            alert("제목과 내용을 모두 입력해주세요.");
+            return;
+        }
+        if (!window.confirm("게시글을 수정하시겠습니까?")) return;
+
+        try {
+            await updatePost(postId, {
+                title: editedTitle.trim(),
+                content: editedContent.trim(),
+            });
+
+            // Post state 갱신 및 읽기 모드로 전환
+            setPost(p => ({
+                ...p,
+                title: editedTitle.trim(),
+                text: editedContent.trim()
+            }));
+            setIsEditing(false);
+            alert("게시글이 성공적으로 수정되었습니다.");
+
+        } catch (err) {
+            console.error("게시글 수정 실패:", err);
+            alert("게시글 수정에 실패했습니다.");
+        }
+    };
+
+    // 게시글 수정 취소 핸들러
+    const handlePostCancel = () => {
+        if (window.confirm("수정 사항을 취소하고 원래 상태로 되돌리시겠습니까?")) {
+            // 임시 상태를 원래 post 상태로 복구
+            setEditedTitle(post.title);
+            setEditedContent(post.text);
+            setIsEditing(false);
+        }
+    };
+
+    // 게시글 삭제 핸들러
+    const handlePostDelete = async () => {
+        if (!window.confirm("게시글을 삭제하시겠습니까?")) return;
+        try {
+            await deletePost(postId);
+            alert("게시글이 삭제되었습니다.");
+            navigate(`/board/${category}`);
+        } catch (err) {
+            console.error("게시글 삭제 실패:", err);
+
+            // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
+            const status = err.status || '알 수 없음';
+            if (status === 403 || status === 401) {
+                alert(`게시글 삭제에 실패했습니다: 접근 권한이 없거나 (HTTP ${status}), 로그인 상태를 확인해주세요.`);
+            } else {
+                alert(`게시글 삭제에 실패했습니다. (HTTP ${status})`);
+            }
+        }
+    };
+
+    // 게시글 신고 핸들러
+    const handlePostReport = async () => {
+        const reason = prompt("게시글 신고 사유를 입력해 주세요.");
+        if (!reason || !reason.trim()) return;
+        try {
+            await reportPost(postId, reason);
+            alert("게시글이 신고되었습니다. 관리자 검토 후 처리됩니다.");
+        } catch (err) {
+            console.error("게시글 신고 실패:", err);
+
+            // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
+            const status = err.status || '알 수 없음';
+            alert(`게시글 신고에 실패했습니다. (HTTP ${status})`);
+        }
+    };
+
+    // 게시글 좋아요 토글 핸들러
+    const handlePostLikeToggle = async () => {
+        if (!post) return;
+        try {
+            if (post.isLiked) {
+                await unlikePost(postId);
+                setPost(p => ({ ...p, likes: p.likes - 1, isLiked: false }));
+            } else {
+                await likePost(postId);
+                setPost(p => ({ ...p, likes: p.likes + 1, isLiked: true }));
+            }
+        } catch (err) {
+            console.error("게시글 좋아요 토글 실패:", err);
+            alert("좋아요 처리에 실패했습니다.");
+        }
+    };
+
+    // 댓글 제출 핸들러
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
         if (!newCommentText.trim()) return;
-
-        // 실제 API 댓글 예시
-        
         try {
             await createComment({ postId, content: newCommentText.trim() });
             setNewCommentText("");
             await reloadComments(postId);
-            // 댓글 목록 새로고침 (또는 낙관적 업데이트)
         } catch (err) {
             console.error("댓글 추가 실패:", err);
+            alert("댓글 등록에 실패했습니다.");
         }
     };
+
+    // 댓글 수정 핸들러
+    const handleCommentEdit = async (commentId, currentContent) => {
+        const newContent = prompt("수정할 내용을 입력해주세요:", currentContent);
+        if (!newContent || newContent.trim() === currentContent.trim()) return;
+        try {
+            await updateComment({ commentId, content: newContent.trim() });
+            alert("댓글이 수정되었습니다.");
+            await reloadComments(postId);
+        } catch (err) {
+            console.error("댓글 수정 실패:", err);
+            alert("댓글 수정에 실패했습니다.");
+        }
+    };
+
+    // 댓글 삭제 핸들러
+    const handleCommentDelete = async (commentId) => {
+        if (!window.confirm("댓글을 삭제하시겠습니까?")) return;
+        try {
+            await deleteComment({ commentId });
+            alert("댓글이 삭제되었습니다.");
+            await reloadComments(postId);
+        } catch (err) {
+            console.error("댓글 삭제 실패:", err);
+            alert("댓글 삭제에 실패했습니다.");
+        }
+    };
+
+    // 댓글 신고 핸들러
+    const handleCommentReport = async (commentId) => {
+        const reason = prompt("댓글 신고 사유를 입력해 주세요.");
+        if (!reason || !reason.trim()) return;
+        try {
+            await reportComment(commentId, reason);
+            alert("댓글이 신고되었습니다. 관리자 검토 후 처리됩니다.");
+        } catch (err) {
+            console.error("댓글 신고 실패:", err);
+
+            // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
+            const status = err.status || '알 수 없음';
+            alert(`댓글 신고에 실패했습니다. (HTTP ${status})`);
+        }
+    };
+
+    // 댓글 좋아요 토글 핸들러
+    const handleCommentLikeToggle = async (commentId, isLiked) => {
+        try {
+            if (isLiked) {
+                await unlikeComment(commentId);
+            } else {
+                await likeComment(commentId);
+            }
+            await reloadComments(postId);
+        } catch (err) {
+            console.error("댓글 좋아요 토글 실패:", err);
+            alert("좋아요 처리에 실패했습니다.");
+        }
+    };
+
 
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
 
+    const postAuthorInfo = DUMMY_USER_INFO[post.username] || { studentYear: "??", subject: "알수없음", nationCode: "??", isMe: false };
+    const isPostAuthor = post.username === currentUserId;
+
     return (
         <div className={s.boardPageContainer}>
 
-            {/* ⬅️ 왼쪽 메뉴 영역 */}
             <BoardMenu />
 
-            {/* ➡️ 오른쪽 게시물 상세 내용 영역 */}
             <div className={s.postDetailArea}>
 
-                {/* 기존 게시물 상세 내용 (postLayout 스타일을 유지) */}
                 <div className={s.postLayout}>
-                    {/* 헤더 영역: 뒤로가기 */}
+                    {/* 헤더 영역: 뒤로가기 버튼 */}
                     <header className={s.postHeader}>
                         <button
                             className={s.backButton}
@@ -111,68 +323,153 @@ export default function ReadPostPage() {
 
                     {/* 메인 콘텐츠 영역 */}
                     <section className={s.postMain}>
-                        <h1 className={s.postTitle}>{post.title}</h1>
+
+                        {/* 제목 영역: 수정 모드에 따라 input 또는 h1 렌더링 */}
+                        {isEditing ? (
+                            <input
+                                className={s.editTitleInput}
+                                type="text"
+                                value={editedTitle}
+                                onChange={(e) => setEditedTitle(e.target.value)}
+                                disabled={!isEditing}
+                            />
+                        ) : (
+                            <h1 className={s.postTitle}>{post.title}</h1>
+                        )}
 
                         {/* 작성자 정보 */}
-                        <div className={s.postMeta}>
-                            <span className={s.postUsername}>{post.username}</span>
-                            <span className={s.postSeparator}>•</span>
-                            <span className={s.postTime}>{post.createdAt}</span>
-                            <span className={s.postSeparator}>•</span>
-                            <span className={s.postViews}>조회 {post.views}</span>
+                        <div className={s.postAuthorInfo}>
+                            <UserProfileMeta
+                                userId={post.username}
+                                studentYear={postAuthorInfo.studentYear}
+                                subject={postAuthorInfo.subject}
+                                nationCode={postAuthorInfo.nationCode}
+                            />
+                            <div className={s.postMeta}>
+                                <span className={s.postTime}>{post.createdAt}</span>
+                                <span className={s.postSeparator}>•</span>
+                                <span className={s.postViews}>조회 {post.views}</span>
+                            </div>
                         </div>
 
                         {/* 게시물 본문 */}
                         <div className={s.postContent}>
-                            <p>{post.text}</p>
+                            {/* 내용 영역: 수정 모드에 따라 textarea 또는 p 렌더링 */}
+                            {isEditing ? (
+                                <textarea
+                                    className={s.editContentTextarea}
+                                    value={editedContent}
+                                    onChange={(e) => setEditedContent(e.target.value)}
+                                    disabled={!isEditing}
+                                />
+                            ) : (
+                                <p>{post.text}</p>
+                            )}
                         </div>
 
-                        {/* 좋아요/댓글 정보 */}
-                        <div className={s.postActions}>
-                            <button className={s.actionItem}>
-                                <LikeIcon /> {post.likes}
-                            </button>
-                            <button className={s.actionItem}>
-                                <CommentIcon /> {comments.length}
-                            </button>
-                            <button className={s.shareButton}>
-                                <ShareIcon />
-                            </button>
-                        </div>
-                    </section>
+                        {/* 게시글 하단 컨트롤 영역 (좋아요, 공유, 수정/삭제/신고/저장/취소) */}
+                        <div className={s.postFooterControls}>
+                            <div className={s.interactionGroup}>
+                                <button className={s.likeButton} onClick={handlePostLikeToggle} disabled={isEditing}>
+                                    {post.isLiked ? <LikedIcon /> : <UnlikedIcon />}
+                                    <span>{post.likes}</span>
+                                </button>
+                                <button className={s.shareButton} disabled={isEditing}>
+                                    <ShareIcon />
+                                </button>
+                            </div>
 
-                    {/* 댓글 입력 영역 */}
-                    <section className={s.commentInputSection}>
-                        <form onSubmit={handleCommentSubmit} className={s.commentForm}>
-                            <textarea
-                                className={s.commentTextarea}
-                                value={newCommentText}
-                                onChange={(e) => setNewCommentText(e.target.value)}
-                                placeholder="댓글을 작성해 주세요..."
-                            />
-                            <button
-                                type="submit"
-                                className={s.commentSubmitBtn}
-                                disabled={!newCommentText.trim()}
-                            >
-                                등록
-                            </button>
-                        </form>
+                            <div className={s.postControls}>
+                                {isPostAuthor ? (
+                                    isEditing ? (
+                                        <>
+                                            <button className={s.controlButton} onClick={handlePostSave}>저장</button>
+                                            <span className={s.postSeparator}>/</span>
+                                            <button className={s.controlButton} onClick={handlePostCancel}>취소</button>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <button className={s.controlButton} onClick={handlePostEdit}>수정</button>
+                                            <span className={s.postSeparator}>/</span>
+                                            <button className={s.controlButton} onClick={handlePostDelete}>삭제</button>
+                                        </>
+                                    )
+                                ) : (
+                                    <button className={s.controlButton} onClick={handlePostReport}>신고</button>
+                                )}
+                            </div>
+                        </div>
+
+                        {/* 댓글 입력 영역 */}
+                        <section className={s.commentInputSection}>
+                            <form className={s.commentForm} onSubmit={handleCommentSubmit}>
+                                <textarea
+                                    className={s.commentInput}
+                                    value={newCommentText}
+                                    onChange={(e) => setNewCommentText(e.target.value)}
+                                    placeholder="댓글을 작성해 주세요..."
+                                    disabled={isEditing} // 게시글 수정 중에는 댓글 입력 비활성화
+                                />
+                                <button
+                                    type="submit"
+                                    className={s.commentSubmitBtn}
+                                    disabled={!newCommentText.trim() || isEditing}
+                                >
+                                    등록
+                                </button>
+                            </form>
+                        </section>
+
                     </section>
 
                     {/* 댓글 목록 영역 */}
                     <section className={s.commentListSection}>
                         <h3 className={s.commentListTitle}>댓글 ({comments.length})</h3>
                         <div className={s.commentList}>
-                            {comments.map((comment) => (
-                                <div key={comment.id} className={s.commentItem}>
-                                    <div className={s.commentMeta}>
-                                        <span className={s.commentUsername}>{comment.username}</span>
-                                        <span className={s.commentTime}>{comment.createdAt}</span>
+                            {comments.map((comment) => {
+                                const commentAuthorInfo = DUMMY_USER_INFO[comment.authorId] || { studentYear: "??", subject: "알수없음", nationCode: "??", isMe: false };
+                                const isCommentAuthor = comment.authorId === currentUserId;
+
+                                return (
+                                    <div key={comment.id} className={s.commentItem}>
+                                        <div className={s.commentHeader}>
+                                            <UserProfileMeta
+                                                userId={comment.authorId}
+                                                studentYear={commentAuthorInfo.studentYear}
+                                                subject={commentAuthorInfo.subject}
+                                                nationCode={commentAuthorInfo.nationCode}
+                                            />
+                                        </div>
+
+                                        <div className={s.commentBody}>
+                                            <p className={s.commentText}>{comment.text}</p>
+
+                                            <div className={s.commentFooterControls}>
+                                                <div className={s.commentMetaInfo}>
+                                                    <span className={s.commentTime}>{comment.createdAt}</span>
+                                                    <span className={s.commentSeparator}>•</span>
+                                                    <button className={s.commentLikeButton} onClick={() => handleCommentLikeToggle(comment.id, comment.isLiked)} disabled={isEditing}>
+                                                        {comment.isLiked ? <LikedIcon color="#EF4444" /> : <UnlikedIcon color="#6B7280" />}
+                                                        <span>{comment.likes}</span>
+                                                    </button>
+                                                </div>
+
+                                                <div className={s.commentControls}>
+                                                    {isCommentAuthor ? (
+                                                        <>
+                                                            <button className={s.controlButton} onClick={() => handleCommentEdit(comment.id, comment.text)} disabled={isEditing}>수정</button>
+                                                            <span className={s.postSeparator}>/</span>
+                                                            <button className={s.controlButton} onClick={() => handleCommentDelete(comment.id)} disabled={isEditing}>삭제</button>
+                                                        </>
+                                                    ) : (
+                                                        <button className={s.controlButton} onClick={() => handleCommentReport(comment.id)} disabled={isEditing}>신고</button>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <p className={s.commentText}>{comment.text}</p>
-                                </div>
-                            ))}
+                                );
+                            })}
                         </div>
                     </section>
                 </div>
