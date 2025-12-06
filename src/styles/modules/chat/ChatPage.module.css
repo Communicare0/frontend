@@ -1,0 +1,304 @@
+.pageWrapper {
+  display: flex;
+  height: calc(100vh - 80px); /* 상단 네비 높이에 맞춰 조정 */
+  background-color: #f3f4f6;
+}
+
+.mainWrapper {
+  flex: 1;
+  display: flex;
+}
+
+/* ---- 왼쪽 사이드바 (My chats + 그룹 생성) ---- */
+.sidebar {
+  width: 280px;
+  background-color: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebarHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.newGroupButton {
+  border-radius: 999px;
+  border: 1px solid #4f46e5;
+  background-color: #e0e7ff;
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #3730a3;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.newGroupButton:hover {
+  background-color: #c7d2fe;
+}
+
+/* 그룹 생성 카드 */
+.groupCreator {
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.groupTitleRow {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groupTitleLabel {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.groupTitleInput {
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  padding: 6px 8px;
+  font-size: 13px;
+}
+
+.groupTitleInput:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.groupFriendsBox {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.groupFriendsHeader {
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.groupFriendsList {
+  max-height: 160px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  padding: 6px;
+  background-color: #f9fafb;
+}
+
+.groupEmptyText {
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.friendSelectItem {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 2px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.friendCheckbox {
+  width: 14px;
+  height: 14px;
+}
+
+.friendSelectName {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.groupCreateButton {
+  margin-top: 4px;
+  align-self: flex-end;
+  border-radius: 999px;
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #4f46e5;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.groupCreateButton:disabled {
+  opacity: 0.7;
+  cursor: default;
+}
+
+/* 채팅방 리스트 */
+.status {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.roomList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow-y: auto;
+}
+
+.roomItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 8px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.roomItem:hover {
+  background-color: #e5e7eb;
+}
+
+.roomItemActive {
+  background-color: #e0e7ff;
+}
+
+.roomAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: #d1d5db;
+}
+
+.roomText {
+  flex: 1;
+  overflow: hidden;
+}
+
+.roomTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.roomLastMessage {
+  font-size: 12px;
+  color: #6b7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ---- 오른쪽 채팅 영역 ---- */
+
+.chatMain {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+.chatHeader {
+  padding: 18px 28px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.chatTitle {
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.error {
+  padding: 4px 28px;
+  font-size: 13px;
+  color: #b91c1c;
+}
+
+/* 메시지 영역 */
+.messagesArea {
+  flex: 1;
+  padding: 12px 28px 8px 28px;
+  overflow-y: auto;
+}
+
+.messageRow {
+  margin-bottom: 8px;
+}
+
+.messageBubble {
+  display: inline-block;
+  max-width: 60%;
+  padding: 8px 10px;
+  border-radius: 16px;
+  background-color: #f3f4f6;
+}
+
+.messageMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: #6b7280;
+  margin-bottom: 2px;
+}
+
+.senderName {
+  font-weight: 500;
+}
+
+.messageTime {
+  margin-left: 8px;
+}
+
+.messageContent {
+  font-size: 13px;
+  color: #111827;
+}
+
+/* 입력 바 */
+.inputBar {
+  padding: 10px 28px 18px 28px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  gap: 10px;
+}
+
+.input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.input:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.sendButton {
+  width: 90px;
+  border-radius: 999px;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+}

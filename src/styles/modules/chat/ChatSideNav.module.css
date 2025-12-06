@@ -1,0 +1,76 @@
+.sideNav {
+  width: 72px;
+  background-color: #111827;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 0;
+  gap: 12px;
+}
+
+.navItem {
+  width: 56px;
+  height: 72px;
+  border: none;
+  background: transparent;
+  color: #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  border-radius: 16px;
+  padding: 8px 6px;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s;
+}
+
+.navItem:hover {
+  background-color: #1f2937;
+  transform: translateY(-1px);
+}
+
+.active {
+  background-color: #f9fafb;
+  color: #4f46e5; /* 보라 계열 */
+}
+
+.iconBox {
+  width: 28px;
+  height: 28px;
+  position: relative;
+}
+
+/* 말풍선 아이콘 */
+.iconBubble {
+  position: absolute;
+  inset: 4px;
+  border-radius: 8px;
+  border: 2px solid currentColor;
+}
+
+/* 사람 아이콘 (동그라미 + 반원) */
+.iconUserHead {
+  position: absolute;
+  top: 3px;
+  left: 8px;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+}
+
+.iconUserBody {
+  position: absolute;
+  bottom: 3px;
+  left: 6px;
+  right: 6px;
+  height: 12px;
+  border-radius: 999px 999px 0 0;
+  border: 2px solid currentColor;
+  border-bottom: none;
+}
+
+.label {
+  font-size: 11px;
+  text-transform: lowercase;
+}

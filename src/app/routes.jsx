@@ -13,6 +13,7 @@ import WritePostPage from "@/pages/board/WritePostPage";
 import RestaurantPage from "@/pages/restaurant/RestaurantPage";
 //채팅 관련
 import ChatPage from "@/pages/chat/ChatPage";
+import FriendPage from "@/pages/chat/FriendPage";
 //마이페이지 관련
 import MyPage from "@/pages/mypage/MyPage";
 //공지페이지 관련
@@ -57,6 +58,7 @@ export const router = createBrowserRouter([
       { path: "board/:category/write", element: <WritePostPage /> },
       { path: "restaurant", element: <RestaurantPage /> },
       { path: "chat", element: <ChatPage /> },
+      { path: "chat/friend", element: <FriendPage />},
       { path: "mypage", element: <MyPage /> },
       { path: "notifications", element: <NotificationsPage /> },
     ],

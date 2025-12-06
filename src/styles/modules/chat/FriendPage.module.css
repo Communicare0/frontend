@@ -1,0 +1,222 @@
+.pageWrapper {
+  display: flex;
+  height: calc(100vh - 80px);
+  background-color: #f3f4f6;
+}
+
+.mainWrapper {
+  flex: 1;
+  display: flex;
+}
+
+/* 왼쪽 My friend 리스트 */
+.sidebar {
+  width: 260px;
+  background-color: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebarTitle {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 친구 리스트 */
+.friendList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.friendItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background-color: #ffffff;
+}
+
+.friendInfo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+
+.friendAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: #d1d5db;
+}
+
+.friendName {
+  font-size: 14px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.friendChatButton {
+  flex-shrink: 0;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* 오른쪽 메인 */
+.main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+}
+
+/* 상단 Add friend */
+.header {
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.addForm {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.addLabel {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.addInput {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  padding: 8px 14px;
+  font-size: 14px;
+}
+
+.addInput:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
+.addButton {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  font-size: 20px;
+  line-height: 1; /* 글씨 튀어나오지 않게 */
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* 친구 요청 리스트 */
+.requestSection {
+  padding: 16px 24px 24px 24px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.sectionTitle {
+  font-size: 14px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.requestList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.requestItem {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background-color: #f9fafb;
+}
+
+.requestInfo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.requestAvatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background-color: #d1d5db;
+}
+
+.requestName {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.requestButtons {
+  flex-shrink: 0;
+  display: flex;
+  gap: 6px;
+}
+
+.acceptButton,
+.rejectButton {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  border: none;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.acceptButton {
+  background-color: #4ade80;
+  color: #064e3b;
+}
+
+.rejectButton {
+  background-color: #fecaca;
+  color: #7f1d1d;
+}
+
+.error {
+  color: #b91c1c;
+  font-size: 13px;
+  padding: 4px 24px;
+}
