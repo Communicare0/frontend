@@ -4,7 +4,7 @@
     gap: 16px;
     padding: 24px 0;
     height: 100%;
-    align-items: fcenter;
+    align-items: center;
 }
 
 .section {
@@ -23,6 +23,7 @@
     color: #333;
     font-size: 16px;
     font-weight: 500;
+    text-align: left;
     padding: 8px 0;
 }
 
@@ -34,4 +35,56 @@
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
     transform: translateY(-1px);
     transition: all 0.15s ease-out;
+}
+
+.sectionBtn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+}
+
+.expandable {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease;
+}
+
+.open {
+    max-height: 200px;
+}
+
+.passwordForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.submitBtn {
+    background: #4a3dff;
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.error {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 4px;
 }
