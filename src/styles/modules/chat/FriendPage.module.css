@@ -101,7 +101,8 @@
 .addForm {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
+  width: 100%;
 }
 
 .addLabel {
@@ -111,10 +112,12 @@
 
 .addInput {
   flex: 1;
+  height: 40px;
   border-radius: 999px;
-  border: 1px solid #d1d5db;
-  padding: 8px 14px;
+  border: 1px solid #e5e7eb;
+  padding: 0 16px;
   font-size: 14px;
+  outline: none;
 }
 
 .addInput:focus {
@@ -123,16 +126,18 @@
 }
 
 .addButton {
-  width: 36px;
-  height: 36px;
+  height: 40px;
+  padding: 0 18px;
   border-radius: 999px;
   border: none;
   background-color: #4f46e5;
   color: #ffffff;
-  font-size: 20px;
-  line-height: 1; /* 글씨 튀어나오지 않게 */
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* 친구 요청 리스트 */
@@ -219,4 +224,36 @@
   color: #b91c1c;
   font-size: 13px;
   padding: 4px 24px;
+}
+
+.friendButtons {
+  display: flex;
+  gap: 6px;
+}
+
+.friendDeleteButton {
+  border-radius: 999px;
+  border: none;
+  padding: 6px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #f87171;
+  color: #fff;
+}
+
+/* 보낸 요청 영역 */
+.pendingText {
+  font-size: 12px;
+  color: #6b7280;
+  margin: 0 8px;
+}
+
+.cancelButton {
+  border-radius: 999px;
+  border: none;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  background-color: #e5e7eb;
+  color: #374151;
 }
