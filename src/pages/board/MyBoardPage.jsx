@@ -44,7 +44,7 @@ export default function MyBoardPage() {
                     >
                         <PostCard post={p} />
                     </Link>
-                ))};
+                ))}
             </div>
         </div>
     )

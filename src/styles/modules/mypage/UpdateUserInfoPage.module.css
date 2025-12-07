@@ -40,3 +40,35 @@
 .success {
     color: green;
 }
+
+.buttonRow {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+}
+
+.saveBtn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: none;
+    background-color: #2563eb;
+    color: #ffffff;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+/* 나가기 버튼은 살짝 연한 톤 */
+.exitBtn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background-color: #ffffff;
+    color: #374151;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.exitBtn:hover {
+    background-color: #f3f4f6;
+}

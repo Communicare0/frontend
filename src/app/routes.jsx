@@ -53,8 +53,8 @@ export const router = createBrowserRouter([
       </RequireAuth>
     ),
     children: [
-      { index: true, element: <Navigate to="board/popularity" replace /> },      // "/" -> 홈(게시판)
-      { path: "board", element: <Navigate to="popularity" replace />},
+      { index: true, element: <Navigate to="board/university" replace /> },      // "/" -> 홈(게시판)
+      { path: "board", element: <Navigate to="university" replace />},
       { path: "board/:category", element: <BoardPage /> },
       { path: "board/:category/:postId", element: <ReadPostPage /> },
       { path: "board/:category/write", element: <WritePostPage /> },

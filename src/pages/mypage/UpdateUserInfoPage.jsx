@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Navigate, useNavigate } from "react-router-dom";
 import { update } from "@/services/authApi";
+import { fetchMyData } from "@/services/mypageApi";
 
 import s from "@styles/modules/mypage/UpdateUserInfoPage.module.css";
 
@@ -15,7 +17,33 @@ export default function UpdateUserInfoPage(){
 
     const [error, setError] = useState("");
     const [success, setSuccess] = useState("");
+    const [loading, setLoading] = useState(true);
     
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        async function loadMyInfo() {
+            try {
+                const data = await fetchMyData();
+
+                setForm({
+                    department: data.department ?? "",
+                    studentId: data.studentId ?? "",
+                    nationality: data.nationality ?? "KOREAN",
+                    preferredFoodType: data.preferredFoodType ?? "NONE",
+                    language: data.language ?? "KOREAN",
+                });
+            } catch (err) {
+                console.error(err);
+                setError("내 정보를 불러오지 못했습니다.");
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        loadMyInfo();
+    }, []);
+
     const handleChange = (key) => (e) => {
         setForm((prev) => ({ ...prev, [key]: e.target.value }));
         setError("");
@@ -35,6 +63,19 @@ export default function UpdateUserInfoPage(){
             setError("저장 중 오류가 발생했습니다.");
         }
     };
+
+    const handleExit = () => {
+        const ok = window.confirm(
+            "변경 사항이 저장되지 않습니다. 정말 나가시겠습니까?"
+        );
+        if(ok) {
+            navigate("/mypage");
+        }
+    }
+
+    if(loading) {
+        return <div className={s.updatepageLayer}>불러오는 중...</div>
+    }
 
     return (
         <div className={s.updatepageLayer}>
@@ -91,17 +132,26 @@ export default function UpdateUserInfoPage(){
                     onChange={handleChange("language")}
                     className={s.input}
                 >
-                    <option value="KO">한국어</option>
-                    <option value="EN">영어</option>
-                    <option value="OTHER">베트남어</option>
+                    <option value="KOREAN">한국어</option>
+                    <option value="ENGLISH">영어</option>
+                    <option value="VIETNAMESE">베트남어</option>
                 </select>
 
                 {error && <p className={s.error}>{error}</p>}
                 {success && <p className={s.success}>{success}</p>}
                 
-                <button type="submit" className={s.saveBtn}>
-                    저장하기
-                </button>
+                <div className={s.buttonRow}>
+                    <button type="submit" className={s.saveBtn}>
+                        저장하기
+                    </button>
+                    <button
+                        type="button"
+                        className={s.exitBtn}
+                        onClick={handleExit}
+                    >
+                        나가기
+                    </button>
+                </div>
             </form>
         </div>
     )

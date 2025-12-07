@@ -1,8 +1,9 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/services/authApi.js";
 import { setAccessToken } from "@/services/authToken";
 import useAuth from "@/hooks/useAuth";
+import { fetchMyData, fetchFriendCode } from "@/services/mypageApi";
 
 import s from "@styles/modules/mypage/MyPage.module.css";
 
@@ -12,9 +13,31 @@ export default function MyPage() {
     const [error, setError] = useState("");
     const contentRef = useRef(null);
     const navigate = useNavigate();
+    const [info, setInfo] = useState({ user: null, friendCode: "" });
 
     const { user } = useAuth();
     const email = user?.email; 
+    
+    useEffect(() => {
+        async function loadMyPageData() {
+            try {
+                const [userData, codeData] = await Promise.all([
+                    fetchMyData(),
+                    fetchFriendCode()
+                ]);
+
+                setInfo({
+                    user: userData,
+                    friendCode: codeData.friendCode,
+                });
+
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
+        loadMyPageData();
+    }, []);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -38,6 +61,40 @@ export default function MyPage() {
 
     return (
         <div className={s.mypageLayout}>
+            {/* 회원 정보 조회 */}
+            <div className={s.section}>
+                <h2 className={s.sectionTitle}>회원 정보</h2>
+
+                <div className={s.basicInfo}>
+                    <div className={s.infoRow}>
+                        <span className={s.infoLabel}>학과</span>
+                        <span className={s.infoValue}>{info.user?.department ?? "-"}</span>
+                    </div>
+                    <div className={s.infoRow}>
+                        <span className={s.infoLabel}>학번</span>
+                        <span className={s.infoValue}>{info.user?.studentId ?? "-"}</span>
+                    </div>
+                    <div className={s.infoRow}>
+                        <span className={s.infoLabel}>국적</span>
+                        <span className={s.infoValue}>{info.user?.nationality ?? "-"}</span>
+                    </div>
+                    <div className={s.infoRow}>
+                        <span className={s.infoLabel}>선호 음식 타입</span>
+                        <span className={s.infoValue}>{info.user?.preferredFoodType ?? "-"}</span>
+                    </div>
+                    <div className={s.infoRow}>
+                        <span className={s.infoLabel}>언어</span>
+                        <span className={s.infoValue}>{info.user?.language ?? "-"}</span>
+                    </div>
+                </div>
+
+                <div className={s.friendCode}>
+                    <span className={s.friendCodeLabel}>내 친구 코드</span>
+                    <div className={s.friendCodeBox}>
+                        {info.friendCode ?? "친구 코드가 아직 발급되지 않았습니다."}
+                    </div>
+                </div>
+            </div>
             
             {/* 회원 정보 수정 */}
             <div className={s.section}>
@@ -69,14 +126,14 @@ export default function MyPage() {
                     내가 쓴 글
                 </Link>
             </div>
-            
-            {/* 이메일 관심 키워드 */}
+            {/*
+            이메일 관심 키워드 
             <div className={s.section}>
                 <Link to={`/mypage/keyword`} className={s.sectionLink}>
                     이메일 관심 키워드
                 </Link>
             </div>
-
+            */}
             {/* 회원 탈퇴 */}
         </div>
     );
