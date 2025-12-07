@@ -6,7 +6,7 @@ import ChatSideNav from "@/components/chat/ChatSideNav";
 import { fetchMyFriends } from "@/services/friendApi";
 
 import s from "@styles/modules/chat/ChatPage.module.css";
-import { createChatRoom } from "@/services/chatApi";
+import { createChatRoom, leaveChatRoom } from "@/services/chatApi";
 import { getCurrentUserId } from "@/services/authToken";
 
 export default function ChatPage() {
@@ -184,7 +184,7 @@ export default function ChatPage() {
     };
 
     const currentRoom = rooms.find((r) => r.chatRoomId === selectedRoomId);
-/*
+
     const getRoomDisplayTitle = (room) => {
         if(!room) return "Chat";
 
@@ -203,14 +203,33 @@ export default function ChatPage() {
                 if(otherId) {
                     const friend = friends.find(
                         (f) =>
-                        (f.requesterId)
-                    )
+                            (f.requesterId === myUserId && f.addresseeId === otherId) ||
+                            (f.addresseeId === myUserId && f.requesterId === otherId)
+                    );
+
+                    if(friend) {
+                        const isRequesterMe = friend.requesterId === myUserId;
+                        const friendName = isRequesterMe
+                            ? friend.addresseeNickname
+                            : friend.requesterNickname;
+                        
+                            if(friendName) return friendName;
+                    }
                 }
             }
-        }
-    }*/
 
-    const headerTitle = currentRoom?.title || (initialRoomTitle && currentRoom && currentRoom.chatRoomId === initialRoomId && initialRoomTitle) || "Chat";
+            if(room.chatRoomId === selectedRoomId && messages.length > 0) {
+                const otherMsg = messages.find((m) => m.senderId && m.senderId !== myUserId);
+                if(otherMsg?.senderNickname) return otherMsg.senderNickname;
+            }
+
+            return "Direct chat";
+        }
+
+        return "No title";
+    };
+
+    const headerTitle = getRoomDisplayTitle(currentRoom);
 
     const toggleCreateGroup = async () => {
         const next = !showCreateGroup;
@@ -282,10 +301,34 @@ export default function ChatPage() {
 
     const handleLeaveRoom = async () => {
         if(!selectedRoomId) return;
-        /*
-        채팅방 나가기 엔드포인트가 있으면 여기에 연결
-        */
-       alert("채팅방 나가기 기능은 백엔드 API 준비 후 연결 예정입니다.");
+        
+        const confirmLeave = window.confirm("이 채팅방에서 나가시겠습니까?");
+        if(!confirmLeave) return;
+
+        try {
+            const leavingId = selectedRoomId;
+
+            await leaveChatRoom(leavingId);
+
+            const remainingRooms = rooms.filter((r) => r.chatRoomId !== leavingId);
+            setRooms(remainingRooms);
+
+            setMessages([]);
+            setUnreadCounts((prev) => {
+                const copy = { ...prev };
+                delete copy[leavingId];
+                return copy;
+            });
+
+            if(remainingRooms.length > 0) {
+                setSelectedRoomId(remainingRooms[0].chatRoomId);
+            } else {
+                setSelectedRoomId(null);
+            }
+        } catch (err) {
+            console.error(err);
+            setError(err.message || "채팅방 나가기 실패");
+        }
     };
 
     return (
@@ -370,7 +413,7 @@ export default function ChatPage() {
                             const isActive = room.chatRoomId === selectedRoomId;
                             const unread = unreadCounts[room.chatRoomId] || 0;
 
-                            const displayTitle = room.title || (initialRoomTitle && room.chatRoomId === initialRoomId && initialRoomTitle) || "No title";
+                            const displayTitle = getRoomDisplayTitle(room);
                             
                             return (
                                 <li

@@ -10,6 +10,7 @@ export async function api(path, options = {}) {
 
   const isAuthPath = path.startsWith("/v1/user/");
   let headers = baseHeaders;
+
   if(!isAuthPath) {
     const token = getAccessToken();
     if(token) {
@@ -26,17 +27,21 @@ export async function api(path, options = {}) {
     headers,
   });
 
-  if(!res.ok) {
-    const errorBody = await res.json().catch(() => ({}));
-    const message = errorBody.message || "API 요청 실패";
+  if (!res.ok) {
+    const errorText = await res.text().catch(() => "");
+    let message = "API 요청 실패";
+    try {
+        const errJson = JSON.parse(errorText);
+        message = errJson.message || message;
+    } catch {}
     const err = new Error(message);
     err.status = res.status;
     throw err;
   }
 
-  if(res.status === 204) {
-    return null;
-  }
+  const text = await res.text();
 
-  return res.json();
+  if (!text) return null;
+
+  return JSON.parse(text);
 }

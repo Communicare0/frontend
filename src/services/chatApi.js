@@ -21,3 +21,9 @@ export async function sendMessageRest({ chatRoomId, content }) {
         body: JSON.stringify({ chatRoomId, content }),
     });
 }
+
+export async function leaveChatRoom(chatRoomId) {
+    return api(`/v1/chat/rooms/${chatRoomId}/leave`, {
+        method: "POST",
+    });
+}
