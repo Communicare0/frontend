@@ -1,0 +1,149 @@
+.mypageLayout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 24px 0;
+    height: 100%;
+    align-items: center;
+}
+
+.section {
+    background-color: #fff;
+    border-radius: 24px;
+    padding: 16px 24px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+    width: 100%;
+    max-width: 600px;
+}
+
+.sectionTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+
+.sectionLink {
+    display: block;
+    width: 100%;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    text-align: left;
+    padding: 8px 0;
+}
+
+.sectionLink:hover {
+    color: #4a3dff;
+}
+
+.section:hover {
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+    transform: translateY(-1px);
+    transition: all 0.15s ease-out;
+}
+
+.sectionBtn {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: 500;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+}
+
+.basicInfo {
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 16px 20px;
+    background-color: #fafafa;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.infoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    font-size: 0.95rem;
+}
+
+.infoLabel {
+    color: #6b7280;
+    min-width: 90px;
+}
+
+.infoValue {
+    color: #111827;
+    font-weight: 500;
+    text-align: right;
+    flex: 1;
+    word-break: break-all;
+}
+
+.friendCode {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap:6px;
+}
+
+.friendCodeLabel {
+    font-size: 0.95rem;
+    color: #6b7280;
+}
+
+.friendCodeBox {
+    border: 1px dashed #9ca3af;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-family: "Roboto Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 0.95rem;
+    color: #111827;
+    background-color: #f9fafb;
+}
+
+.expandable {
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.35s ease;
+}
+
+.open {
+    max-height: 200px;
+}
+
+.passwordForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.input {
+    padding: 10px 14px;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+}
+
+.submitBtn {
+    background: #4a3dff;
+    color: #fff;
+    border: none;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.error {
+    color: #e53935;
+    font-size: 13px;
+    margin-top: 4px;
+}

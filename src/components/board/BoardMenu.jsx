@@ -2,7 +2,6 @@ import { NavLink } from "react-router-dom";
 import s from "@styles/modules/board/BoardMenu.module.css";
 
 const MENUS = [
-    { label: "인기 게시판", value: "popularity" },
     { label: "학교 공지사항", value: "university" },
     { label: "자유게시판", value: "free" },
     { label: "알바 게시판", value: "job" },
