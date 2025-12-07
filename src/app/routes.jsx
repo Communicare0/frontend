@@ -14,6 +14,7 @@ import MyBoardPage from "@/pages/board/MyBoardPage";
 import RestaurantPage from "@/pages/restaurant/RestaurantPage";
 //채팅 관련
 import ChatPage from "@/pages/chat/ChatPage";
+import FriendPage from "@/pages/chat/FriendPage";
 //마이페이지 관련
 import MyPage from "@/pages/mypage/MyPage";
 import UpdateUserInfoPage from "@/pages/mypage/UpdateUserInfoPage";
@@ -61,6 +62,7 @@ export const router = createBrowserRouter([
       { path: "board/myboard", element: <MyBoardPage />},
       { path: "restaurant", element: <RestaurantPage /> },
       { path: "chat", element: <ChatPage /> },
+      { path: "chat/friend", element: <FriendPage />},
       { path: "mypage", element: <MyPage /> },
       { path: "mypage/updateUserInfo", element: <UpdateUserInfoPage />},
       { path: "mypage/keyword", element: <SetKeywordPage />},
