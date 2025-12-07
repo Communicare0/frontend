@@ -416,7 +416,7 @@ const RestaurantRegistrationCardOverlay = ({ onClose, onSubmit }) => {
                 padding: '24px',
                 backgroundColor: '#fff',
                 borderRadius: '16px',
-                boxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
+             onsboxShadow: '0 4px 16px rgba(0, 0, 0, 0.2)',
                 textAlign: 'left',
             }}>
                 <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700', color: '#1a1a1a', marginBottom: '16px' }}>
@@ -528,7 +528,6 @@ const CategoryDropdown = ({ value, onChange, options }) => {
 
 // --- 메인 컴포넌트 ---
 export default function RestaurantPage() {
-    // 🌟 수정: 사용자 정보를 상태로 관리
     const [currentUserProfile, setCurrentUserProfile] = useState(INITIAL_USER_PROFILE);
     
     const [restaurants, setRestaurants] = useState([]);
@@ -546,11 +545,9 @@ export default function RestaurantPage() {
     
     const reviewListRef = useRef(null);
 
-    // 🌟 추가: 사용자 프로필 로드 (API를 가정)
     useEffect(() => {
         async function loadUserProfile() {
             try {
-                // 실제 API 호출 로직은 주석 처리하고 더미 데이터 사용
                 const user = {
                     userId: "my-test-user-id",
                     nickname: "커뮤니케어 사용자", 
@@ -579,7 +576,7 @@ export default function RestaurantPage() {
                     }
                 }
             } catch (error) {
-                console.error("식당 목록 로드 실패 (API 오류 예상):", error);
+                console.error("식당 목록 로드 실패 (API 오류):", error);
             }
         }
         loadRestaurants();
