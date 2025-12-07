@@ -18,21 +18,19 @@ const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke={fill ? "#FFC700" : "#d0d0d0"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
-const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinecap="round" /></svg>;
+const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" fill="#6D28D9" fillOpacity="0.2" /><path d="M17.5 19.5c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5" stroke="#6D28D9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const FlagIcon = () => <span role="img" aria-label="Flag">🇰🇷</span>;
 const PlusIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
 
 const INITIAL_USER_PROFILE = {
     userId: getCurrentUserId() || "N/A",
-    nickname: "Loading...",
+    nickname: getCurrentUserId() || "N/A",
     studentId: "NONE",
     department: "NONE",
     nationality: "NONE",
     preferredFoodType: "NONE",
 };
-
-const TABS = { ALL: "ALL", RECOMMENDED: "RECOMMENDED" };
 
 const RatingStars = ({ rating, size = 16 }) => {
     const stars = [];
@@ -47,8 +45,8 @@ const RatingStars = ({ rating, size = 16 }) => {
 };
 
 const RestaurantListItem = React.memo(({ restaurant, isSelected, onClick }) => {
-    const avgRating = restaurant.avgRating ? parseFloat(restaurant.avgRating).toFixed(1) : 'N/A';
-    
+    const avgRating = restaurant.avgRating ? parseFloat(restaurant.avgRating).toFixed(1) : '0.0';
+
     return (
         <div onClick={onClick} className={`${s.listItem} ${isSelected ? s.selected : ''}`}>
             <div className={s.itemInfo}>
@@ -70,18 +68,16 @@ const RestaurantListItem = React.memo(({ restaurant, isSelected, onClick }) => {
 
 const mapReviewForUI = (review) => {
     const authorUIDD = String(review.authorId).substring(0, 4);
-    
+
     return {
         restaurantReviewId: review.restaurantReviewId,
         authorId: review.authorId,
         rating: review.rating || 0,
-        reason: review.reason || '리뷰 내용 없음', 
-        
+        reason: review.reason || '리뷰 내용 없음',
         authorNickname: `UIDD-${authorUIDD}`,
-        studentId: 'N/A', 
-        department: 'N/A', 
-        nationality: 'N/A', 
-        
+        studentId: 'N/A',
+        department: 'N/A',
+        nationality: 'N/A',
         createdAt: review.createdAt,
     };
 };
@@ -109,6 +105,7 @@ const ReviewListItem = React.memo(({ review, currentUser, onEdit, onDelete }) =>
                     </div>
                 </div>
             </div>
+
             <div className={s.reviewDivider} />
             <p className={s.reviewContent}>{review.reason}</p>
 
@@ -139,12 +136,11 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
 
     return (
         <div className={s.reviewFormCard}>
-             <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700', color: '#1a1a1a', marginBottom: '16px' }}>
+            <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700', color: '#1a1a1a', marginBottom: '16px' }}>
                 {isEditing ? '리뷰 수정' : `리뷰 작성: ${selectedRestaurantName || '선택된 식당'}`}
             </h3>
-
             <form onSubmit={handleSubmit}>
-                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                     <div style={{ display: 'flex', alignItems: 'flex-start' }}>
                         <ProfileIcon style={{ marginRight: '10px', width: '36px', height: '36px' }} />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
@@ -157,7 +153,6 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                             </div>
                         </div>
                     </div>
-
                     <div style={{ display: 'flex', gap: '8px', paddingTop: '5px' }}>
                         {[1, 2, 3, 4, 5].map((starValue) => (
                             <div key={starValue} onClick={() => setRating(starValue)} style={{ cursor: 'pointer' }}>
@@ -166,9 +161,7 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                         ))}
                     </div>
                 </div>
-
                 <div className={s.reviewDivider} style={{ margin: '0 0 20px 0' }} />
-
                 <textarea
                     placeholder="식당에 대한 소중한 리뷰를 작성해 주세요..."
                     value={reason}
@@ -176,10 +169,9 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                     className={s.reviewTextarea}
                     disabled={isLoading}
                 />
-
                 <div className={s.buttonGroup}>
-                    <button type="button" onClick={onCancel} className={s.cancelBtn} style={{fontWeight: '600'}}>취소</button>
-                    <button type="submit" disabled={rating === 0 || !reason.trim() || isLoading} className={s.submitBtn} style={{ 
+                    <button type="button" onClick={onCancel} className={s.cancelBtn} style={{ fontWeight: '600' }}>취소</button>
+                    <button type="submit" disabled={rating === 0 || !reason.trim() || isLoading} className={s.submitBtn} style={{
                         backgroundColor: (rating === 0 || !reason.trim() || isLoading) ? '#ccc' : '#5b5bff',
                         cursor: (rating === 0 || !reason.trim() || isLoading) ? 'not-allowed' : 'pointer',
                         fontWeight: '600',
@@ -195,7 +187,7 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
 const RestaurantRegistrationCardOverlay = ({ onClose, onSubmit }) => {
     const [name, setName] = useState('');
     const [mapUrl, setMapUrl] = useState('');
-    const [type, setType] = useState('NONE'); 
+    const [type, setType] = useState('NONE');
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -233,7 +225,7 @@ const RestaurantRegistrationCardOverlay = ({ onClose, onSubmit }) => {
                         </select>
                     </div>
                     <div className={s.buttonGroup}>
-                        <button type="button" onClick={onClose} className={s.cancelBtn} style={{fontWeight: '600'}}>취소</button>
+                        <button type="button" onClick={onClose} className={s.cancelBtn} style={{ fontWeight: '600' }}>취소</button>
                         <button type="submit" disabled={!name.trim() || !mapUrl.trim()} className={s.submitBtn} style={{ backgroundColor: (!name.trim() || !mapUrl.trim()) ? '#ccc' : '#5b5bff', fontWeight: '600' }}>등록 요청</button>
                     </div>
                 </form>
@@ -266,7 +258,6 @@ const RegisterRestaurantButton = ({ onClick }) => (
     </button>
 );
 
-
 export default function RestaurantPage() {
     const [currentUserProfile, setCurrentUserProfile] = useState(INITIAL_USER_PROFILE);
     const [restaurants, setRestaurants] = useState([]);
@@ -274,9 +265,9 @@ export default function RestaurantPage() {
     const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("NONE");
     const [selectedFilter, setSelectedFilter] = useState("Recommendation");
-    const [isRegisterFormOpen, setIsRegisterFormOpen] = useState(false); 
-    const [editingReview, setEditingReview] = useState(null); 
-    const [isReviewFormOpen, setIsReviewFormOpen] = useState(false); 
+    const [isRegisterFormOpen, setIsRegisterFormOpen] = useState(false);
+    const [editingReview, setEditingReview] = useState(null);
+    const [isReviewFormOpen, setIsReviewFormOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(true);
     const reviewListRef = useRef(null);
 
@@ -286,18 +277,22 @@ export default function RestaurantPage() {
     useEffect(() => {
         const loadUserProfileDefaults = () => {
             const currentId = getCurrentUserId();
-            
+
             if (!currentId) {
                 setCurrentUserProfile(prev => ({ ...prev, nickname: "게스트" }));
                 return;
             }
-            
-            const defaultProfileData = {};
+
+            const shortId = String(currentId).substring(0, 4);
+            const uiddNickname = `UIDD-${shortId}`;
 
             setCurrentUserProfile(prev => ({
                 ...prev,
                 userId: currentId,
-                ...defaultProfileData,
+                nickname: uiddNickname,
+                studentId: "N/A",
+                department: "N/A",
+                nationality: "N/A",
                 preferredFoodType: displayValue(prev.preferredFoodType),
             }));
         };
@@ -308,10 +303,14 @@ export default function RestaurantPage() {
     const loadRestaurants = useCallback(async () => {
         setIsLoading(true);
         try {
-            const data = selectedFilter === "Recommendation" ? await fetchRecommendedRestaurants() : await fetchAllRestaurants();
-
+            let data;
+            if (selectedCategory === "Recommendation") {
+                data = await fetchRecommendedRestaurants();
+            } else {
+                data = await fetchAllRestaurants();
+            }
             setRestaurants(data || []);
-            
+
             if (data && data.length > 0) {
                 setSelectedRestaurantId(prevId => {
                     const exists = data.some(r => r.restaurantId === prevId);
@@ -326,15 +325,25 @@ export default function RestaurantPage() {
         } finally {
             setIsLoading(false);
         }
-    }, [selectedFilter]);
+    }, [selectedCategory]);
 
     const loadReviews = useCallback(async (id) => {
         if (!id) { setReviews([]); return; }
         try {
-            const reviewData = await fetchReviewsByRestaurantId(id);
-            const fetchedReviews = reviewData.restaurantReviews || [];
-            setReviews(fetchedReviews.map(mapReviewForUI)); 
+            const timestamp = new Date().getTime();
+            const reviewData = await fetchReviewsByRestaurantId(id, { cacheBuster: timestamp });
 
+            let fetchedReviews = [];
+            if (Array.isArray(reviewData)) {
+                fetchedReviews = reviewData;
+            } else if (reviewData && Array.isArray(reviewData.restaurantReviews)) {
+                fetchedReviews = reviewData.restaurantReviews;
+            } else {
+                console.warn("리뷰 데이터 형식을 식별할 수 없습니다:", reviewData);
+                fetchedReviews = [];
+            }
+
+            setReviews(fetchedReviews.map(mapReviewForUI));
             setIsReviewFormOpen(false);
             setEditingReview(null);
 
@@ -358,12 +367,12 @@ export default function RestaurantPage() {
     const filteredAndSortedRestaurants = useMemo(() => {
         let list = restaurants;
 
-        if (selectedCategory !== 'NONE') {
+        if (selectedCategory !== 'NONE' && selectedCategory !== 'Recommendation') {
             list = list.filter(rest => rest.restaurantType === selectedCategory);
         }
-        
+
         if (selectedFilter !== "Recommendation") {
-             list = list.sort((a, b) => {
+            list = list.sort((a, b) => {
                 const ratingA = a.avgRating || 0;
                 const ratingB = b.avgRating || 0;
                 if (selectedFilter === 'Rating') return ratingB - ratingA;
@@ -373,11 +382,6 @@ export default function RestaurantPage() {
         }
         return list;
     }, [restaurants, selectedCategory, selectedFilter]);
-
-    const refreshList = (id) => {
-        setSelectedRestaurantId(null); 
-        setTimeout(() => setSelectedRestaurantId(id), 10); 
-    };
 
     const handleReviewSubmit = async (payload) => {
         if (!selectedRestaurantId) return;
@@ -390,7 +394,10 @@ export default function RestaurantPage() {
                 await createReview({ restaurantId: selectedRestaurantId, ...payload, });
                 alert("리뷰가 작성되었습니다.");
             }
-            refreshList(selectedRestaurantId);
+            // 리뷰 작성 후, 리뷰 목록과 식당 목록(평점)을 모두 다시 불러와야 반영됨 🌟🌟🌟
+            await loadReviews(selectedRestaurantId);
+            await loadRestaurants();
+
         } catch (error) {
             console.error("리뷰 처리 오류:", error);
             alert(`리뷰 처리 중 오류가 발생했습니다: ${error.message}`);
@@ -409,7 +416,8 @@ export default function RestaurantPage() {
         try {
             await deleteReview(reviewId);
             alert("리뷰가 삭제되었습니다.");
-            refreshList(selectedRestaurantId);
+            await loadReviews(selectedRestaurantId);
+            await loadRestaurants();
         } catch (error) {
             console.error("리뷰 삭제 오류:", error);
             alert(`리뷰 삭제 중 오류가 발생했습니다: ${error.message}`);
@@ -438,10 +446,10 @@ export default function RestaurantPage() {
 
         if (editingReview || isReviewFormOpen) {
             return (
-                <ReviewForm 
-                    initialData={editingReview} 
-                    onSubmit={handleReviewSubmit} 
-                    onCancel={handleCancelReviewForm} 
+                <ReviewForm
+                    initialData={editingReview}
+                    onSubmit={handleReviewSubmit}
+                    onCancel={handleCancelReviewForm}
                     currentUser={currentUserProfile}
                     selectedRestaurantName={selectedRestaurant.name}
                 />
@@ -465,7 +473,7 @@ export default function RestaurantPage() {
                         <CategoryDropdown value={selectedFilter} onChange={setSelectedFilter} options={['Rating', 'Distance', 'New']} />
                         <RegisterRestaurantButton onClick={() => setIsRegisterFormOpen(true)} />
                     </div>
-                    
+
                     <div className={`${s.listScrollArea} custom-scroll-list`}>
                         {isLoading ? (
                             <div className={s.noReviewMessage}>식당 목록 로드 중...</div>
@@ -489,7 +497,7 @@ export default function RestaurantPage() {
                     <h2 className={s.reviewTitle}>
                         {selectedRestaurant ? `${selectedRestaurant.name} ` : '식당을 선택해주세요.'} 리뷰 목록 ({selectedRestaurant ? reviews.length : 0}개)
                     </h2>
-                    
+
                     {selectedRestaurant ? (
                         <>
                             {reviews.length > 0 ? (
@@ -515,11 +523,11 @@ export default function RestaurantPage() {
                     )}
                 </div>
             </div>
-            
+
             {isRegisterFormOpen && (
-                <RestaurantRegistrationCardOverlay 
-                    onClose={() => setIsRegisterFormOpen(false)} 
-                    onSubmit={handleCreateRestaurant} 
+                <RestaurantRegistrationCardOverlay
+                    onClose={() => setIsRegisterFormOpen(false)}
+                    onSubmit={handleCreateRestaurant}
                 />
             )}
         </div>
