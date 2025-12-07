@@ -18,7 +18,7 @@ const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke={fill ? "#FFC700" : "#d0d0d0"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
-const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinecap="round" /></svg>;
+const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" fill="#6D28D9" fillOpacity="0.2" /><path d="M17.5 19.5c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5" stroke="#6D28D9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const FlagIcon = () => <span role="img" aria-label="Flag">🇰🇷</span>;
 const PlusIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
@@ -105,7 +105,7 @@ const ReviewListItem = React.memo(({ review, currentUser, onEdit, onDelete }) =>
                     </div>
                 </div>
             </div>
-            {/* 🚨 기존 오류: className.reviewDivider -> 수정됨: className={s.reviewDivider} */}
+
             <div className={s.reviewDivider} />
             <p className={s.reviewContent}>{review.reason}</p>
 
@@ -289,7 +289,7 @@ export default function RestaurantPage() {
             setCurrentUserProfile(prev => ({
                 ...prev,
                 userId: currentId,
-                nickname: uiddNickname, 
+                nickname: uiddNickname,
                 studentId: "N/A",
                 department: "N/A",
                 nationality: "N/A",
@@ -394,7 +394,7 @@ export default function RestaurantPage() {
                 await createReview({ restaurantId: selectedRestaurantId, ...payload, });
                 alert("리뷰가 작성되었습니다.");
             }
-            // 🌟🌟🌟 리뷰 작성 후, 리뷰 목록과 식당 목록(평점)을 모두 다시 불러와야 반영됨 🌟🌟🌟
+            // 리뷰 작성 후, 리뷰 목록과 식당 목록(평점)을 모두 다시 불러와야 반영됨 🌟🌟🌟
             await loadReviews(selectedRestaurantId);
             await loadRestaurants();
 
