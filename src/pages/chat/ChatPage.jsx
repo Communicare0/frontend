@@ -39,21 +39,21 @@ export default function ChatPage() {
         try {
             const data = await fetchMyChatRooms();
             setRooms(data || []);
-
+/*
             if(!selectedRoomId && data && data.length > 0) {
                 if(initialRoomId && data.some((r) => r.chatRoomId === initialRoomId)) {
                     setSelectedRoomId(initialRoomId);
                 } else {
                     setSelectedRoomId(data[0].chatRoomId);
                 }
-            }
+            }*/
         } catch (err) {
             console.error(err);
             setError(err.message || "채팅방 목록 로딩 실패");
         } finally {
             setLoadingRooms(false);
         }
-    }, [selectedRoomId, initialRoomId]);
+    }, [/*selectedRoomId, initialRoomId*/]);
 
     useEffect(() => {
         selectedRoomIdRef.current = selectedRoomId;
@@ -101,6 +101,20 @@ export default function ChatPage() {
         rooms.forEach((room) => {
             const roomId = room.chatRoomId;
             const sub = subscribeRoom(roomId, (chatMessage) => {
+                console.log(
+                    "[WS] incoming",
+                    {
+                    chatMessage,
+                    roomIdFromMsg: chatMessage.chatRoomId,
+                    selectedRoomId: selectedRoomIdRef.current,
+                    senderIdFromMsg: chatMessage.senderId,
+                    myUserId,
+                    willCountAsUnread:
+                        chatMessage.chatRoomId !== selectedRoomIdRef.current &&
+                        chatMessage.senderId &&
+                        chatMessage.senderId !== myUserId,
+                    }
+                );
                 const roomIdFromMsg = chatMessage.chatRoomId;
                 const senderIdFromMsg = chatMessage.senderId;
 
@@ -331,6 +345,8 @@ export default function ChatPage() {
         }
     };
 
+    const hasSelectedRoom = !!selectedRoomId;
+
     return (
         <div className={s.pageWrapper}>
             <ChatSideNav />
@@ -456,65 +472,89 @@ export default function ChatPage() {
                 {/* 오른쪽: 메시지 영역 */}
                 <main className={s.chatMain}>
                     <header className={s.chatHeader}>
-                        <h2 className={s.chatTitle}>{headerTitle}</h2>
-                        <button
-                            type="button"
-                            className={s.leaveButton}
-                            onClick={handleLeaveRoom}
-                        >
-                            나가기
-                        </button>
+                        <h2 className={s.chatTitle}>
+                            {hasSelectedRoom ? headerTitle : "채팅"}
+                        </h2>
+                        {hasSelectedRoom && (
+                            <button
+                                type="button"
+                                className={s.leaveButton}
+                                onClick={handleLeaveRoom}
+                            >
+                                나가기
+                            </button>
+                        )}
                     </header>
                     
-                    {error && <div className={s.error}>{error}</div>}
+                    {!hasSelectedRoom ? (
+                        <div className={s.emptyState}>
+                            채팅방을 왼쪽에서 선택하거나, 새로운 그룹을 생성해서 대화를 시작해 보세요.
+                        </div>
+                    ) : (
+                        <>
+                            {error && <div className={s.error}>{error}</div>}
 
-                    <section className={s.messagesArea}>
-                        {loadingMessages && (
-                            <div className={s.status}>메시지 로딩 중...</div>
-                        )}
-                        {!loadingMessages && messages.length === 0 && (
-                            <div className={s.status}>아직 메시지가 없습니다.</div>
-                        )}
-                        {messages.map((m) => {
-                            const isMine = myUserId && m.senderId === myUserId;
-                            const timeStr = new Date(m.createdAt).toLocaleTimeString(
-                                [],
-                                {
-                                    hour: "2-digit",
-                                    minute: "2-digit",
-                                }
-                            );
+                            <section className={s.messagesArea}>
+                                {loadingMessages && (
+                                    <div className={s.status}>메시지 로딩 중...</div>
+                                )}
+                                {!loadingMessages && messages.length === 0 && (
+                                    <div className={s.status}>아직 메시지가 없습니다.</div>
+                                )}
+                                {messages.map((m) => {
+                                    const isMine = myUserId && m.senderId === myUserId;
+                                    const timeStr = new Date(m.createdAt).toLocaleTimeString(
+                                        [],
+                                        { hour: "2-digit", minute: "2-digit" }
+                                    );
 
-                            return(
-                                <div key={m.chatMessageId} className={`${s.messageRow} ${isMine ? s.messageRowMine : s.messageRowOther}`}>
-                                    {!isMine && <div className={s.messageAvatar} />}{" "}
-                                    <div className={`${s.messageBubble} ${isMine ? s.messageBubbleMine : s.messageBubbleOther}`}>
-                                        <div className={s.messageMeta}>
-                                            {!isMine && (
-                                                <span className={s.senderName}>
-                                                    {m.senderNickname}
-                                                </span>
-                                            )}
-                                            <span className={s.messageTime}>{timeStr}</span>
+                                    return (
+                                        <div
+                                            key={m.chatMessageId}
+                                            className={`${s.messageRow} ${
+                                                isMine ? s.messageRowMine : s.messageRowOther
+                                            }`}
+                                        >
+                                            {!isMine && <div className={s.messageAvatar} />}
+                                            <div
+                                                className={`${s.messageBubble} ${
+                                                    isMine
+                                                        ? s.messageBubbleMine
+                                                        : s.messageBubbleOther
+                                                }`}
+                                            >
+                                                <div className={s.messageMeta}>
+                                                    {!isMine && (
+                                                        <span className={s.senderName}>
+                                                            {m.senderNickname}
+                                                        </span>
+                                                    )}
+                                                    <span className={s.messageTime}>
+                                                        {timeStr}
+                                                    </span>
+                                                </div>
+                                                <div className={s.messageContent}>
+                                                    {m.content}
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div className={s.messageContent}>{m.content}</div>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </section>
+                                    );
+                                })}
+                            </section>
 
-                    <form className={s.inputBar} onSubmit={handleSend}>
-                        <input
-                            className={s.input}
-                            placeholder="Input message"
-                            value={input}
-                            onChange={(e) => setInput(e.target.value)}
-                        />
-                        <button className={s.sendButton} type="submit">
-                            Send
-                        </button>
-                    </form>
+                            <form className={s.inputBar} onSubmit={handleSend}>
+                                <input
+                                    className={s.input}
+                                    placeholder="Input message"
+                                    value={input}
+                                    onChange={(e) => setInput(e.target.value)}
+                                />
+                                <button className={s.sendButton} type="submit">
+                                    Send
+                                </button>
+                            </form>
+                        </>
+                    )}
                 </main>
             </div>
         </div>
