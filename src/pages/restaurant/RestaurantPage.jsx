@@ -15,7 +15,6 @@ import {
 
 // --- 상수 및 헬퍼 함수 ---
 
-// 🌟 null 또는 빈 문자열을 "NONE"으로 변환하는 헬퍼 함수
 const displayValue = (value) => value ? value : "N/A";
 
 // 초기 사용자 프로필 상태 정의 (MeProfileResponse.java 기반)
@@ -37,7 +36,6 @@ const TABS = {
 // --- 아이콘 및 헬퍼 컴포넌트 ---
 
 const ChevronDownIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-// StarIcon: #FFC700 색상을 사용합니다.
 const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
     <svg width={width} height={height} viewBox="0 0 24 24" fill={fill ? "#FFC700" : "none"} xmlns="http://www.w3.org/2000/svg" onClick={onClick} style={style}>
         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke={fill ? "#FFC700" : "#d0d0d0"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -46,7 +44,7 @@ const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
 const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" fill="#6D28D9" fillOpacity="0.2" /><path d="M17.5 19.5c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5" stroke="#6D28D9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const FlagIcon = () => <span role="img" aria-label="Flag">🇰🇷</span>; // 국적에 따라 동적으로 변경해야 함 (현재는 🇰🇷 더미)
-const WriteIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20H21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M16.5 3.5C17.757 2.243 19.757 2.243 21 3.5L20.5 4L19 2.5L16.5 4.5V3.5ZM16.5 3.5L19 6L18 7L15.5 5.5L16.5 3.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M15 5L18 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M9 19L11 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M3 13L3 21H11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinecap="round" /><path d="M16 5.5L4 17.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
+const WriteIcon = () => (<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 20H21" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M16.5 3.5C17.757 2.243 19.757 2.243 21 3.5L20.5 4L19 2.5L16.5 4.5V3.5ZM16.5 3.5L19 6L18 7L15.5 5.5L16.5 3.5Z" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M15 5L18 8" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M9 19L11 19" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M3 13L3 21H11" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M16 5.5L4 17.5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
 const PlusIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
 
 
@@ -98,7 +96,6 @@ const RatingStars = ({ rating, size = 16 }) => {
 };
 
 
-// 🌟 CSS 클래스 적용하여 UI 반영
 const RestaurantListItem = React.memo(({ restaurant, isSelected, onClick }) => {
     const avgRating = restaurant.avgRating ? parseFloat(restaurant.avgRating).toFixed(1) : 'N/A';
 
@@ -125,7 +122,6 @@ const RestaurantListItem = React.memo(({ restaurant, isSelected, onClick }) => {
 
 // 리뷰 객체를 UI에 필요한 형태로 매핑 (RestaurantReviewResponse.java 기반)
 const mapReviewForUI = (review) => {
-    // 🌟 리뷰 응답 DTO에 author 정보가 포함되어 있지 않을 수 있어 임시 닉네임 사용 (백엔드 수정 필요)
     const authorNickname = review.author?.nickname || `사용자-${String(review.authorId).substring(0, 4)}` || '익명';
     const authorStudentId = review.author?.studentId || 'N/A';
     const authorDepartment = review.author?.department || 'N/A';
@@ -135,7 +131,6 @@ const mapReviewForUI = (review) => {
         restaurantReviewId: review.restaurantReviewId,
         authorId: review.authorId,
         rating: review.rating || 0,
-        // 현재 엔티티 구조상 reason 필드를 사용
         reason: review.reason || '리뷰 내용 없음', 
         authorNickname: authorNickname,
         studentId: authorStudentId,
@@ -145,7 +140,6 @@ const mapReviewForUI = (review) => {
     };
 };
 
-// 🌟 CSS 클래스 적용하여 UI 반영
 const ReviewListItem = React.memo(({ review, currentUser, onEdit, onDelete }) => {
     const isMyReview = review.authorId === currentUser.userId;
 

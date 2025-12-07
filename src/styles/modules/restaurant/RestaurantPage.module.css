@@ -28,19 +28,66 @@
     height: 800px; /* 고정 높이 */
 }
 
-.dropdownContainer {
+.filterArea {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 12px;
     margin-bottom: 16px;
     flex-shrink: 0;
 }
+
+.tabContainer {
+    display: flex;
+    gap: 8px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 8px;
+}
+
+.tabButton {
+    padding: 8px 16px;
+    border: none;
+    background-color: transparent;
+    color: #666;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+}
+
+.tabButton.activeTab {
+    color: #5b5bff;
+    border-bottom: 2px solid #5b5bff;
+}
+
+.dropdownContainer {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.registerButton {
+    display: flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #5b5bff;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: auto; /* 우측 정렬 */
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
 
 .listScrollArea {
     flex: 1;
     overflow-y: auto;
     padding-right: 8px;
-    /* 커스텀 스크롤바 스타일링을 위한 클래스 이름 (globals.css 또는 여기에 추가) */
-    /* .custom-scroll-list */
+    /* .custom-scroll-list 클래스 정의는 아래에 있습니다. */
 }
 
 
@@ -132,6 +179,7 @@
     color: #999;
 }
 
+/* Review Box and Content */
 .reviewBox {
     flex: 1;
     background-color: #fff;
@@ -142,12 +190,21 @@
     height: 800px;
     overflow-y: auto;
     position: relative;
+    display: flex;
+    flex-direction: column; /* 내용물을 세로로 정렬 */
+}
+
+.reviewListScrollArea {
+    flex: 1;
+    overflow-y: auto;
+    /* padding-right: 8px; 리뷰 리스트가 너무 길어지면 여기에 커스텀 스크롤바 적용 */
 }
 
 .reviewTitle {
     margin-bottom: 20px;
     font-size: 24px;
     font-weight: 700;
+    flex-shrink: 0;
 }
 
 .noReviewMessage {
@@ -226,6 +283,79 @@
     box-shadow: 0 4px 12px rgba(91, 91, 255, 0.4);
     transition: background-color 0.2s;
 }
+
+.reviewFormCard {
+    padding: 24px; 
+    background-color: #f9f9f9; 
+    border-radius: 16px; 
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
+    margin-top: 16px;
+    border: 1px solid #eee;
+}
+
+.reviewTextarea {
+    width: 95%; 
+    min-height: 100px; 
+    padding: 12px; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    resize: vertical; 
+    font-size: 15px; 
+    outline: none;
+}
+
+.buttonGroup {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancelBtn {
+    padding: 8px 16px; 
+    border-radius: 20px; 
+    border: 1px solid #ddd; 
+    background-color: #f0f0f0; 
+    color: #333; 
+    cursor: pointer; 
+    font-weight: 600;
+}
+
+.submitBtn {
+    padding: 8px 16px; 
+    border-radius: 20px; 
+    border: none; 
+    background-color: #5b5bff; 
+    color: white; 
+    cursor: pointer; 
+    font-weight: 600; 
+    transition: background-color 0.2s;
+}
+
+
+.overlay {
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.5); 
+    z-index: 100; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+}
+
+.registrationCard {
+    width: 100%; 
+    max-width: 350px; 
+    padding: 24px; 
+    background-color: #fff; 
+    border-radius: 16px; 
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3); 
+    text-align: left;
+}
+
 
 /* 1. WebKit 기반 브라우저 (Chrome, Safari) */
 .custom-scroll-list::-webkit-scrollbar {
