@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
+import useAuth from "@/hooks/useAuth";
 import {
     fetchPostDetail,
     fetchPostComments,
@@ -26,34 +27,36 @@ const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="no
 const LikedIcon = ({ color = "#EF4444" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 const UnlikedIcon = ({ color = "#6B7280" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 
+const NATIONALITY_FLAG = {
+    KOREAN: "🇰🇷",
+    VIETNAMESE: "🇻🇳",
+    CHINESE: "🇨🇳",
+    MYANMARESE: "🇲🇲",
+    JAPANESE: "🇯🇵",
+    INDONESIAN: "🇮🇩",
+    MALAYSIAN: "🇲🇾",
+    EMIRATIS: "🇦🇪",
+};
+
+
 // 프로필 메타 컴포넌트
-const UserProfileMeta = ({ userId, studentYear, subject, nationCode }) => (
+const UserProfileMeta = ({ studentYear, department, nationEmoji }) => (
     <div className={s.userProfileMeta}>
-        <img className={s.profilePicture} src={`/profile/${userId}.png`} alt="프로필 사진" />
-        <span className={s.profileUsername}>{userId}</span>
+       <span className={s.profileYear}>{studentYear}</span>
         <span className={s.profileSeparator}>/</span>
-        <span className={s.profileYear}>{studentYear}</span>
+        <span className={s.profileInfo}>{department}</span>
         <span className={s.profileSeparator}>/</span>
-        <span className={s.profileInfo}>{subject}</span>
-        <span className={s.profileSeparator}>/</span>
-        <img className={s.nationIcon} src={`/flags/${nationCode}.png`} alt="국기 아이콘" />
+        <span className={s.profileNation}>{nationEmoji}</span>
     </div>
 );
-
-// 더미 사용자 정보 및 현재 사용자 ID
-const DUMMY_USER_INFO = {
-    "user123": { studentYear: "20학번", subject: "경영학과", nationCode: "KR", isMe: true },
-    "author456": { studentYear: "22학번", subject: "컴퓨터공학", nationCode: "US", isMe: false },
-    "commenter789": { studentYear: "23학번", subject: "경제학과", nationCode: "JP", isMe: false },
-};
-const currentUserId = "653c0e5d-8e07-4b4e-8e00-1d01d4e58ec5";
-//const currentUserId = "a11d32b0-a40d-4350-a945-64ead098c3d0";
-
-
 
 export default function ReadPostPage() {
     const { category, postId } = useParams();
     const navigate = useNavigate();
+
+    const { user } = useAuth();
+    const currentUserId = user?.id || user?.userId || null;
+
     const [post, setPost] = useState(null);
     const [comments, setComments] = useState([]);
     const [newCommentText, setNewCommentText] = useState("");
@@ -64,13 +67,16 @@ export default function ReadPostPage() {
     const [editedContent, setEditedContent] = useState("");
 
 
+
     function mapComments(commentResponses) {
         return commentResponses.map((c) => ({
             id: c.commentId,
-            username: c.authorId ?? "익명",
             text: c.content,
             createdAt: new Date(c.createdAt).toLocaleString(),
             authorId: c.authorId,
+            studentYear: c.authorStudentYear,
+            department: c.authorDepartment,
+            nationEmoji: NATIONALITY_FLAG[c.authorNationality] ?? "None",
             likes: c.likeCount || 0,
             isLiked: c.isLikedByMe || false,
         }));
@@ -99,7 +105,13 @@ export default function ReadPostPage() {
                     id: postData.postId,
                     category: postData.category,
                     title: postData.title,
-                    username: postData.userId,
+
+                    authorId: postData.authorId ?? postData.userId,
+
+                    studentYear: postData.authorStudentYear,
+                    department: postData.authorDepartment,
+                    nationEmoji: NATIONALITY_FLAG[postData.authorNationality] ?? "None",
+
                     createdAt: new Date(postData.createdAt).toLocaleString(),
                     views: postData.viewCount,
                     likes: postData.likeCount || 0,
@@ -295,13 +307,11 @@ export default function ReadPostPage() {
         }
     };
 
-
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
 
-    const postAuthorInfo = DUMMY_USER_INFO[post.username] || { studentYear: "??", subject: "알수없음", nationCode: "??", isMe: false };
-    const isPostAuthor = post.username === currentUserId;
+    const isPostAuthor = currentUserId && post.authorId === currentUserId;
 
     return (
         <div className={s.boardPageContainer}>
@@ -340,10 +350,9 @@ export default function ReadPostPage() {
                         {/* 작성자 정보 */}
                         <div className={s.postAuthorInfo}>
                             <UserProfileMeta
-                                userId={post.username}
-                                studentYear={postAuthorInfo.studentYear}
-                                subject={postAuthorInfo.subject}
-                                nationCode={postAuthorInfo.nationCode}
+                                studentYear={post.studentYear}
+                                department={post.department}
+                                nationEmoji={post.nationEmoji}
                             />
                             <div className={s.postMeta}>
                                 <span className={s.postTime}>{post.createdAt}</span>
@@ -427,17 +436,14 @@ export default function ReadPostPage() {
                         <h3 className={s.commentListTitle}>댓글 ({comments.length})</h3>
                         <div className={s.commentList}>
                             {comments.map((comment) => {
-                                const commentAuthorInfo = DUMMY_USER_INFO[comment.authorId] || { studentYear: "??", subject: "알수없음", nationCode: "??", isMe: false };
-                                const isCommentAuthor = comment.authorId === currentUserId;
-
+                                const isCommentAuthor = currentUserId && comment.authorId == currentUserId;
                                 return (
                                     <div key={comment.id} className={s.commentItem}>
                                         <div className={s.commentHeader}>
                                             <UserProfileMeta
-                                                userId={comment.authorId}
-                                                studentYear={commentAuthorInfo.studentYear}
-                                                subject={commentAuthorInfo.subject}
-                                                nationCode={commentAuthorInfo.nationCode}
+                                                studentYear={comment.studentYear}
+                                                department={comment.department}
+                                                nationEmoji={comment.nationEmoji}
                                             />
                                         </div>
 
@@ -456,12 +462,12 @@ export default function ReadPostPage() {
 
                                                 <div className={s.commentControls}>
                                                     {isCommentAuthor ? (
-                                                        <>
+                                                        <>    
                                                             <button className={s.controlButton} onClick={() => handleCommentEdit(comment.id, comment.text)} disabled={isEditing}>수정</button>
                                                             <span className={s.postSeparator}>/</span>
                                                             <button className={s.controlButton} onClick={() => handleCommentDelete(comment.id)} disabled={isEditing}>삭제</button>
                                                         </>
-                                                    ) : (
+                                                    ) : ( 
                                                         <button className={s.controlButton} onClick={() => handleCommentReport(comment.id)} disabled={isEditing}>신고</button>
                                                     )}
                                                 </div>

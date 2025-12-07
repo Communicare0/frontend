@@ -10,8 +10,8 @@ export default function BoardPage() {
     const { category } = useParams();
     const navigate = useNavigate();
     
-    const [posts, setPosts]=  useState([]);
-    const [sortOption, setSortOption]=  useState("like_desc");
+    const [posts, setPosts] =  useState([]);
+    const [sortOption, setSortOption] =  useState("like_desc");
     const [search, setSearch] = useState("");
 
     useEffect(() => {
@@ -24,7 +24,11 @@ export default function BoardPage() {
                     search,
                 });
 
-                const normalized = data.map((p) => ({
+                const sorted = data.slice().sort((a, b) => {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                });
+
+                const normalized = sorted.map((p) => ({
                     id: p.postId,
                     title: p.title,
                     text: p.content,

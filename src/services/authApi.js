@@ -17,3 +17,7 @@ export async function register({ name, email, password }) {
     }),
   });
 }
+
+export async function update(payload) {
+  return api("/v1/user/update", { method: "PUT", body: JSON.stringify(payload)})
+}
