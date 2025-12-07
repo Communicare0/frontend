@@ -129,19 +129,26 @@ export default function FriendPage() {
             const isRequesterMe = requesterId === myUserId;
             const otherId = isRequesterMe ? addresseeId : requesterId;
 
-            const friendName = isRequesterMe ? addresseeNickname : requesterNickname;
+            const friendName = (isRequesterMe ? addresseeNickname : requesterNickname) || "Friend";
 
             const rooms = await fetchMyChatRooms();
+
             const existing = (rooms || []).find((r) => {
                 if(r.chatRoomType !== "DIRECT") return false;
-                const members = r.membersId || [];
+
+                const members = r.memberIds || [];
                 const hasMe = members.includes(myUserId);
                 const hasOther = members.includes(otherId);
+
                 return hasMe && hasOther && members.length === 2;
             });
+
             if(existing) {
                 navigate("/chat", {
-                    state: { initialRoomId: existing.chatRoomId },
+                    state: {
+                        initialRoomId: existing.chatRoomId,
+                        initialRoomTitle: friendName,
+                    },
                 });
                 return;
             }
@@ -156,7 +163,10 @@ export default function FriendPage() {
             const created = await createChatRoom(payload);
 
             navigate("/chat", {
-                state: { initialRoomId: created.chatRoomId },
+                state: {
+                    initialRoomId: created.chatRoomId,
+                    initialRoomTitle: friendName,
+                },
             });
         } catch (err) {
             console.error(err);

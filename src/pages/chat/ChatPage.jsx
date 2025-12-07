@@ -28,9 +28,11 @@ export default function ChatPage() {
 
     const [unreadCounts, setUnreadCounts] = useState({});
     const subscriptionsRef = useRef({});
+    const selectedRoomIdRef = useRef(null);
 
     const location = useLocation();
-    const initialRoomId = location.state?.initialRoomId;
+    const initialRoomId = location.state?.initialRoomId || null;
+    const initialRoomTitle = location.state?.initialRoomTitle || null;
 
     const loadRooms = useCallback(async () => {
         setLoadingRooms(true);
@@ -42,7 +44,7 @@ export default function ChatPage() {
                 if(initialRoomId && data.some((r) => r.chatRoomId === initialRoomId)) {
                     setSelectedRoomId(initialRoomId);
                 } else {
-                    setSelectedRoomId(initialRoomId);
+                    setSelectedRoomId(data[0].chatRoomId);
                 }
             }
         } catch (err) {
@@ -53,6 +55,10 @@ export default function ChatPage() {
         }
     }, [selectedRoomId, initialRoomId]);
 
+    useEffect(() => {
+        selectedRoomIdRef.current = selectedRoomId;
+    }, [selectedRoomId]);
+
     // 채팅방 목록 로딩
     useEffect(() => {
         let mounted = true;
@@ -62,6 +68,13 @@ export default function ChatPage() {
             if(mounted) setMyUserId(meId);
 
             await loadRooms();
+
+            try {
+                const friendsData = await fetchMyFriends();
+                if(mounted) setFriends(friendsData || []);
+            } catch (err) {
+                console.error(err);
+            }
         })();
 
         return () => {
@@ -81,24 +94,33 @@ export default function ChatPage() {
         });
         subscriptionsRef.current = {};
 
-        if(!rooms || rooms.length === 0) return;
+        if(!rooms || rooms.length === 0 || !myUserId) return;
 
         const newSubs = {};
 
         rooms.forEach((room) => {
             const roomId = room.chatRoomId;
             const sub = subscribeRoom(roomId, (chatMessage) => {
+                const roomIdFromMsg = chatMessage.chatRoomId;
+                const senderIdFromMsg = chatMessage.senderId;
+
+                if(!roomIdFromMsg) return;
+
                 setMessages((prev) => {
-                    if(chatMessage.chatRoomId === selectedRoomId) {
+                    if(roomIdFromMsg === selectedRoomIdRef.current) {
+                        if(chatMessage.chatMessageId && prev.some((m) => m.chatMessageId === chatMessage.chatMessageId)) {
+                            return prev;
+                        }
                         return [...prev, chatMessage];
                     }
+
                     return prev;
                 });
 
-                if(chatMessage.chatRoomId !== selectedRoomId) {
+                if(roomIdFromMsg !== selectedRoomIdRef.current && senderIdFromMsg && senderIdFromMsg !== myUserId) {
                     setUnreadCounts((prev) => ({
                         ...prev,
-                        [chatMessage.chatRoomId]: (prev[chatMessage.chatRoomId] || 0) + 1,
+                        [roomIdFromMsg]: (prev[roomIdFromMsg] || 0) + 1,
                     }));
                 }
             });
@@ -113,13 +135,14 @@ export default function ChatPage() {
                 if(sub && sub.unsubscribe) sub.unsubscribe();
             });
         };
-    }, [rooms, selectedRoomId]);
+    }, [rooms, myUserId]);
 
     useEffect(() => {
         if(!selectedRoomId) return;
         
         let mounted = true;
         setLoadingMessages(true);
+        setMessages([]);
 
         fetchRoomMessages(selectedRoomId)
             .then((data) => {
@@ -161,6 +184,33 @@ export default function ChatPage() {
     };
 
     const currentRoom = rooms.find((r) => r.chatRoomId === selectedRoomId);
+/*
+    const getRoomDisplayTitle = (room) => {
+        if(!room) return "Chat";
+
+        if(room.title) return room.title;
+
+        if(initialRoomTitle && room.chatRoomId === initialRoomId) {
+            return initialRoomTitle;
+        }
+
+        if(room.chatRoomType === "DIRECT" && myUserId) {
+            const members = room.memberIds || room.membersId || room.members || [];
+
+            if(members.length === 2) {
+                const otherId = members.find((id) => id !== myUserId);
+
+                if(otherId) {
+                    const friend = friends.find(
+                        (f) =>
+                        (f.requesterId)
+                    )
+                }
+            }
+        }
+    }*/
+
+    const headerTitle = currentRoom?.title || (initialRoomTitle && currentRoom && currentRoom.chatRoomId === initialRoomId && initialRoomTitle) || "Chat";
 
     const toggleCreateGroup = async () => {
         const next = !showCreateGroup;
@@ -319,6 +369,8 @@ export default function ChatPage() {
                         {rooms.map((room) => {
                             const isActive = room.chatRoomId === selectedRoomId;
                             const unread = unreadCounts[room.chatRoomId] || 0;
+
+                            const displayTitle = room.title || (initialRoomTitle && room.chatRoomId === initialRoomId && initialRoomTitle) || "No title";
                             
                             return (
                                 <li
@@ -328,9 +380,7 @@ export default function ChatPage() {
                                 >
                                     <div className={s.roomAvatar} />
                                     <div className={s.roomText}>
-                                        <div className={s.roomTitle}>
-                                            {room.title || "No title"}
-                                        </div>
+                                        <div className={s.roomTitle}>{displayTitle}</div>
                                         <div className={s.roomLastMessage}>
                                             {room.lastMessageContent || "대화 내역 없음"}
                                         </div>
@@ -349,9 +399,7 @@ export default function ChatPage() {
                 {/* 오른쪽: 메시지 영역 */}
                 <main className={s.chatMain}>
                     <header className={s.chatHeader}>
-                        <h2 className={s.chatTitle}>
-                            {currentRoom?.title || "Chat"}
-                        </h2>
+                        <h2 className={s.chatTitle}>{headerTitle}</h2>
                         <button
                             type="button"
                             className={s.leaveButton}
