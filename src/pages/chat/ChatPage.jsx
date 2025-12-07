@@ -371,23 +371,37 @@ export default function ChatPage() {
                                     )}
                                     {friends.map((f) => {
                                         // 이름 표시용
-                                        const name = f.requesterNickname || f.addresseeNickname || "Friend";
-                                        
-                                        const id = f.requesterId === f.addresseeId ? f.requesterId : f.requesterId;
+                                        if(!myUserId) return null;
 
-                                        const checked = selectedFriendIds.includes(id);
+                                        const {
+                                            requesterId,
+                                            requesterNickname,
+                                            addresseeId,
+                                            addresseeNickname,
+                                            friendshipId,
+                                        } = f;
+
+                                        const isRequesterMe = requesterId === myUserId;
+
+                                        const friendId = isRequesterMe ? addresseeId : requesterId;
+                                        const friendName = isRequesterMe
+                                            ? addresseeNickname
+                                            : requesterNickname;
+                                        
+                                        const checked = selectedFriendIds.includes(friendId);
+                                        
                                         return (
                                             <label
-                                                key={f.friendshipId}
+                                                key={friendshipId}
                                                 className={s.friendSelectItem}
                                             >
                                                 <input
                                                     type="checkbox"
                                                     className={s.friendCheckbox}
                                                     checked={checked}
-                                                    onChange={() => handleToggleFriendSelect(id)}
+                                                    onChange={() => handleToggleFriendSelect(friendId)}
                                                 />
-                                                <span className={s.friendSelectName}>{name}</span>
+                                                <span className={s.friendSelectName}>{friendName || "Friend"}</span>
                                             </label>
                                         );
                                     })}
