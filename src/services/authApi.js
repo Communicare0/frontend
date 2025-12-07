@@ -17,3 +17,7 @@ export async function register({ name, email, password }) {
     }),
   });
 }
+
+export async function fetchCurrentUserProfile() {
+  return api("/v1/user/me"); 
+}
