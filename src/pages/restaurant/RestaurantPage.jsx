@@ -182,13 +182,6 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                         <ProfileIcon style={{ marginRight: '10px', width: '36px', height: '36px' }} />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontWeight: '600', fontSize: '15px' }}>익명 (나)</span>
-                            <div style={{ color: '#666', fontSize: '12px', display: 'flex', alignItems: 'center' }}>
-                                <span>{displayStudentYear}</span>
-                                <span className={s.reviewSeparator}> / </span>
-                                <span>{displayDepartment}</span>
-                                <span className={s.reviewSeparator}> • </span>
-                                <span style={{ fontSize: '14px' }}>{displayFlag}</span>
-                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', paddingTop: '5px' }}>
