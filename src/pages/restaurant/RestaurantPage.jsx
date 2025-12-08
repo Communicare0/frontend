@@ -382,7 +382,6 @@ export default function RestaurantPage() {
         }
         return list;
     }, [restaurants, selectedCategory, selectedFilter]);
-
     const handleReviewSubmit = async (payload) => {
         if (!selectedRestaurantId) return;
 
@@ -394,16 +393,15 @@ export default function RestaurantPage() {
                 await createReview({ restaurantId: selectedRestaurantId, ...payload, });
                 alert("리뷰가 작성되었습니다.");
             }
-            // 리뷰 작성 후, 리뷰 목록과 식당 목록(평점)을 모두 다시 불러와야 반영됨 🌟🌟🌟
-            await loadReviews(selectedRestaurantId);
-            await loadRestaurants();
+
+            await loadReviews(selectedRestaurantId); // 리뷰 목록 갱신
+            await loadRestaurants();                 // 식당 목록(별점, 리뷰수) 갱신
 
         } catch (error) {
             console.error("리뷰 처리 오류:", error);
             alert(`리뷰 처리 중 오류가 발생했습니다: ${error.message}`);
         }
     };
-
     const handleEditReview = (review) => {
         setEditingReview(review);
         setIsReviewFormOpen(true);
@@ -416,8 +414,9 @@ export default function RestaurantPage() {
         try {
             await deleteReview(reviewId);
             alert("리뷰가 삭제되었습니다.");
-            await loadReviews(selectedRestaurantId);
-            await loadRestaurants();
+
+            await loadReviews(selectedRestaurantId); // 리뷰 목록 갱신
+            await loadRestaurants();                 // 식당 목록(별점, 리뷰수) 갱신
         } catch (error) {
             console.error("리뷰 삭제 오류:", error);
             alert(`리뷰 삭제 중 오류가 발생했습니다: ${error.message}`);
