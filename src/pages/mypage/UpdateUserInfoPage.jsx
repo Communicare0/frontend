@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { update } from "@/services/authApi";
 import { fetchMyData } from "@/services/mypageApi";
+import Nationalities from "@/pages/mypage/Nationalities";
 
 import s from "@styles/modules/mypage/UpdateUserInfoPage.module.css";
 
@@ -145,20 +146,7 @@ export default function UpdateUserInfoPage() {
                 />
 
                 <label className={s.label}>국적</label>
-                <select
-                    value={form.nationality}
-                    onChange={handleChange("nationality")}
-                    className={s.input}
-                >
-                    <option value="KOREAN">한국</option>
-                    <option value="VIETNAMESE">베트남</option>
-                    <option value="CHINESE">중국</option>
-                    <option value="MYANMARESE">미얀마</option>
-                    <option value="JAPANESE">일본</option>
-                    <option value="INDONESIAN">인도네시아</option>
-                    <option value="MALAYSIAN">말레이시아</option>
-                    <option value="EMIRATIS">아랍에미리트</option>
-                </select>
+                <Nationalities value={form.nationality} onChange={handleChange("nationality")} className={s.input} />
 
                 <label className={s.label}>선호 음식 타입</label>
                 <select

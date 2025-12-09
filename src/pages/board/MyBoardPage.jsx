@@ -40,6 +40,7 @@ export default function MyBoardPage() {
                     <Link
                         key={p.id}
                         to={`/board/${p.category}/${p.id}`}
+                        state={{ from: "myboard" }}
                         style={{ textDecoration: "none", color: "inherit" }}
                     >
                         <PostCard post={p} />
