@@ -81,21 +81,6 @@ export default function LoginForm() {
         navigate("/register");
     };
 
-    // 추가한 부분================================================================
-    const handleDevLogin = () => {
-        setUser({
-            id: 1,
-            email: "dev@ajou.ac.kr",
-            nickname: "DevUser",
-            major: "Software",
-            nation: "KR",
-            studentId: "202500000",
-        });
-
-        navigate("/", { replace: true });
-    };
-    // 개발용 강제 로그인 버튼 -> 추후 반드시 제거======================================
-
     const googleIconPath = '/image/google_icon.svg';
     const dividerLinePath = '/image/Vector 1.svg';
     
@@ -153,16 +138,6 @@ export default function LoginForm() {
                 </a>
             </p>
 
-            {/* 추가한 부분 =======================================================================*/}
-            <Button 
-                type="button"
-                className={s.socialBtn}
-                onClick={handleDevLogin}
-                style={{ marginTop: "12px", background: "#ddd" }}
-            >
-                (개발용) 로그인 없이 홈으로 이동
-            </Button>
-            {/* 개발용 강제 로그인 버튼 -> 백엔드 연동 후 반드시 제거 =======================================*/}
         </form>
     );
 }

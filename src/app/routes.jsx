@@ -18,7 +18,6 @@ import FriendPage from "@/pages/chat/FriendPage";
 //마이페이지 관련
 import MyPage from "@/pages/mypage/MyPage";
 import UpdateUserInfoPage from "@/pages/mypage/UpdateUserInfoPage";
-import SetKeywordPage from "@/pages/mypage/SetKeywordPage";
 //공지페이지 관련
 import NotificationsPage from "@/pages/notification/NotificationsPage";
 
@@ -65,7 +64,6 @@ export const router = createBrowserRouter([
       { path: "chat/friend", element: <FriendPage />},
       { path: "mypage", element: <MyPage /> },
       { path: "mypage/updateUserInfo", element: <UpdateUserInfoPage />},
-      { path: "mypage/keyword", element: <SetKeywordPage />},
       { path: "notifications", element: <NotificationsPage /> },
     ],
   },

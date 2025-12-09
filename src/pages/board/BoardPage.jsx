@@ -97,6 +97,7 @@ export default function BoardPage() {
                         <Link
                             key={post.id}
                             to={`/board/${category}/${post.id}`}
+                            state={{ from: "board", category }}
                             style={{ textDecoration: "none", color: "inherit" }}
                         >
                             <PostCard post={post} />

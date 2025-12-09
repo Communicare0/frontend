@@ -1,6 +1,6 @@
 body {
     /* fallback 폰트와 함께 지정 */
-    font-family: 'Noto Sans KR', sans-serif;
+    font-family: 'Noto Sans KR', "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
     margin: 0;
     padding: 0;
 }

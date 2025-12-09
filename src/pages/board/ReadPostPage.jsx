@@ -1,6 +1,6 @@
 // src/pages/board/ReadPostPage.jsx
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import useAuth from "@/hooks/useAuth";
 import {
@@ -18,6 +18,7 @@ import {
     unlikeComment,
     reportComment,
 } from "@/services/boardApi";
+import NationalityFlag from "@/components/ui/NationalityFlag";
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
@@ -27,32 +28,26 @@ const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="no
 const LikedIcon = ({ color = "#EF4444" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 const UnlikedIcon = ({ color = "#6B7280" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 
-const NATIONALITY_FLAG = {
-    KOREAN: "🇰🇷",
-    VIETNAMESE: "🇻🇳",
-    CHINESE: "🇨🇳",
-    MYANMARESE: "🇲🇲",
-    JAPANESE: "🇯🇵",
-    INDONESIAN: "🇮🇩",
-    MALAYSIAN: "🇲🇾",
-    EMIRATIS: "🇦🇪",
-};
+
 
 
 // 프로필 메타 컴포넌트
-const UserProfileMeta = ({ studentYear, department, nationEmoji }) => (
+const UserProfileMeta = ({ studentYear, department, nationality }) => (
     <div className={s.userProfileMeta}>
        <span className={s.profileYear}>{studentYear}</span>
         <span className={s.profileSeparator}>/</span>
         <span className={s.profileInfo}>{department}</span>
         <span className={s.profileSeparator}>/</span>
-        <span className={s.profileNation}>{nationEmoji}</span>
+        <span className={s.profileNation}>
+            <NationalityFlag nationality={nationality} size={18} />
+        </span>
     </div>
 );
 
 export default function ReadPostPage() {
     const { category, postId } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const { user } = useAuth();
     const currentUserId = user?.id || user?.userId || null;
@@ -76,7 +71,7 @@ export default function ReadPostPage() {
             authorId: c.authorId,
             studentYear: c.authorStudentYear,
             department: c.authorDepartment,
-            nationEmoji: NATIONALITY_FLAG[c.authorNationality] ?? "None",
+            nationality: c.authorNationality,
             likes: c.likeCount || 0,
             isLiked: c.isLikedByMe || false,
         }));
@@ -110,7 +105,7 @@ export default function ReadPostPage() {
 
                     studentYear: postData.authorStudentYear,
                     department: postData.authorDepartment,
-                    nationEmoji: NATIONALITY_FLAG[postData.authorNationality] ?? "None",
+                    nationality: postData.authorNationality,
 
                     createdAt: new Date(postData.createdAt).toLocaleString(),
                     views: postData.viewCount,
@@ -307,6 +302,24 @@ export default function ReadPostPage() {
         }
     };
 
+    const handleBack = () => {
+        const from = location.state?.from;
+
+        if(from === "myboard") {
+            navigate("/board/myboard");
+            return;
+        }
+        if(from === "board") {
+            navigate(`/board/${category}`);
+            return;
+        }
+        if(window.history.length > 1) {
+            navigate(-1);
+        } else {
+            navigate("/board")
+        }
+    };
+
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
@@ -325,7 +338,7 @@ export default function ReadPostPage() {
                     <header className={s.postHeader}>
                         <button
                             className={s.backButton}
-                            onClick={() => navigate(`/board/${category}`)}
+                            onClick={handleBack}
                         >
                             <ArrowLeftIcon />
                         </button>
@@ -352,7 +365,7 @@ export default function ReadPostPage() {
                             <UserProfileMeta
                                 studentYear={post.studentYear}
                                 department={post.department}
-                                nationEmoji={post.nationEmoji}
+                                nationality={post.nationality}
                             />
                             <div className={s.postMeta}>
                                 <span className={s.postTime}>{post.createdAt}</span>
@@ -443,7 +456,7 @@ export default function ReadPostPage() {
                                             <UserProfileMeta
                                                 studentYear={comment.studentYear}
                                                 department={comment.department}
-                                                nationEmoji={comment.nationEmoji}
+                                                nationality={comment.nationality}
                                             />
                                         </div>
 
