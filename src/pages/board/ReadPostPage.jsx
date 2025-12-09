@@ -19,6 +19,7 @@ import {
     reportComment,
 } from "@/services/boardApi";
 import NationalityFlag from "@/components/ui/NationalityFlag";
+import { translate } from "@/services/boardApi";
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
@@ -27,8 +28,6 @@ const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill
 const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 7.5L13.3333 3.33333M17.5 7.5L13.3333 11.6667M17.5 7.5H9.16667C8.44928 7.5 7.76159 7.79097 7.25825 8.3044C6.75492 8.81784 6.47917 9.51087 6.47917 10.2333V14.4167C6.47917 15.1391 6.75492 15.8322 7.25825 16.3456C7.76159 16.859 8.44928 17.15 9.16667 17.15H17.5" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const LikedIcon = ({ color = "#EF4444" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 const UnlikedIcon = ({ color = "#6B7280" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
-
-
 
 
 // 프로필 메타 컴포넌트
@@ -60,6 +59,10 @@ export default function ReadPostPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState("");
     const [editedContent, setEditedContent] = useState("");
+
+    // 번역 관련
+    const [translatedTitle, setTranslatedTitle] = useState();
+    const [translatedContent, setTranslatedContent] = useState();
 
 
 
@@ -118,6 +121,9 @@ export default function ReadPostPage() {
                 // 로드 시 수정 상태 초기화
                 setEditedTitle(loadedPost.title);
                 setEditedContent(loadedPost.text);
+
+                setTranslatedTitle(loadedPost.title);
+                setTranslatedContent(loadedPost.text);
 
                 const rawComments = Array.isArray(commentRes) ? commentRes : (commentRes.comments || []);
                 setComments(mapComments(rawComments));
@@ -320,6 +326,17 @@ export default function ReadPostPage() {
         }
     };
 
+    const handleTranslate = async () => {
+        try {
+            const { translatedTitle, translatedContent } = await translate(post.id);
+
+            setTranslatedTitle(translatedTitle);
+            setTranslatedContent(translatedContent);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
@@ -342,6 +359,13 @@ export default function ReadPostPage() {
                         >
                             <ArrowLeftIcon />
                         </button>
+
+                        {!isEditing &&
+                            <button className={s.translateButton} onClick={handleTranslate} type="button">
+                                <img src="/image/translate.svg" alt="번역" />
+                            </button>
+                        }
+                        
                     </header>
 
                     {/* 메인 콘텐츠 영역 */}
@@ -357,7 +381,7 @@ export default function ReadPostPage() {
                                 disabled={!isEditing}
                             />
                         ) : (
-                            <h1 className={s.postTitle}>{post.title}</h1>
+                            <h1 className={s.postTitle}>{translatedTitle}</h1>
                         )}
 
                         {/* 작성자 정보 */}
@@ -385,7 +409,7 @@ export default function ReadPostPage() {
                                     disabled={!isEditing}
                                 />
                             ) : (
-                                <p>{post.text}</p>
+                                <p>{translatedContent}</p>
                             )}
                         </div>
 
