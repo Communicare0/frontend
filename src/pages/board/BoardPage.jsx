@@ -36,6 +36,7 @@ export default function BoardPage() {
                     createdAt: new Date(p.createdAt).toLocaleString(),
                     likes: p.likeCount,
                     commentCount: 0,
+                    view: p.viewCount,
                 }));
 
                 setPosts(normalized);
