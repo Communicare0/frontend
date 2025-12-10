@@ -29,7 +29,7 @@ export default function PostCard({ post }) {
     return (
         <article className={s.postCard}>
             <div className={s.translate}>
-                <button onClick={handleTranslate}>
+                <button onClick={handleTranslate} disabled={isLoading}>
                     <img
                         src="/image/translate.svg"
                         alt="번역"
