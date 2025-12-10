@@ -10,20 +10,10 @@ import {
     deleteReview,
     createRestaurant
 } from "@/services/restaurantApi.js";
+import NationalityFlag from "@/components/ui/NationalityFlag";
+
 
 const displayValue = (value) => (value && value !== "NONE" ? value : "N/A");
-
-const NATIONALITY_FLAG = {
-    KOREAN: "🇰🇷",
-    VIETNAMESE: "🇻🇳",
-    CHINESE: "🇨🇳",
-    MYANMARESE: "🇲🇲",
-    JAPANESE: "🇯🇵",
-    INDONESIAN: "🇮🇩",
-    MALAYSIAN: "🇲🇾",
-    EMIRATIS: "🇦🇪",
-    NONE: "🏳️",
-};
 
 // --- 아이콘 컴포넌트 ---
 const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
@@ -31,9 +21,8 @@ const StarIcon = ({ fill, width = 16, height = 16, onClick, style }) => (
         <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke={fill ? "#FFC700" : "#d0d0d0"} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
 );
-const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinecap="round" /></svg>;
+const LinkIcon = () => <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" stroke="currentColor" strokeWidth="2" strokeLinecap="round" /></svg>;
 const ProfileIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="7" r="4" fill="#6D28D9" fillOpacity="0.2" /><path d="M17.5 19.5c0-2.5-2.5-4.5-5.5-4.5s-5.5 2-5.5 4.5" stroke="#6D28D9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const FlagIcon = () => <span role="img" aria-label="Flag">🏳️</span>;
 const PlusIcon = () => (<svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 4V20M4 12H20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>);
 
 const INITIAL_USER_PROFILE = {
@@ -94,8 +83,7 @@ const mapReviewForUI = (review) => {
         // null 체크 정도만 수행하고 값은 그대로 씁니다.
         studentYear: review.authorStudentYear || 'N/A', 
         department: displayValue(review.authorDepartment),
-        nationEmoji: NATIONALITY_FLAG[review.authorNationality] || NATIONALITY_FLAG["NONE"],
-        
+        nationalityCode: review.authorNationality || "NONE",        
         createdAt: new Date(review.createdAt).toLocaleDateString(),
     };
 };
@@ -119,8 +107,10 @@ const ReviewListItem = React.memo(({ review, currentUser, onEdit, onDelete }) =>
                         <span>{review.studentYear}</span>
                         <span className={s.reviewSeparator}> / </span>
                         <span>{review.department}</span>
-                        <span className={s.reviewSeparator}> • </span>
-                        <span style={{ fontSize: '14px' }}>{review.nationEmoji}</span>
+                        <span className={s.reviewSeparator}> / </span>
+                        <span style={{ fontSize: '14px', alignItems: "center" }}>
+                            <NationalityFlag nationality={review.nationalityCode} size={16} />
+                        </span>
                     </div>
                 </div>
             </div>
@@ -153,9 +143,9 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
     };
 
 
-    const displayFlag = isEditing 
-        ? initialData.nationEmoji 
-        : (NATIONALITY_FLAG[currentUser.nationality] || NATIONALITY_FLAG["NONE"]);
+    const displayNationalityCode = isEditing 
+        ? initialData.nationalityCode 
+        : (currentUser.nationality || "NONE");
 
     // 학번 (수정 시: 이미 포맷된 데이터 / 작성 시: 포맷팅 필요)
     let displayStudentYear = "N/A";
@@ -182,6 +172,13 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                         <ProfileIcon style={{ marginRight: '10px', width: '36px', height: '36px' }} />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontWeight: '600', fontSize: '15px' }}>익명 (나)</span>
+                            <div style={{ marginTop: "4px", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#666" }}>
+                                <span>{displayStudentYear}</span>
+                                <span> / </span>
+                                <span>{displayDepartment}</span>
+                                <span> / </span>
+                                <NationalityFlag nationality={displayNationalityCode} size={16} />
+                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', paddingTop: '5px' }}>
