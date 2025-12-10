@@ -2,8 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@/services/authApi.js";
 import { setAccessToken } from "@/services/authToken";
-import useAuth from "@/hooks/useAuth";
 import { fetchMyData, fetchFriendCode } from "@/services/mypageApi";
+import { getLoginEmail } from "@/services/authToken";
 
 import s from "@styles/modules/mypage/MyPage.module.css";
 
@@ -14,9 +14,6 @@ export default function MyPage() {
     const contentRef = useRef(null);
     const navigate = useNavigate();
     const [info, setInfo] = useState({ user: null, friendCode: "" });
-
-    const { user } = useAuth();
-    const email = user?.email; 
     
     useEffect(() => {
         async function loadMyPageData() {
@@ -42,9 +39,18 @@ export default function MyPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError("");
-        console.log("email:", email);
+
+        const emailFromStorage = getLoginEmail();
+        const emailToUse = info.user?.email || emailFromStorage;
+        
+        if(!emailToUse) {
+            console.log("여기 들어옴");
+            setError("이메일 정보를 불러오지 못했습니다. 다시 로그인해 주세요.");
+            return;
+        }
+
         try {
-            const data = await login({ email, password });
+            const data = await login({ email: emailToUse, password });
             setAccessToken(data.accessToken);
             navigate("/mypage/updateUserInfo");
         } catch (err) {
@@ -52,6 +58,8 @@ export default function MyPage() {
 
             if(status === 400 || status === 401) {
                 setError("비밀번호가 일치하지 않습니다.");
+            } else if (status === 403) {
+                setError("이 작업을 수행할 권한이 없습니다. 다시 로그인해 주세요.");
             } else {
                 setError("잠시 후 다시 시도해 주세요.");
             }
