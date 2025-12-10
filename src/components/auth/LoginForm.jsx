@@ -11,6 +11,7 @@ import useAuth from "@/hooks/useAuth";
 // setUser 사용하기 위해 import====================================================
 
 import { setAccessToken } from "@/services/authToken";
+import { setLoginEmail } from "../../services/authToken";
 
 export default function LoginForm() {
     const navigate = useNavigate();
@@ -56,6 +57,7 @@ export default function LoginForm() {
             });
             
             setAccessToken(data.accessToken);
+            setLoginEmail(data.email);
             
             setUser({
                 id: data.userId,

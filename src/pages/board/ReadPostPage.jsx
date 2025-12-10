@@ -121,6 +121,9 @@ export default function ReadPostPage() {
             setEditedTitle(loadedPost.title);
             setEditedContent(loadedPost.text);
 
+            setTranslatedTitle(loadedPost.title);
+            setTranslatedContent(loadedPost.text);
+
             const rawComments = Array.isArray(commentRes)
                 ? commentRes
                 : (commentRes.comments || []);

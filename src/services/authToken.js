@@ -1,4 +1,5 @@
 const ACCESS_TOKEN_KEY = "accessToken";
+const LOGIN_EMAIL_KEY = "loginEmail";
 
 
 /*
@@ -15,6 +16,7 @@ export function getAccessToken() {
 
 export function clearAccessToken() {
     sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(LOGIN_EMAIL_KEY);
 }
 
 export function getCurrentUserId() {
@@ -36,4 +38,12 @@ export function getCurrentUserId() {
         console.error("Failed to parse JWT payload", e);
         return null;
     }
+}
+
+export function setLoginEmail(email) {
+    sessionStorage.setItem(LOGIN_EMAIL_KEY, email);
+}
+
+export function getLoginEmail() {
+    return sessionStorage.getItem(LOGIN_EMAIL_KEY);
 }
