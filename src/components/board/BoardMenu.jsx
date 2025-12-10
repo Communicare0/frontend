@@ -4,7 +4,7 @@ import s from "@styles/modules/board/BoardMenu.module.css";
 const MENUS = [
     { label: "학교 공지사항", value: "university" },
     { label: "자유게시판", value: "free" },
-    { label: "알바 게시판", value: "job" },
+    { label: "여행게시판", value: "job" },
 ];
 
 export default function BoardMenu() {

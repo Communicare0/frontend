@@ -62,6 +62,7 @@ export default function RegisterForm() {
 
   return (
     <form className={s.form} onSubmit={handleSubmit} noValidate>
+      <img src="/image/Logo.png" className={s.logo}/>
       <h1 className={s.title}>Communicare</h1>
 
       <label className={s.label}>이름</label>

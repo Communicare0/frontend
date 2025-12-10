@@ -66,7 +66,7 @@ export default function ReadPostPage() {
     const [translatedTitle, setTranslatedTitle] = useState();
     const [translatedContent, setTranslatedContent] = useState();
 
-
+    const [isLoading, setIsLoading] = useState(false);
 
     function mapComments(commentResponses) {
         return commentResponses.map((c) => ({
@@ -246,6 +246,9 @@ export default function ReadPostPage() {
     const handleCommentSubmit = async (e) => {
         e.preventDefault();
         if (!newCommentText.trim()) return;
+
+        setIsLoading(true);
+
         try {
             await createComment({ postId, content: newCommentText.trim() });
             setNewCommentText("");
@@ -253,6 +256,8 @@ export default function ReadPostPage() {
         } catch (err) {
             console.error("댓글 추가 실패:", err);
             alert("댓글 등록에 실패했습니다.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -368,7 +373,10 @@ export default function ReadPostPage() {
 
                         {!isEditing &&
                             <button className={s.translateButton} onClick={handleTranslate} type="button">
-                                <img src="/image/translate.svg" alt="번역" />
+                                <img
+                                    src="/image/translate.svg"
+                                    alt="번역"
+                                    className={isLoading ? s.translateLoading : ""}/>
                             </button>
                         }
                         

@@ -17,6 +17,7 @@ export default function MainLayout() {
             <header className={s.header}>
                 <div className={s.left}>
                     <span className={s.logo} onClick={() => navigate("/")}>
+                        <img src="/image/Logo.png" className={s.logoimg}/>            
                         Communicare
                     </span>
                 </div>

@@ -6,10 +6,13 @@ import s from "@styles/modules/board/PostCard.module.css";
 export default function PostCard({ post }) {
     const [translatedTitle, setTranslatedTitle] = useState(post.title);
     const [translatedContent, setTranslatedContent] = useState(post.text);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleTranslate = async (e) => {
         e.preventDefault();
         e.stopPropagation();
+
+        setIsLoading(true);
 
         try {
             const { translatedTitle, translatedContent } = await translate(post.id);
@@ -18,6 +21,8 @@ export default function PostCard({ post }) {
             setTranslatedContent(translatedContent);
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -25,7 +30,12 @@ export default function PostCard({ post }) {
         <article className={s.postCard}>
             <div className={s.translate}>
                 <button onClick={handleTranslate}>
-                    <img src="/image/translate.svg" alt="번역" style={{ width: 32, height: 32 }} />
+                    <img
+                        src="/image/translate.svg"
+                        alt="번역"
+                        style={{ width: 32, height: 32 }}
+                        className={isLoading ? s.translateLoading : ""}
+                    />
                 </button>
             </div>
 
