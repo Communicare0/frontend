@@ -81,6 +81,7 @@ export default function LoginForm() {
     
     return (
         <form className={s.form} onSubmit={handleSubmit}>
+            <img src="/image/Logo.png" className={s.logo}/>
             <h1 className={s.title}>Communicare</h1>
 
             {/* 이메일 필드 */}

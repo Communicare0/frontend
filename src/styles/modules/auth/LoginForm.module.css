@@ -21,6 +21,13 @@
     padding: 32px 40px;
 }
 
+.logo {
+    width: 100px;
+    height: 100px;
+    display: block;
+    margin: 0 auto;
+}
+
 /* 제목: Communicare */
 .title {
     font-family: 'Roboto', sans-serif;
