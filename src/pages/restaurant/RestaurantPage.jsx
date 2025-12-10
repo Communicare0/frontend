@@ -134,7 +134,7 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (rating === 0 || !reason.trim()) {
+        if (rating === 0) {
             alert("별점과 내용을 모두 입력해주세요.");
             return;
         }
@@ -191,9 +191,9 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                 />
                 <div className={s.buttonGroup}>
                     <button type="button" onClick={onCancel} className={s.cancelBtn} style={{fontWeight: '600'}}>취소</button>
-                    <button type="submit" disabled={rating === 0 || !reason.trim() || isLoading} className={s.submitBtn} style={{ 
-                        backgroundColor: (rating === 0 || !reason.trim() || isLoading) ? '#ccc' : '#5b5bff',
-                        cursor: (rating === 0 || !reason.trim() || isLoading) ? 'not-allowed' : 'pointer',
+                    <button type="submit" disabled={rating === 0 || isLoading} className={s.submitBtn} style={{ 
+                        backgroundColor: (rating === 0 || isLoading) ? '#ccc' : '#5b5bff',
+                        cursor: (rating === 0 || isLoading) ? 'not-allowed' : 'pointer',
                         fontWeight: '600',
                     }}>
                         {isEditing ? '수정 완료' : '등록'}
