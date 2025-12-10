@@ -19,6 +19,7 @@ import {
     reportComment,
 } from "@/services/boardApi";
 import NationalityFlag from "@/components/ui/NationalityFlag";
+import { translate } from "@/services/boardApi";
 
 import s from "@styles/modules/board/ReadPostPage.module.css";
 
@@ -60,6 +61,10 @@ export default function ReadPostPage() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedTitle, setEditedTitle] = useState("");
     const [editedContent, setEditedContent] = useState("");
+
+    // 번역 관련
+    const [translatedTitle, setTranslatedTitle] = useState();
+    const [translatedContent, setTranslatedContent] = useState();
 
 
 
@@ -118,6 +123,9 @@ export default function ReadPostPage() {
                 // 로드 시 수정 상태 초기화
                 setEditedTitle(loadedPost.title);
                 setEditedContent(loadedPost.text);
+
+                setTranslatedTitle(loadedPost.title);
+                setTranslatedContent(loadedPost.text);
 
                 const rawComments = Array.isArray(commentRes) ? commentRes : (commentRes.comments || []);
                 setComments(mapComments(rawComments));
@@ -320,6 +328,17 @@ export default function ReadPostPage() {
         }
     };
 
+    const handleTranslate = async () => {
+        try {
+            const { translatedTitle, translatedContent } = await translate(post.id);
+
+            setTranslatedTitle(translatedTitle);
+            setTranslatedContent(translatedContent);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
     if (!post) {
         return <div className={s.loading}>게시물 로드 중...</div>;
     }
@@ -342,6 +361,13 @@ export default function ReadPostPage() {
                         >
                             <ArrowLeftIcon />
                         </button>
+
+                        {!isEditing &&
+                            <button className={s.translateButton} onClick={handleTranslate} type="button">
+                                <img src="/image/translate.svg" alt="번역" />
+                            </button>
+                        }
+                        
                     </header>
 
                     {/* 메인 콘텐츠 영역 */}
@@ -357,7 +383,7 @@ export default function ReadPostPage() {
                                 disabled={!isEditing}
                             />
                         ) : (
-                            <h1 className={s.postTitle}>{post.title}</h1>
+                            <h1 className={s.postTitle}>{translatedTitle}</h1>
                         )}
 
                         {/* 작성자 정보 */}
@@ -385,7 +411,7 @@ export default function ReadPostPage() {
                                     disabled={!isEditing}
                                 />
                             ) : (
-                                <p>{post.text}</p>
+                                <p>{translatedContent}</p>
                             )}
                         </div>
 
