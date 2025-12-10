@@ -40,6 +40,7 @@
 
 /* 게시글 헤더 (뒤로가기 버튼) */
 .postHeader {
+    position: relative;
     display: flex;
     align-items: center;
     padding-bottom: 16px;
@@ -348,4 +349,43 @@
 
 .commentLikeButton svg {
     margin-right: 0;
+}
+
+.translateButton {
+  margin-left: auto;
+  width: 40px;
+  height: 40px;
+
+  border-radius: 10px;
+  border: 1px solid #d4d4d4;
+  background-color: #ffffff;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.1s ease;
+}
+
+.translateButton img {
+  width: 22px;
+  height: 22px;
+  pointer-events: none;
+}
+
+.translateButton:hover {
+  background-color: #f5f5f5;
+  border-color: #c0c0c0;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+.translateButton:active {
+  transform: translateY(0);
+  box-shadow: none;
 }

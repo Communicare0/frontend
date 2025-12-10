@@ -1,7 +1,8 @@
 .postCard {
+    position: relative;
     background-color: #fff;
     border-radius: 24px;
-    padding: 24px 32px;
+    padding: 24px 24px 16px;
     box-shadow: 0 4px 12px rgba(0,0,0,0.04);
 }
 
@@ -16,6 +17,12 @@
     margin-bottom: 16px;
     border-bottom: 1px solid #ccc;
     padding-bottom: 12px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+    text-overflow: ellipsis;
+    line-clamp: 2;
 }
 
 .postCardFooter {
@@ -42,4 +49,41 @@
 
 .postCardLikeText {
     font-size: 11px;
+}
+
+.translate {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    z-index: 2;
+}
+
+.translate button {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(4px);
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: all 0.18s ease-in-out;
+}
+
+.translate button:hover {
+    background-color: rgba(255,255,255,1);
+    box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+    transform: translateY(-1px);
+}
+
+.translate button img {
+    width: 20px;
+    height: 20px;
+    pointer-events: none;
 }
