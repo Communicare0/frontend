@@ -111,3 +111,7 @@ export async function reportComment(commentId, reason) {
         body: JSON.stringify({ reason }),
     });
 }
+
+export async function translate(postId) {
+  return api(`/v1/posts/translate/${postId}`);
+}
