@@ -135,7 +135,7 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
     const handleSubmit = (e) => {
         e.preventDefault();
         if (rating === 0) {
-            alert("별점과 내용을 모두 입력해주세요.");
+            alert("별점은 필수! 리뷰 남겨주시면 감사합니다.");
             return;
         }
         onSubmit({ rating, reason: reason.trim() });
