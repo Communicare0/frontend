@@ -44,5 +44,15 @@ export async function api(path, options = {}) {
     return null;
   }
 
-  return res.json();
+  const text = await res.text();
+  if(!text) {
+    return null;
+  }
+  
+  try {
+    return JSON.parse(text);
+  } catch(e) {
+    console.error("JSON 파싱 실패, 원문:", text);
+    throw e;
+  }
 }

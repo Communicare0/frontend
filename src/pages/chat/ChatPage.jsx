@@ -34,26 +34,24 @@ export default function ChatPage() {
     const initialRoomId = location.state?.initialRoomId || null;
     const initialRoomTitle = location.state?.initialRoomTitle || null;
 
+    useEffect(() => {
+        if(initialRoomId && !selectedRoomId) {
+            setSelectedRoomId(initialRoomId);
+        }
+    }, [initialRoomId, selectedRoomId]);
+
     const loadRooms = useCallback(async () => {
         setLoadingRooms(true);
         try {
             const data = await fetchMyChatRooms();
             setRooms(data || []);
-/*
-            if(!selectedRoomId && data && data.length > 0) {
-                if(initialRoomId && data.some((r) => r.chatRoomId === initialRoomId)) {
-                    setSelectedRoomId(initialRoomId);
-                } else {
-                    setSelectedRoomId(data[0].chatRoomId);
-                }
-            }*/
         } catch (err) {
             console.error(err);
             setError(err.message || "채팅방 목록 로딩 실패");
         } finally {
             setLoadingRooms(false);
         }
-    }, [/*selectedRoomId, initialRoomId*/]);
+    }, []);
 
     useEffect(() => {
         selectedRoomIdRef.current = selectedRoomId;
@@ -339,6 +337,7 @@ export default function ChatPage() {
             } else {
                 setSelectedRoomId(null);
             }
+
         } catch (err) {
             console.error(err);
             setError(err.message || "채팅방 나가기 실패");
