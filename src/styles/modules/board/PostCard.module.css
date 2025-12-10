@@ -32,6 +32,17 @@
     font-size: 11px;
 }
 
+.postCardMeta {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.85rem;
+}
+
+.metaDivider {
+    padding: 0 4px;
+}
+
 .postCardMeta span + span {
     margin-left: 4px;
 }
