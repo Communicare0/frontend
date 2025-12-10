@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import PostCard from "@/components/board/PostCard";
@@ -10,35 +10,16 @@ export default function BoardPage() {
     const { category } = useParams();
     const navigate = useNavigate();
     
-    const [posts, setPosts] =  useState([]);
-    const [sortOption, setSortOption] =  useState("like_desc");
+    const [rawPosts, setRawPosts] =  useState([]);
+    const [sortOption, setSortOption] =  useState("latest");
     const [search, setSearch] = useState("");
 
     useEffect(() => {
         async function loadPosts() {
         
             try {
-                const data = await fetchBoardPosts({
-                    category,
-                    sort: sortOption,
-                    search,
-                });
-
-                const sorted = data.slice().sort((a, b) => {
-                    return new Date(b.createdAt) - new Date(a.createdAt);
-                });
-
-                const normalized = sorted.map((p) => ({
-                    id: p.postId,
-                    title: p.title,
-                    text: p.content,
-                    username: p.userId,
-                    createdAt: new Date(p.createdAt).toLocaleString(),
-                    likes: p.likeCount,
-                    commentCount: 0,
-                }));
-
-                setPosts(normalized);
+                const data = await fetchBoardPosts({ category });
+                setRawPosts(data);
             } catch (err) {
                 console.error(err);
             }
@@ -47,17 +28,39 @@ export default function BoardPage() {
         if(category) {
             loadPosts();
         }
-    }, [category, sortOption, search]);
+    }, [category]);
 
-    const handleSortToggle = () => {
-        //실제 정렬 로직은 나중에
-        setSortOption((prev) => prev === "like_desc" ? "latest" : "like_desc");
-    };
+    const posts = useMemo(() => {
+        if(!rawPosts) return [];
 
-    const handleSearchChange = (e) => {
-        //실제로는 devounce + API 호출 or 프론트 필터링
-        setSearch(e.target.value);
-    }
+        let filtered = rawPosts;
+        if(search.trim()) {
+            filtered = filtered.filter((p) => 
+                p.title?.toLowerCase().includes(search.toLowerCase()) ||
+                p.content?.toLowerCase().includes(search.toLowerCase())
+            );
+        }
+
+        let sorted = filtered.slice();
+        if(sortOption === "latest") {
+            sorted.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        } else if(sortOption === "like_desc") {
+            sorted.sort((a,b) => b.likeCount - a.likeCount);
+        } else if(sortOption === "view_desc") {
+            sorted.sort((a,b) => b.viewCount - a.viewCount);
+        }
+
+        return sorted.map((p) => ({
+            id: p.postId,
+            title: p.title,
+            text: p.content,
+            username: p.userId,
+            createdAt: new Date(p.createdAt).toLocaleString(),
+            likes: p.likeCount,
+            view: p.viewCount,
+            commentCount: 0,
+        }));
+    }, [rawPosts, sortOption, search]);
 
     const handleTopClick = () => {
         const contentEl = document.querySelector("[data-layout-content]");
@@ -77,9 +80,14 @@ export default function BoardPage() {
 
             <section className={s.boardMain}>
                 <header className={s.boardMainHeader}>
-                    <button className={s.boardSortBtn} onClick={handleSortToggle}>
-                        {sortOption === "like_desc" ? "Like 30 up" : "Latest"}
-                    </button>
+                    <select
+                        value={sortOption}
+                        onChange={(e) => setSortOption(e.target.value)}
+                    >
+                        <option value="latest">최신순</option>
+                        <option value="like_desc">좋아요순</option>
+                        <option value="view_desc">조회순</option>
+                    </select>
 
                     <div className={s.boardSearchWrapper}>
                         <input
@@ -87,7 +95,7 @@ export default function BoardPage() {
                             type="text"
                             placeholder="search"
                             value={search}
-                            onChange={handleSearchChange}
+                            onChange={(e) => setSearch(e.target.value)}
                         />
                     </div>
                 </header>

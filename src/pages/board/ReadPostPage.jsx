@@ -1,5 +1,5 @@
 // src/pages/board/ReadPostPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import BoardMenu from "@/components/board/BoardMenu";
 import useAuth from "@/hooks/useAuth";
@@ -92,51 +92,49 @@ export default function ReadPostPage() {
         }
     }
 
+    const loadPostData = useCallback(async () => {
+        try {
+            const [postData, commentRes] = await Promise.all([
+                fetchPostDetail(postId),
+                fetchPostComments(postId),
+            ]);
+
+            const loadedPost = {
+                id: postData.postId,
+                category: postData.category,
+                title: postData.title,
+
+                authorId: postData.authorId ?? postData.userId,
+
+                studentYear: postData.authorStudentYear,
+                department: postData.authorDepartment,
+                nationality: postData.authorNationality,
+
+                createdAt: new Date(postData.createdAt).toLocaleString(),
+                views: postData.viewCount,
+                likes: postData.likeCount || 0,
+                isLiked: postData.isLikedByMe || false,
+                text: postData.content,
+            };
+
+            setPost(loadedPost);
+            setEditedTitle(loadedPost.title);
+            setEditedContent(loadedPost.text);
+
+            const rawComments = Array.isArray(commentRes)
+                ? commentRes
+                : (commentRes.comments || []);
+            setComments(mapComments(rawComments));
+        } catch(err) {
+            console.error(err);
+            navigate(`/board/${category}`);
+        }
+    }, [postId, category, navigate]);
+
 
     useEffect(() => {
-        async function loadPostData() {
-            try {
-                const [postData, commentRes] = await Promise.all([
-                    fetchPostDetail(postId),
-                    fetchPostComments(postId)
-                ]);
-
-                const loadedPost = {
-                    id: postData.postId,
-                    category: postData.category,
-                    title: postData.title,
-
-                    authorId: postData.authorId ?? postData.userId,
-
-                    studentYear: postData.authorStudentYear,
-                    department: postData.authorDepartment,
-                    nationality: postData.authorNationality,
-
-                    createdAt: new Date(postData.createdAt).toLocaleString(),
-                    views: postData.viewCount,
-                    likes: postData.likeCount || 0,
-                    isLiked: postData.isLikedByMe || false,
-                    text: postData.content,
-                }
-
-                setPost(loadedPost);
-                // 로드 시 수정 상태 초기화
-                setEditedTitle(loadedPost.title);
-                setEditedContent(loadedPost.text);
-
-                setTranslatedTitle(loadedPost.title);
-                setTranslatedContent(loadedPost.text);
-
-                const rawComments = Array.isArray(commentRes) ? commentRes : (commentRes.comments || []);
-                setComments(mapComments(rawComments));
-            } catch (err) {
-                console.error(err);
-                navigate(`/board/${category}`);
-            }
-        }
-
         loadPostData();
-    }, [category, postId, navigate]);
+    }, [loadPostData]);
 
     // 게시글 수정 모드 진입 핸들러
     const handlePostEdit = () => {
@@ -166,6 +164,9 @@ export default function ReadPostPage() {
                 title: editedTitle.trim(),
                 text: editedContent.trim()
             }));
+
+            await loadPostData();
+            
             setIsEditing(false);
             alert("게시글이 성공적으로 수정되었습니다.");
 

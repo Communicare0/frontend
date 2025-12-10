@@ -13,7 +13,11 @@ export default function MyBoardPage() {
             try {
                 const data = await fetchUserPosts();
 
-                const normalized = data.map((p) => ({
+                const sorted = data.slice().sort((a,b) => {
+                    return new Date(b.createdAt) - new Date(a.createdAt);
+                })
+
+                const normalized = sorted.map((p) => ({
                     id: p.postId,
                     title: p.title,
                     text: p.content,

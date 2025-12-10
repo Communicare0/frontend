@@ -1,15 +1,20 @@
 const ACCESS_TOKEN_KEY = "accessToken";
 
+
+/*
+localStorage => 직접 로그아웃 안하면 계속 로그인 유지
+sessionStorage => 브라우저 껐다 키면 상태 초기화
+*/
 export function setAccessToken(token) {
-    localStorage.setItem(ACCESS_TOKEN_KEY, token);
+    sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
 }
 
 export function getAccessToken() {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
+    return sessionStorage.getItem(ACCESS_TOKEN_KEY);
 }
 
 export function clearAccessToken() {
-    localStorage.removeItem(ACCESS_TOKEN_KEY);
+    sessionStorage.removeItem(ACCESS_TOKEN_KEY);
 }
 
 export function getCurrentUserId() {
@@ -22,7 +27,7 @@ export function getCurrentUserId() {
 
         const payloadBase64 = parts[1]
             .replace(/-/g, "+")
-            .replace(/-/g, "/");
+            .replace(/_/g, "/");
 
         const json = JSON.parse(atob(payloadBase64));
 

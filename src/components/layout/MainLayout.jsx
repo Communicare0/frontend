@@ -49,15 +49,18 @@ export default function MainLayout() {
                 </nav>
 
                 <div className={s.right}>
+
                     <NavLink to="/mypage" className={s.mypageBtn}>
                         <img src="/image/user.svg" alt="마이페이지" className={s.mypageicon} />
                     </NavLink>
+                    {/*
                     <NavLink to="/notifications" className={s.alarmBtn}>
                         <img src="/image/alarm.svg" alt="알림" className={s.icon} />
-                        {/*{unreadCount > 0 && (
+                        {unreadCount > 0 && (
                             <span className={s.badge}>{unreadCount}</span>
-                        )}*/}
+                        )}
                     </NavLink>
+                    */}
                     <button type="button" className={s.logoutBtn} onClick={handleLogout}>
                         로그아웃
                     </button>

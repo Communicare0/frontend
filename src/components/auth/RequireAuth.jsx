@@ -4,8 +4,13 @@ import useAuth from "@/hooks/useAuth";
 export default function RequireAuth({ children }) {
     const auth = useAuth();
     const user = auth?.user;
+    const initialized = auth?.initialized;
     const location = useLocation();
 
+    if(!initialized) {
+        return null;
+    }
+    
     if(!user) {
         return (
             <Navigate

@@ -72,17 +72,10 @@ export default function LoginForm() {
         }
     };
 
-    const handleGoogleLogin = () => {
-        console.log('Google OAuth 시작');
-    };
-
     const handleRegisterClick = (e) => {
         e.preventDefault();
         navigate("/register");
     };
-
-    const googleIconPath = '/image/google_icon.svg';
-    const dividerLinePath = '/image/Vector 1.svg';
     
     return (
         <form className={s.form} onSubmit={handleSubmit}>
@@ -114,17 +107,6 @@ export default function LoginForm() {
 
             <Button type="submit" className={s.submitBtn} disabled={loading}>
                 {loading ? "로그인 중..." : "로그인"}
-            </Button>
-
-            <div className={s.dividerContainer}>
-                <img src={dividerLinePath} alt="Divider line" className={s.dividerLine} />
-                <p className={s.dividerText}>또는</p>
-                <img src={dividerLinePath} alt="Divider line" className={s.dividerLine} />
-            </div>
-
-            <Button type="button" className={s.socialBtn} onClick={handleGoogleLogin}>
-                <img src={googleIconPath} alt="Google logo" style={{ width: '18px', height: '18px' }} />
-                Google 계정으로 로그인
             </Button>
 
             <p className={s.footerText}>
