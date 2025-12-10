@@ -1,7 +1,21 @@
 import { useState } from "react";
 import { translate } from "@/services/boardApi";
+import NationalityFlag from "@/components/ui/NationalityFlag";
 
 import s from "@styles/modules/board/PostCard.module.css";
+
+// 프로필 메타 컴포넌트
+const UserProfileMeta = ({ studentYear, department, nationality }) => (
+    <div className={s.userProfileMeta}>
+       <span className={s.profileYear}>{studentYear}</span>
+        <span className={s.profileSeparator}>/</span>
+        <span className={s.profileInfo}>{department}</span>
+        <span className={s.profileSeparator}>/</span>
+        <span className={s.profileNation}>
+            <NationalityFlag nationality={nationality} size={18} />
+        </span>
+    </div>
+);
 
 export default function PostCard({ post }) {
     const [translatedTitle, setTranslatedTitle] = useState(post.title);
@@ -44,9 +58,12 @@ export default function PostCard({ post }) {
 
             <div className={s.postCardFooter}>
                 <div className={s.postCardMeta}>
-                    <span>{post.commentCount} comment</span>
-                    <span>| {post.createdAt}</span>
-                    <span>| {post.username}</span>
+                    <span>{post.createdAt} |</span>
+                    <UserProfileMeta
+                        studentYear={post.studentYear}
+                        department={post.department}
+                        nationality={post.nationality}
+                    />
                 </div>
 
                 <div className={s.postCardLike}>
