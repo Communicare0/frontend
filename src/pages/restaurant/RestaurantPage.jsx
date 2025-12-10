@@ -7,7 +7,8 @@ import {
     fetchReviewsByRestaurantId,
     createReview,
     updateReview,
-    deleteReview
+    deleteReview,
+    createRestaurant
 } from "@/services/restaurantApi.js";
 import NationalityFlag from "@/components/ui/NationalityFlag";
 
@@ -171,6 +172,13 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
                         <ProfileIcon style={{ marginRight: '10px', width: '36px', height: '36px' }} />
                         <div style={{ display: 'flex', flexDirection: 'column' }}>
                             <span style={{ fontWeight: '600', fontSize: '15px' }}>익명 (나)</span>
+                            <div style={{ marginTop: "4px", display: "flex", alignItems: "center", gap: "6px", fontSize: "13px", color: "#666" }}>
+                                <span>{displayStudentYear}</span>
+                                <span> / </span>
+                                <span>{displayDepartment}</span>
+                                <span> / </span>
+                                <NationalityFlag nationality={displayNationalityCode} size={16} />
+                            </div>
                         </div>
                     </div>
                     <div style={{ display: 'flex', gap: '8px', paddingTop: '5px' }}>
@@ -204,6 +212,55 @@ const ReviewForm = ({ initialData, onSubmit, onCancel, currentUser, selectedRest
     );
 };
 
+const RestaurantRegistrationCardOverlay = ({ onClose, onSubmit }) => {
+    const [name, setName] = useState('');
+    const [mapUrl, setMapUrl] = useState('');
+    const [type, setType] = useState('NONE'); 
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (!name || !mapUrl) {
+            alert("식당 이름과 Google Map URL을 입력해주세요.");
+            return;
+        }
+        onSubmit({ name, googleMapUrl: mapUrl, restaurantType: type });
+    };
+
+    const restaurantTypes = [
+        { value: 'NONE', label: '일반/기타' },
+        { value: 'HALAL', label: '할랄 (Halal)' },
+        { value: 'KOSHER', label: '코셔 (Kosher)' },
+        { value: 'VEGAN', label: '비건 (Vegan)' },
+    ];
+
+    return (
+        <div className={s.overlay}>
+            <div className={s.registrationCard}>
+                <h3 style={{ marginTop: 0, fontSize: '18px', fontWeight: '700', color: '#1a1a1a', marginBottom: '16px' }}>새 식당 등록 요청</h3>
+                <form onSubmit={handleSubmit}>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', fontWeight: '600', fontSize: '13px', marginBottom: '5px' }}>식당 이름</label>
+                        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="식당 이름을 입력하세요" style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                    </div>
+                    <div style={{ marginBottom: '15px' }}>
+                        <label style={{ display: 'block', fontWeight: '600', fontSize: '13px', marginBottom: '5px' }}>Google 지도 URL</label>
+                        <input type="url" value={mapUrl} onChange={(e) => setMapUrl(e.target.value)} placeholder="지도 URL을 붙여넣으세요" style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px' }} />
+                    </div>
+                    <div style={{ marginBottom: '25px' }}>
+                        <label style={{ display: 'block', fontWeight: '600', fontSize: '13px', marginBottom: '5px' }}>식당 타입</label>
+                        <select value={type} onChange={(e) => setType(e.target.value)} style={{ width: '100%', padding: '10px', border: '1px solid #ddd', borderRadius: '6px', appearance: 'none', cursor: 'pointer' }}>
+                            {restaurantTypes.map(opt => (<option key={opt.value} value={opt.value}>{opt.label}</option>))}
+                        </select>
+                    </div>
+                    <div className={s.buttonGroup}>
+                        <button type="button" onClick={onClose} className={s.cancelBtn} style={{fontWeight: '600'}}>취소</button>
+                        <button type="submit" disabled={!name.trim() || !mapUrl.trim()} className={s.submitBtn} style={{ backgroundColor: (!name.trim() || !mapUrl.trim()) ? '#ccc' : '#5b5bff', fontWeight: '600' }}>등록 요청</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
 
 const CategoryDropdown = ({ value, onChange, options }) => {
     return (
@@ -222,6 +279,12 @@ const WriteReviewButton = ({ onClick }) => (
     </button>
 );
 
+const RegisterRestaurantButton = ({ onClick }) => (
+    <button onClick={onClick} className={s.registerButton}>
+        <PlusIcon style={{ marginRight: '4px' }} />
+        <span>식당 등록</span>
+    </button>
+);
 
 
 export default function RestaurantPage() {
@@ -231,6 +294,7 @@ export default function RestaurantPage() {
     const [selectedRestaurantId, setSelectedRestaurantId] = useState(null);
     const [selectedCategory, setSelectedCategory] = useState("NONE");
     const [selectedFilter, setSelectedFilter] = useState("Recommendation");
+    const [isRegisterFormOpen, setIsRegisterFormOpen] = useState(false); 
     const [editingReview, setEditingReview] = useState(null); 
     const [isReviewFormOpen, setIsReviewFormOpen] = useState(false); 
     const [isLoading, setIsLoading] = useState(true);
@@ -402,6 +466,17 @@ export default function RestaurantPage() {
         setEditingReview(null);
     };
 
+    const handleCreateRestaurant = async (payload) => {
+        try {
+            await createRestaurant(payload);
+            alert("식당 등록 요청이 완료되었습니다.");
+            setIsRegisterFormOpen(false);
+            loadRestaurants();
+        } catch (error) {
+            console.error("식당 등록 오류:", error);
+            alert(`식당 등록 중 오류가 발생했습니다: ${error.message}`);
+        }
+    };
 
     const renderReviewForm = () => {
         if (editingReview || isReviewFormOpen) {
@@ -443,6 +518,7 @@ export default function RestaurantPage() {
                     <div className={s.dropdownContainer}>
                         <CategoryDropdown value={selectedCategory} onChange={setSelectedCategory} options={['NONE', 'Recommendation', 'HALAL', 'KOSHER', 'VEGAN', 'KOREA', 'JAPAN', 'CHINA', 'VIETNAM', 'INDIA', 'WEST']} />
                         <CategoryDropdown value={selectedFilter} onChange={setSelectedFilter} options={['Rating', 'Distance', 'New']} />
+                        <RegisterRestaurantButton onClick={() => setIsRegisterFormOpen(true)} />
                     </div>
                     
                     <div className={`${s.listScrollArea} custom-scroll-list`}>
@@ -494,6 +570,13 @@ export default function RestaurantPage() {
                     )}
                 </div>
             </div>
+            
+            {isRegisterFormOpen && (
+                <RestaurantRegistrationCardOverlay 
+                    onClose={() => setIsRegisterFormOpen(false)} 
+                    onSubmit={handleCreateRestaurant} 
+                />
+            )}
         </div>
     );
 }
