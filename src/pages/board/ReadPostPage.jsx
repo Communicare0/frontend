@@ -247,8 +247,6 @@ export default function ReadPostPage() {
         e.preventDefault();
         if (!newCommentText.trim()) return;
 
-        setIsLoading(true);
-
         try {
             await createComment({ postId, content: newCommentText.trim() });
             setNewCommentText("");
@@ -256,8 +254,6 @@ export default function ReadPostPage() {
         } catch (err) {
             console.error("댓글 추가 실패:", err);
             alert("댓글 등록에 실패했습니다.");
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -338,6 +334,7 @@ export default function ReadPostPage() {
     };
 
     const handleTranslate = async () => {
+        setIsLoading(true);
         try {
             const { translatedTitle, translatedContent } = await translate(post.id);
 
@@ -345,6 +342,8 @@ export default function ReadPostPage() {
             setTranslatedContent(translatedContent);
         } catch (err) {
             console.error(err);
+        } finally {
+            setIsLoading(false);
         }
     }
 
@@ -372,11 +371,12 @@ export default function ReadPostPage() {
                         </button>
 
                         {!isEditing &&
-                            <button className={s.translateButton} onClick={handleTranslate} type="button">
+                            <button className={s.translateButton} onClick={handleTranslate} type="button" disabled={isLoading}>
                                 <img
                                     src="/image/translate.svg"
                                     alt="번역"
-                                    className={isLoading ? s.translateLoading : ""}/>
+                                    className={isLoading ? s.translateLoading : ""}
+                                />
                             </button>
                         }
                         
@@ -433,9 +433,6 @@ export default function ReadPostPage() {
                                 <button className={s.likeButton} onClick={handlePostLikeToggle} disabled={isEditing}>
                                     {post.isLiked ? <LikedIcon /> : <UnlikedIcon />}
                                     <span>{post.likes}</span>
-                                </button>
-                                <button className={s.shareButton} disabled={isEditing}>
-                                    <ShareIcon />
                                 </button>
                             </div>
 

@@ -26,7 +26,6 @@ export default function ChatPage() {
     const [creatingGroup, setCreatingGroup] = useState(false);
     const [myUserId, setMyUserId] = useState(null);
 
-    const [unreadCounts, setUnreadCounts] = useState({});
     const subscriptionsRef = useRef({});
     const selectedRoomIdRef = useRef(null);
 
@@ -114,8 +113,7 @@ export default function ChatPage() {
                     }
                 );
                 const roomIdFromMsg = chatMessage.chatRoomId;
-                const senderIdFromMsg = chatMessage.senderId;
-
+                
                 if(!roomIdFromMsg) return;
 
                 setMessages((prev) => {
@@ -128,13 +126,6 @@ export default function ChatPage() {
 
                     return prev;
                 });
-
-                if(roomIdFromMsg !== selectedRoomIdRef.current && senderIdFromMsg && senderIdFromMsg !== myUserId) {
-                    setUnreadCounts((prev) => ({
-                        ...prev,
-                        [roomIdFromMsg]: (prev[roomIdFromMsg] || 0) + 1,
-                    }));
-                }
             });
 
             newSubs[roomId] = sub;
@@ -168,11 +159,6 @@ export default function ChatPage() {
             .finally(() => {
                 if(mounted) setLoadingMessages(false);
             });
-
-        setUnreadCounts((prev) => ({
-            ...prev,
-            [selectedRoomId]: 0,
-        }));
 
         return () => {
             mounted = false;
@@ -326,11 +312,6 @@ export default function ChatPage() {
             setRooms(remainingRooms);
 
             setMessages([]);
-            setUnreadCounts((prev) => {
-                const copy = { ...prev };
-                delete copy[leavingId];
-                return copy;
-            });
 
             if(remainingRooms.length > 0) {
                 setSelectedRoomId(remainingRooms[0].chatRoomId);
@@ -440,10 +421,14 @@ export default function ChatPage() {
                     <ul className={s.roomList}>
                         {rooms.map((room) => {
                             const isActive = room.chatRoomId === selectedRoomId;
-                            const unread = unreadCounts[room.chatRoomId] || 0;
-
+                            
                             const displayTitle = getRoomDisplayTitle(room);
                             
+                            const membersRaw = room.memberIds || room.membersId || room.members || [];
+                            const memberCount = Array.isArray(membersRaw) ? membersRaw.length : 0;
+
+                            const isGroup = room.chatRoomType === "GROUP";
+
                             return (
                                 <li
                                     key={room.chatRoomId}
@@ -452,16 +437,16 @@ export default function ChatPage() {
                                 >
                                     <div className={s.roomAvatar} />
                                     <div className={s.roomText}>
-                                        <div className={s.roomTitle}>{displayTitle}</div>
+                                        <div className={s.roomTitleRow}>
+                                            <span className={s.roomTitle}>{displayTitle}</span>
+                                            {isGroup && memberCount > 0 && (
+                                                <span className={s.memberCountBadge}>{memberCount}</span>
+                                            )}
+                                        </div>
                                         <div className={s.roomLastMessage}>
                                             {room.lastMessageContent || "대화 내역 없음"}
                                         </div>
                                     </div>
-                                    {unread > 0 && (
-                                        <div className={s.unreadBadge}>
-                                            {unread > 99 ? "99+" : unread}
-                                        </div>
-                                    )}
                                 </li>
                             );
                         })}
