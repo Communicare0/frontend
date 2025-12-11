@@ -93,18 +93,6 @@ export async function reportPost(postId, reason) {
     });
 }
 
-export async function likeComment(commentId) {
-    return api(`/v1/comments/${commentId}/like`, {
-        method: "POST",
-    });
-}
-
-export async function unlikeComment(commentId) {
-    return api(`/v1/comments/${commentId}/like`, {
-        method: "DELETE",
-    });
-}
-
 export async function reportComment(commentId, reason) {
     return api(`/v1/reports/comment/${commentId}`, {
         method: "POST",

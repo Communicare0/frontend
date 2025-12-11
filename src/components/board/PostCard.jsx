@@ -58,7 +58,9 @@ export default function PostCard({ post }) {
 
             <div className={s.postCardFooter}>
                 <div className={s.postCardMeta}>
-                    <span>{post.createdAt} |</span>
+                    <span className={s.metaDate}>{post.createdAt}</span>
+
+                    <span className={s.metaDivider}>|</span>
                     <UserProfileMeta
                         studentYear={post.studentYear}
                         department={post.department}

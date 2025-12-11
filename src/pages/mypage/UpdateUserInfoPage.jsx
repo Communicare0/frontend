@@ -79,7 +79,7 @@ export default function UpdateUserInfoPage() {
     }
 
     return (
-        <div className={s.updatepageLayer}>
+        <div className={s.updatePageLayer}>
             <form className={s.form} onSubmit={handleSubmit}>
 
                 <label className={s.label}>학과</label>
