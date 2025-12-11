@@ -14,8 +14,6 @@ import {
     likePost,
     unlikePost,
     reportPost,
-    likeComment,
-    unlikeComment,
     reportComment,
 } from "@/services/boardApi";
 import NationalityFlag from "@/components/ui/NationalityFlag";
@@ -25,7 +23,6 @@ import s from "@styles/modules/board/ReadPostPage.module.css";
 
 // 아이콘 컴포넌트
 const ArrowLeftIcon = () => <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15 18L9 12L15 6" stroke="#1F2937" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>;
-const ShareIcon = () => <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.5 7.5L13.3333 3.33333M17.5 7.5L13.3333 11.6667M17.5 7.5H9.16667C8.44928 7.5 7.76159 7.79097 7.25825 8.3044C6.75492 8.81784 6.47917 9.51087 6.47917 10.2333V14.4167C6.47917 15.1391 6.75492 15.8322 7.25825 16.3456C7.76159 16.859 8.44928 17.15 9.16667 17.15H17.5" stroke="#6B7280" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round" /></svg>;
 const LikedIcon = ({ color = "#EF4444" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill={color} xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 const UnlikedIcon = ({ color = "#6B7280" }) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" /></svg>;
 
@@ -113,7 +110,7 @@ export default function ReadPostPage() {
                 createdAt: new Date(postData.createdAt).toLocaleString(),
                 views: postData.viewCount,
                 likes: postData.likeCount || 0,
-                isLiked: postData.isLikedByMe || false,
+                isLiked: postData.likedByCurrentUser || false,
                 text: postData.content,
             };
 
@@ -297,21 +294,6 @@ export default function ReadPostPage() {
             // API 에러 상태 코드를 포함하여 사용자에게 알려줍니다.
             const status = err.status || '알 수 없음';
             alert(`댓글 신고에 실패했습니다. (HTTP ${status})`);
-        }
-    };
-
-    // 댓글 좋아요 토글 핸들러
-    const handleCommentLikeToggle = async (commentId, isLiked) => {
-        try {
-            if (isLiked) {
-                await unlikeComment(commentId);
-            } else {
-                await likeComment(commentId);
-            }
-            await reloadComments(postId);
-        } catch (err) {
-            console.error("댓글 좋아요 토글 실패:", err);
-            alert("좋아요 처리에 실패했습니다.");
         }
     };
 
@@ -500,12 +482,7 @@ export default function ReadPostPage() {
 
                                             <div className={s.commentFooterControls}>
                                                 <div className={s.commentMetaInfo}>
-                                                    <span className={s.commentTime}>{comment.createdAt}</span>
-                                                    <span className={s.commentSeparator}>•</span>
-                                                    <button className={s.commentLikeButton} onClick={() => handleCommentLikeToggle(comment.id, comment.isLiked)} disabled={isEditing}>
-                                                        {comment.isLiked ? <LikedIcon color="#EF4444" /> : <UnlikedIcon color="#6B7280" />}
-                                                        <span>{comment.likes}</span>
-                                                    </button>
+                                                    {/*<span className={s.commentTime}>{comment.createdAt}</span>*/}
                                                 </div>
 
                                                 <div className={s.commentControls}>

@@ -1,9 +1,9 @@
 .updatePageLayer {
-    width: 100%;
-    padding: 24px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    width: 100%;
 }
 
 .form {
